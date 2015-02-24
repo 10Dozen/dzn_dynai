@@ -10,15 +10,18 @@
 	<wpPos id="n"><!-- getWPPos => [Pos3D] --></wpPos>
 </wp>
 <refUnits>
-	<refGroup id="0">
-		<refUnit id="0" type="classname">
-			<skill><!-- Skill  --></skill>
-			<rank><!-- Rank --></rank>
-			<gear><!-- Gear String --></gear>
-		</refUnit>
-		<refUnits id="n"><!-- ... --></refUnits>
-	</refGroup>
-	<refGroup id="n"><!-- ... --></refGroup>
+	<refTemplate id="0">
+		<count><!-- getDir leader --></count>
+		<refGroup>
+			<refUnit id="0" type="classname">
+				<skill><!-- Skill  --></skill>
+				<rank><!-- Rank --></rank>
+				<gear><!-- Gear String --></gear>
+			</refUnit>
+			<refUnits id="n"><!-- ... --></refUnits>
+		</refGroup>
+	</refTemplate>
+	<refTemplate id="n"><!-- ... --></refTemplate>
 </refUnits>
 <behavior>
 	<speedMode><!-- wpSpeedMode --></speedMode>
