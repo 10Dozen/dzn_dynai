@@ -1,1 +1,28 @@
+<!-- Zone's properties after zone initialization -->
 
+<name><!-- Zone name (Optional) --></name>
+<area>
+	<location id="0"><!-- createLoction => location --></location>
+	<location id="n"><!-- createLoction => location --></location>
+</area>
+<wp>
+	<wpPos id="0"><!-- getWPPos => [Pos3D] --></wpPos>
+	<wpPos id="n"><!-- getWPPos => [Pos3D] --></wpPos>
+</wp>
+<refUnits>
+	<refGroup id="0">
+		<refUnit id="0" type="classname">
+			<skill><!-- Skill  --></skill>
+			<rank><!-- Rank --></rank>
+			<gear><!-- Gear String --></gear>
+		</refUnit>
+		<refUnits id="n"><!-- ... --></refUnits>
+	</refGroup>
+	<refGroup id="n"><!-- ... --></refGroup>
+</refUnits>
+<behavior>
+	<speedMode><!-- wpSpeedMode --></speedMode>
+	<combatMode><!-- wpCombatMode --></combatMode>
+	<formation><!-- wpFormation --></formation>
+	<courage><!-- wpDescription."courage" --></courage>
+</behavior>
