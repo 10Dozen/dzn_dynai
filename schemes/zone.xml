@@ -13,7 +13,7 @@
 	</wp>
 	<units src="dzn_dynai_units%">
 		<exampleGroup type="group" linkType="synchronized">
-			<group>Reference group of units and gear</group>
+			<group>Reference group of units and gear, groups count = getDir leader</group>
 		</exampleGroup>
 	</units>
 	<behavior src="dzn_dynai_behavior%">
