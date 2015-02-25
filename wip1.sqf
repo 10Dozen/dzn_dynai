@@ -12,8 +12,10 @@ _bahavior = _this select 5;
 		<refGroup>
 			<refUnit id="0">
 				<classname><!-- Classname --></classname>
-				<skill><!-- Skill  --></skill>
-				<rank><!-- Rank --></rank>
+				<assignedTo>
+					<vehicle><!-- Vehicle --></vehicle>
+					<role><!-- Role --></role>
+				</assignedTo>
 				<gear><!-- Gear String --></gear>
 			</refUnit>
 			<refUnits id="n"><!-- ... --></refUnits>
