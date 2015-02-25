@@ -3,10 +3,13 @@ _zoneName = _this select 0;
 _side = _this select 1;
 _areas = _this select 2;
 _wps = _this select 3;
-_units = _this select 4;
+_refUnits = _this select 4;
 _bahavior = _this select 5;
 
 
+{
+	
+} forEach _refUnits;
 
 
 // Creating GameLogic Controller
