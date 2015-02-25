@@ -4,7 +4,10 @@ _side = _this select 1;
 _areas = _this select 2;
 _wps = _this select 3;
 _units = _this select 4;
-_bahevior = _this select 5;
+_bahavior = _this select 5;
+
+
+
 
 // Creating GameLogic Controller
 _grp = createGroup _side;
