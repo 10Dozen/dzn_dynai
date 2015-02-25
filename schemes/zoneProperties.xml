@@ -1,15 +1,15 @@
 <!-- Zone's properties after zone initialization -->
 
-<name><!-- Zone name (Optional) --></name>
-<area>
+<name id="0"><!-- Zone name (Optional) --></name>
+<area id="1">
 	<location id="0"><!-- createLoction => location --></location>
 	<location id="n"><!-- createLoction => location --></location>
 </area>
-<wp>
+<wp id="2">
 	<wpPos id="0"><!-- getWPPos => [Pos3D] --></wpPos>
 	<wpPos id="n"><!-- getWPPos => [Pos3D] --></wpPos>
 </wp>
-<refUnits>
+<refUnits id="3">
 	<refTemplate id="0">
 		<count><!-- getDir leader --></count>
 		<refGroup>
@@ -23,7 +23,7 @@
 	</refTemplate>
 	<refTemplate id="n"><!-- ... --></refTemplate>
 </refUnits>
-<behavior>
+<behavior id="4">
 	<speedMode><!-- wpSpeedMode --></speedMode>
 	<combatMode><!-- wpCombatMode --></combatMode>
 	<formation><!-- wpFormation --></formation>
