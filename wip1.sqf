@@ -25,8 +25,13 @@ _bahavior = _this select 5;
 
 _zoneGrps = [];
 
+
+
 {
 	for "_i" from 0 to (_x select 0) do {
+		// Get position for group
+		_initPos = 0; // Call Method to get position in location
+	
 		// Creating GameLogic Controller
 		_grp = createGroup _side;	
 		_grpControl = _grp createUnit ["LOGIC",[0,0,0], [],0, "NONE"]; 
