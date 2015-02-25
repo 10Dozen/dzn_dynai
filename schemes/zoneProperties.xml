@@ -1,15 +1,16 @@
 <!-- Zone's properties after zone initialization -->
 
 <name id="0"><!-- Zone name (Optional) --></name>
-<area id="1">
+<side id="1"><!-- Side --></side>
+<area id="2">
 	<location id="0"><!-- createLoction => location --></location>
 	<location id="n"><!-- createLoction => location --></location>
 </area>
-<wp id="2">
+<wp id="3">
 	<wpPos id="0"><!-- getWPPos => [Pos3D] --></wpPos>
 	<wpPos id="n"><!-- getWPPos => [Pos3D] --></wpPos>
 </wp>
-<refUnits id="3">
+<refUnits id="4">
 	<refTemplate id="0">
 		<count><!-- getDir leader --></count>
 		<refGroup>
@@ -24,7 +25,7 @@
 	</refTemplate>
 	<refTemplate id="n"><!-- ... --></refTemplate>
 </refUnits>
-<behavior id="4">
+<behavior id="5">
 	<speedMode><!-- wpSpeedMode --></speedMode>
 	<combatMode><!-- wpCombatMode --></combatMode>
 	<formation><!-- wpFormation --></formation>
@@ -34,8 +35,8 @@
 <!--
 	ARMA ARRAY-STYLE VIEW
 [
-	[ 
-		<name>,
+	<name>,
+	<side>,
 	[ 
 		<loction1>,
 		<loction2> 
