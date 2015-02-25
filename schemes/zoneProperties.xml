@@ -17,8 +17,10 @@
 		<refGroup>
 			<refUnit id="0">
 				<classname><!-- Classname --></classname>
-				<skill><!-- Skill  --></skill>
-				<rank><!-- Rank --></rank>
+				<assignedTo>
+					<vehicle><!-- Unit Id inside Group --></vehicle> 
+					<role><!-- Role --></role>
+				</assignedTo>
 				<gear><!-- Gear String --></gear>
 			</refUnit>
 			<refUnits id="n"><!-- ... --></refUnits>
