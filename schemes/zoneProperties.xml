@@ -30,3 +30,46 @@
 	<formation><!-- wpFormation --></formation>
 	<courage><!-- wpDescription."courage" --></courage>
 </behavior>
+
+<!--
+	ARMA ARRAY-STYLE VIEW
+[
+	[ 
+		<name>,
+	[ 
+		<loction1>,
+		<loction2> 
+	], 
+	[ 
+		WPpos3d, 
+		WPpos3d 
+	], 
+	[ 
+		// GROUP 1
+		[ 
+			// UNIT OF GROUP 1
+			[
+				classname, 
+				skill, 
+				rank, 
+				gearKit
+			],
+			//UNIT
+			[
+				...
+			]
+		],
+		// GRPOUP 2
+		[
+			// UNIT OF GROUP 2
+		]
+	],
+	[	// BEHAVIOR
+		<speedMode>
+		<combatMode>
+		<formation>
+		<courage>
+	]
+];
+
+-->
