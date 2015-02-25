@@ -21,12 +21,28 @@ _bahavior = _this select 5;
 	</refTemplate>
 */
 
+_zoneGrps = [];
+
 {
-	
+	for "_i" from 0 to (_x select 0) do {
+		// Creating GameLogic Controller
+		_grp = createGroup _side;	
+		_grpControl = _grp createUnit ["LOGIC",[0,0,0], [],0, "NONE"]; 
+		
+		// Create units
+		{
+			_unit = _grp createUnit [_x select 0, [0,0,0], [], 0, "NONE"];
+		} forEach (_x select 1);
+		
+		
+		// Assign Behavior
+		
+		// Assign Waypoints
+		
+		// Set waypoints
+		
+	};
 } forEach _refUnits;
 
 
-// Creating GameLogic Controller
-_grp = createGroup _side;
-_grControl = _grp createunit ["LOGIC",[0,0,0], [],0, "NONE"]; 
 
