@@ -25,20 +25,24 @@ _bahavior = _this select 5;
 
 _zoneGrps = [];
 
-
+<<Method to get position in location:	Get position inside location and NOT inside building or water!>>
 
 {
 	for "_i" from 0 to (_x select 0) do {
 		// Get position for group
-		_initPos = 0; // Call Method to get position in location
+		_initPos = 0; // <<Call Method to get position in location>>
 	
 		// Creating GameLogic Controller
 		_grp = createGroup _side;	
-		_grpControl = _grp createUnit ["LOGIC",[0,0,0], [],0, "NONE"]; 
+		_grpControl = _grp createUnit ["LOGIC", _initPos, [], 0, "NONE"]; 
 		
 		// Create units
 		{
-			_unit = _grp createUnit [_x select 0, [0,0,0], [], 0, "NONE"];
+			_unit = _grp createUnit [_x select 0, _initPos, [], 0, "NONE"];
+			// <<Method to Assign Gear>>
+			// disableAI 
+			// Assign as crew
+			
 		} forEach (_x select 1);
 		
 		
