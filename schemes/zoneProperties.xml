@@ -2,16 +2,17 @@
 
 <name id="0"><!-- Zone name (Optional) --></name>
 <side id="1"><!-- Side --></side>
-<area id="2">
+<isActive id="2"><!-- is zone active (bool) --></isActive>
+<area id="3">
 	<location id="0"><!-- createLoction => location --></location>
 	<location id="n"><!-- createLoction => location --></location>
 </area>
-<wp id="3">
+<wp id="4">
 	<wpPos id="0"><!-- getWPPos => [Pos3D] --></wpPos>
 	<wpPos id="n"><!-- getWPPos => [Pos3D] --></wpPos>
 	<generate><!-- BOOLEAN --></generate> <!-- Нужно ли генерировать дополнительные чекпоинты -->
 </wp>
-<refUnits id="4">
+<refUnits id="5">
 	<refTemplate id="0">
 		<count><!-- getDir leader --></count>
 		<refGroup>
@@ -28,7 +29,7 @@
 	</refTemplate>
 	<refTemplate id="n"><!-- ... --></refTemplate>
 </refUnits>
-<behavior id="5">
+<behavior id="6">
 	<speedMode><!-- wpSpeedMode --></speedMode>
 	<combatMode><!-- wpCombatMode --></combatMode>
 	<formation><!-- wpFormation --></formation>
@@ -40,6 +41,7 @@
 [
 	<name>,
 	<side>,
+	<isAvtive>,
 	[ 
 		<loction1>,
 		<loction2> 
