@@ -23,7 +23,7 @@ dzn_fnc_getZoneSize = {
 	/*
 		Return size of area by border.
 		INPUT:
-			0: LOCATION or ARRAY
+		0: LOCATION or ARRAY	Location of array of locations
 		OUTPUT:	Array of center point and width and length of array [Pos3d, [X,Y]]; (or [min X, min Y, max X, max Y]
 	*/
 	pirvate [];
@@ -43,7 +43,7 @@ dzn_fnc_getZoneSize = {
 			_notExactPositions = _notExactPositions + [locationPosition _x];
 		} forEach (_this select 0);
 	} else {
-		_notExactPositions = [locationPosition (_this select 0)];
+		_notExactPositions = [locationPosition _this];
 	};
 };
 
