@@ -41,7 +41,7 @@ dzn_fnc_getZoneSize = {
 			_yMax = (_pos select 1) max (_yMax);
 			_yMin = (_pos select 1) min (_yMin);
 			_notExactPositions = _notExactPositions + [locationPosition _x];
-		} forEach (_this select 0);
+		} forEach _this;
 	} else {
 		_notExactPositions = [locationPosition _this];
 	};
