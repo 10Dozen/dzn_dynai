@@ -26,9 +26,25 @@ dzn_fnc_getZoneSize = {
 			0: LOCATION or ARRAY
 		OUTPUT:	Array of center point and width and length of array [Pos3d, [X,Y]]; (or [min X, min Y, max X, max Y]
 	*/
+	pirvate [];
 	
-	_
+	_notExactPositions = [];
+	_xMax = 0;		_yMax = 0;
+	_xMin = 90000;		_yMin = 90000;
 	
+	// Get position/s of locations: [ ..., [ posX, posY, posZ ], ... ]
+	if (typename _this == "ARRAY") then {
+		{
+			_pos = locationPosition _x;
+			_xMax = (_pos select 0) max (_xMax);
+			_xMin = (_pos select 0) min (_xMin);
+			_yMax = (_pos select 1) max (_yMax);
+			_yMin = (_pos select 1) min (_yMin);
+			_notExactPositions = _notExactPositions + [locationPosition _x];
+		} forEach (_this select 0);
+	} else {
+		_notExactPositions = [locationPosition (_this select 0)];
+	};
 };
 
 
