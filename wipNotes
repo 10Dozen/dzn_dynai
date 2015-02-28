@@ -6,7 +6,21 @@ forEach [ZONES] -> [ZONE]
 		call dzn_fnc_getZonePosstion -> [CentralPos, xMin, yMin, xMax, yMax]
 		forEach ZONE.refUnits -> [refTemplate]
 			for "_i" from 0 to refTemplate.count
-				call dzn_fnc_getRandomPointInZone -> [Pos3d]
+				call dzn_fnc_getRandomPointInZone -> [SpawnPos]
 				createGroup -> [GRP]
 				createUnit LOGIC -> [GRP.LOGIC]
+				LOGIC setVariable 'units' -> [GRP.LOGIC.units]
+				forEach refTemplate.refGroup -> [refUnit]
+					createUnit [classname = refUnit.classname, group = GRP, position = SpawnPos] -> [unit]
+					call dzn_fnc_assignGear -> [null]
+					GRP.LOGIC.units setVariable pushBack [unit]
+					[unit] synchronizeObjects with GRP.LOGIC
+					if (refUnit.assignedTo != null) then 
+						[[unit], refUnit.assignetTo, refUnit.role] call dzn_fnc_assignToVehicle -> [null]
+					[unit] setSkill 0
+				GRP setBehavior
+				GRP setCombatMode
+				GRP setSpeedMode
 				
+				// Assign Waypoints (from 3 to 6)
+					
