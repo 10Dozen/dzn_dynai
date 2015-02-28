@@ -57,7 +57,7 @@ dzn_fnc_getRandomPosInZone = {
 
 
 
-dzn_wip = {
+dzn_fnc_w = {
 	/*
 		Return random point inside location or array of locations.
 		INPUT:
@@ -80,17 +80,17 @@ dzn_wip = {
 
 
 
-// Get position/s of locations: [ ..., [ posX, posY, posZ ], ... ]
-if (_isArray) then {
-	{
-		_pos = locationPosition _x;
-		_xMax = (_pos select 0) max (_xMax);
-		_xMin = (_pos select 0) min (_xMin);
-		_yMax = (_pos select 1) max (_yMax);
-		_yMin = (_pos select 1) min (_yMin);
-		_notExactPositions = _notExactPositions + [locationPosition _x];
-	} forEach (_this select 0);
-} else {
+	// Get position/s of locations: [ ..., [ posX, posY, posZ ], ... ]
+	if (_isArray) then {
+		{
+			_pos = locationPosition _x;
+			_xMax = (_pos select 0) max (_xMax);
+			_xMin = (_pos select 0) min (_xMin);
+			_yMax = (_pos select 1) max (_yMax);
+			_yMin = (_pos select 1) min (_yMin);
+			_notExactPositions = _notExactPositions + [locationPosition _x];
+		} forEach (_this select 0);
+	} else {
 
 	_notExactPositions = [locationPosition (_this select 0)];
 };
@@ -115,3 +115,10 @@ if (_isArray) then {
 	
 	[_locpos, _dir + 270, _a] call dzn_fnc_draw;	
 	*/
+
+
+dzn_fnc_createZone = {
+	
+
+
+};
