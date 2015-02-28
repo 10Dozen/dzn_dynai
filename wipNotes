@@ -1,0 +1,12 @@
+Initialize Dynai -> [ZONES]
+waitUntil { time > DYNAI_CONFIG.activationDelay }
+forEach [ZONES] -> [ZONE]
+	[ZONE] spawn
+		waitUntil { ZONE.isActive }
+		call dzn_fnc_getZonePosstion -> [CentralPos, xMin, yMin, xMax, yMax]
+		forEach ZONE.refUnits -> [refTemplate]
+			for "_i" from 0 to refTemplate.count
+				call dzn_fnc_getRandomPointInZone -> [Pos3d]
+				createGroup -> [GRP]
+				createUnit LOGIC -> [GRP.LOGIC]
+				
