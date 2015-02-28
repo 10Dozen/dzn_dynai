@@ -96,3 +96,22 @@ if (_isArray) then {
 };
 
 };
+
+
+/*
+	_locpos = locationPosition _loc;
+	_dir = direction _loc;
+	_a = size _loc select 0;
+	_b = size _loc select 1;
+	
+	[_locpos, _dir, _b] call dzn_fnc_draw;
+	sleep 1;
+	
+	[_locpos, _dir + 90, _a] call dzn_fnc_draw;
+	sleep 1;
+	
+	[_locpos, _dir + 180, _b] call dzn_fnc_draw;
+	sleep 1;	
+	
+	[_locpos, _dir + 270, _a] call dzn_fnc_draw;	
+	*/
