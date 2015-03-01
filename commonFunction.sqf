@@ -106,7 +106,42 @@ dzn_fnc_getRandomPointInZone = {
 	_randomPoint
 };
 
-
+dzn_fnc_dynai_assignInVehicle = {
+	/*
+		Assign unit in given vehicle as given role
+		INPUT:
+			0: OBJECT	- unit 
+			1: OBJECT	- vehicle to assign to
+			2: STRING	- role in vehicle
+		OUTPUT:	NULL
+	*/
+	private[];
+	
+	_unit = _this select 0;
+	_veh = _this select 1;
+	
+	switch { _this select 2 } do {
+		case "driver": {
+			_unit assignAsDriver _veh;
+			_unit moveInDriver _veh;
+		};
+		case "gunner": {
+			_unit assignAsGunner _veh;
+			_unit moveInGunner _veh;
+		};
+		case "commander": {
+			_unit assignAsCommander _veh;
+			_unit moveInCommander _veh;
+		};
+		case "cargo": {
+			_unit assignAsCargo _veh;
+			_unit moveInCargo _veh;
+		};
+		case default: {
+			if ([]) then {};
+		};
+	};
+};
 
 
 
