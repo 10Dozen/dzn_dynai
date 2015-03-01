@@ -4,7 +4,7 @@ dzn_fnc_getZonePosition = {
 	/*
 		Return central position of locations and max and min of x and y
 		INPUT:
-			0: ARRAY of locations call dzn_fnc_getZonePosition;
+			0: ARRAY	- array of locations
 		OUTPUT:	ARRAY (Pos3d, xMin, yMin, xMax, yMax)
 	*/
 	private ["_i","_xMin","_xMax","_yMin","_yMax","_cPos","_locPos","_dir","_a","_b","_dist"];
@@ -45,7 +45,9 @@ dzn_fnc_getPosOnGivenDir = {
 	/*
 		Return position on given direction and distance from base point
 		INPUT:
-			0: ARRAY - [StartPos; Direction; Distance]
+			0: Pos3d 		- StartPos
+			1: Number 		- Direction from start pos
+			2: Number		- Distance from start pos
 		OUTPUT:	ARRAY Pos3d
 	*/
 	private ["_pos", "_dir", "_dist", "_newPos"];
@@ -61,15 +63,48 @@ dzn_fnc_getPosOnGivenDir = {
 	_newPos
 };
 
-
-/*
-		Return position on given direction and distance from base point
+dzn_fnc_dynai_isInLocation = {
+	/*
+		Return is position is in any of given location
 		INPUT:
-			0: ARRAY - [StartPos; Direction; Distance]
+			0: POS3d	- Position to check
+			1: ARRAY	- Array of locations to check
+		OUTPUT:	BOOLEAN
+	*/	
+	private["_result"];
+	_result = false;
+	{if ((_this select 0) in _x) then { _result = true; };} forEach (_this select 1);
+	_result
+};
+
+dzn_fnc_getRandomPointInZone = {
+	/*
+		Return random position inside given location or locations
+		INPUT:
+			0: ARRAY	- locations to find
+			Optional (if not given, then search for 20x20km):
+			1: ARRAY	- Min [X,Y] point to start search
+			2: ARRAY	- Max [X,Y] point to end search
 		OUTPUT:	ARRAY Pos3d
 	*/
-
-
+	private ["_locs","_min","_max","_randomPoint"];
+	
+	_locs = _this select 0;
+	_min = if (!isNil {_this select 1})) then { _this select 1 } else { [0,0] };
+	_max = if (!isNil {_this select 2})) then { _this select 2 } else { [20000,20000] };
+	
+	_randomPoint = [-100,-100,0];
+	while { !([_randomPoint, _locs] call dzn_fnc_dynai_isInLocation) } do {
+		#define GET_RANDOM_FROM_LIMIT(IDX)	(_min select IDX) + random((_max select IDX) - (_min select IDX))
+		_randomPoint = [
+			GET_RANDOM_FROM_LIMIT(0),
+			GET_RANDOM_FROM_LIMIT(1),
+			0
+		];
+	};
+	
+	_randomPoint
+};
 
 
 
