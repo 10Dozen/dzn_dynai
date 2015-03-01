@@ -63,7 +63,7 @@ dzn_fnc_getPosOnGivenDir = {
 	_newPos
 };
 
-dzn_fnc_dynai_isInLocation = {
+dzn_fnc_isInLocation = {
 	/*
 		Return is position is in any of given location
 		INPUT:
@@ -74,6 +74,18 @@ dzn_fnc_dynai_isInLocation = {
 	private["_result"];
 	_result = false;
 	{if ((_this select 0) in _x) then { _result = true; };} forEach (_this select 1);
+	_result
+};
+
+dzn_fnc_isInWater = {
+	/*
+		Return TRUE if position is not on surface above sea level
+		INPUT:
+			0: OBJECT	- Position to check
+		OUTPUT: BOOLEAN	
+	*/
+	private ["_result"];
+	_result = if ( ((ATLtoASL _this) select 2) < (_this select 2) ) then {true} else {false};
 	_result
 };
 
@@ -94,7 +106,9 @@ dzn_fnc_getRandomPointInZone = {
 	_max = if (!isNil {_this select 2})) then { _this select 2 } else { [20000,20000] };
 	
 	_randomPoint = [-100,-100,0];
-	while { !([_randomPoint, _locs] call dzn_fnc_dynai_isInLocation) } do {
+	
+	// Get random points while point not in location or in water
+	while { !([_randomPoint, _locs] call dzn_fnc_dynai_isInLocation) || (_randomPoint call dzn_fnc_isInWater) } do {
 		#define GET_RANDOM_FROM_LIMIT(IDX)	(_min select IDX) + random((_max select IDX) - (_min select IDX))
 		_randomPoint = [
 			GET_RANDOM_FROM_LIMIT(0),
