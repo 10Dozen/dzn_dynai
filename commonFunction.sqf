@@ -44,7 +44,7 @@ dzn_fnc_getZonePosition = {
 		// player sideChat format ["cPos: %1", str(_cPos)];
 	} forEach _this;
 
-	[_cPos, _xMin, _yMin, _xMax, _yMax]
+	[_cPos, [_xMin, _yMin], [_xMax, _yMax]]
 };
 
 dzn_fnc_getPosOnGivenDir = {
