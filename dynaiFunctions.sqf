@@ -105,13 +105,14 @@ dzn_fnc_dynai_createZone = {
 	];
 	
 	player sideChat "Calculating zone position";
-	_zonePos = [] call dzn_fnc_getZonePosition; //[CentralPos, xMin, yMin, xMax, yMax]
+	_locs = _this select 3;	
+	_zonePos = _locs call dzn_fnc_getZonePosition; //[CentralPos, xMin, yMin, xMax, yMax]
 	_behavior = _this select 6;
 	
 	// Creation of Groups and Units
 	{
 		for "_i" from 0 to (_x select 0) do {
-			_groupPos = [] call dzn_fnc_getRandomPointInZone; // return Pos3D
+			_groupPos = [_locs, _zonePos select 1, _zonePos select 2] call dzn_fnc_getRandomPointInZone; // return Pos3D
 			_grp = createGroup _side;
 			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];
 			[_grpLogic] joinSilent grpNull;
