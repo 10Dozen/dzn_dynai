@@ -1,14 +1,17 @@
+dynai_debug = true;
 
 dzn_fnc_getZonePosition = {
 	/*
-		Return central position of locations and max and min x and y
-		ARRAY of locations call dzn_fnc_getZonePosition;
+		Return central position of locations and max and min of x and y
+		INPUT:
+			0: ARRAY of locations call dzn_fnc_getZonePosition;
 		OUTPUT:	ARRAY (Pos3d, xMin, yMin, xMax, yMax)
 	*/
-	private [];
+	private ["_xMin","_xMax","_yMin","_yMax","_cPos","_locPos","_dir","_a","_b","_dist"];
 	
 	_xMin = 90000;	_xMax = 0;
 	_yMin = 90000;	_yMin = 0;
+	_cPos = [];
 	
 	{
 		_locPos = locationPosition _x;
@@ -19,13 +22,19 @@ dzn_fnc_getZonePosition = {
 		for "_i" from 0 to 3 do {
 			_dist = if (_i == 0 || _i == 2) then { _b } else { _a };
 			_pointPos = [_locPos, _dir + 90*_i, _dist] call dzn_fnc_getPosOnGivenDir;
+			if (dynai_debug) then { [_locPos, _dir + 90*_i, _dist] call dzn_fnc_draw; };
 			
 			_xMin = if (_pointPos select 0 < _xMin) then { _pointPos select 0 } else { _xMin };
 			_xMax = if (_pointPos select 0 > _xMax) then { _pointPos select 0 } else { _xMax };
 			_yMin = if (_pointPos select 1 < _yMin) then { _pointPos select 1 } else { _yMin };
 			_yMax = if (_pointPos select 1 > _yMax) then { _pointPos select 1 } else { _yMax };
 		};
+		
+		#define AVG_POS(X, Y, IDX)	((X select IDX) + (Y select IDX))/2
+		_cPos = if (_cPos isEqualTo []) then { _locPos } else { [AVG_POS(_cPos, _locPos, 0),AVG_POS(_cPos, _locPos, 1),0] };
 	} forEach _this;
+
+	[_cPos, _xMin, _yMin, _xMax, _yMax]
 };
 
 dzn_fnc_getPosOnGivenDir = {
