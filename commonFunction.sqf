@@ -7,7 +7,7 @@ dzn_fnc_getZonePosition = {
 			0: ARRAY of locations call dzn_fnc_getZonePosition;
 		OUTPUT:	ARRAY (Pos3d, xMin, yMin, xMax, yMax)
 	*/
-	private ["_xMin","_xMax","_yMin","_yMax","_cPos","_locPos","_dir","_a","_b","_dist"];
+	private ["_i","_xMin","_xMax","_yMin","_yMax","_cPos","_locPos","_dir","_a","_b","_dist"];
 	
 	_xMin = 90000;	_xMax = 0;
 	_yMin = 90000;	_yMin = 0;
@@ -185,6 +185,7 @@ dzn_fnc_dynai_createZone = {
 	waitUntil { _this select 2 };
 	player sideChat "Zone is activated";
 	
+	_side = _this select 1;
 	// Creating center of side if not exists
 	call compile format ["
 		if (isNil { dzn_dynai_center_%1}) then {
@@ -192,13 +193,44 @@ dzn_fnc_dynai_createZone = {
 			dzn_dynai_center_%1 = true;
 		};	
 		",
-		str(_this select 1)
+		str(_side)
 	];
 	
 	player sideChat "Calculating zone position";
 	_zonePos = [] call dzn_fnc_getZonePosition; //[CentralPos, xMin, yMin, xMax, yMax]
+	_behavior = _this select 6;
 	
-	
+	// 5 -templates
+	{
+		for "_i" from 0 to (_x select 0) do {
+			_groupPos = [] call dzn_fnc_getRandomPointInZone; // return Pos3D
+			_grp = createGroup _side;
+			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];
+			[_grpLogic] joinSilent grpNull;
+			_grpLogic setVariable ["units", []];
+			
+			// Create units of group
+			{
+				//  0: class, 1: assigne, 2: gear
+				_unit = _grp createUnit [(_x select 0), _groupPos, [], 0, "NONE"];
+				_unit setSkill 0;
+				_grpLogic setVariable ["units", (_grpLogic getVariable "units" + [_unit])];
+				if !((_x select 2) == "") then { /* Call AssignGear */ };
+				if !((_x select 1) isEqualTo []) then { /* Call AssignRole */ };
+			} forEach (_x select 1);
+			
+			// Synhronize units with groupLogic
+			_grpLogic synchronizeObjectsAdd (units group _grp);
+			
+			// Set group behavior
+			_grp setSpeedMode (_behavior select 0);
+			_grp setBehaviour (_behavior select 1);
+			_grp setCombatMode (_behavior select 2);
+			_grp setFormation (_behavior select 3);
+			
+			// Assign waypoints
+		};
+	} forEach (_this select 5);
 	
 };
 
