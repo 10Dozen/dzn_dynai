@@ -31,6 +31,7 @@
 </refUnits>
 <behavior id="6">
 	<speedMode><!-- wpSpeedMode --></speedMode>
+	<behavior><!-- wpBehavior --></behavior>
 	<combatMode><!-- wpCombatMode --></combatMode>
 	<formation><!-- wpFormation --></formation>
 	<courage><!-- wpDescription."courage" --></courage>
