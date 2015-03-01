@@ -44,8 +44,9 @@ dzn_fnc_getZonePosition = {
 dzn_fnc_getPosOnGivenDir = {
 	/*
 		Return position on given direction and distance from base point
-		ARRAY( StartPos; Direction; Distance) call dzn_fnc_getPosOnGivenDir
-		OUTPUT: ARRAY Pos3d
+		INPUT:
+			0: ARRAY - [StartPos; Direction; Distance]
+		OUTPUT:	ARRAY Pos3d
 	*/
 	private ["_pos", "_dir", "_dist", "_newPos"];
 	_pos = _this select 0;
@@ -60,6 +61,25 @@ dzn_fnc_getPosOnGivenDir = {
 	_newPos
 };
 
+
+/*
+		Return position on given direction and distance from base point
+		INPUT:
+			0: ARRAY - [StartPos; Direction; Distance]
+		OUTPUT:	ARRAY Pos3d
+	*/
+
+
+
+
+
+
+
+
+
+
+
+
 dzn_fnc_draw = {
 	// pos, dir, dist
 	
@@ -70,27 +90,6 @@ dzn_fnc_draw = {
 	_mrk setMarkerType "hd_dot";
 	_mrk setMarkerText format["%1", str(time)];
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 dzn_fnc_createLocation = {	
 	private ["_locloc","_pos","_dir","_a","_b"];
