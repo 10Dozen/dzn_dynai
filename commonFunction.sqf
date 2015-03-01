@@ -10,7 +10,7 @@ dzn_fnc_getZonePosition = {
 	private ["_i","_xMin","_xMax","_yMin","_yMax","_cPos","_locPos","_dir","_a","_b","_dist"];
 	
 	_xMin = 90000;	_xMax = 0;
-	_yMin = 90000;	_yMin = 0;
+	_yMin = 90000;	_yMax = 0;
 	_cPos = [];
 	
 	{
@@ -19,23 +19,29 @@ dzn_fnc_getZonePosition = {
 		_a = size _x select 0;
 		_b = size _x select 1;
 		
+		// player sideChat format ["Location: %1, %2, %3, %4, %5", str(_x), str(_locPos), str(_dir), str(_a), str(_b)];
+		
 		for "_i" from 0 to 3 do {
 			_dist = if (_i == 0 || _i == 2) then { _b } else { _a };
 			_pointPos = [_locPos, _dir + 90*_i, _dist] call dzn_fnc_getPosOnGivenDir;
-			if (dynai_debug) then { [_locPos, _dir + 90*_i, _dist] call dzn_fnc_draw; };
 			
+			if (dynai_debug) then { [_locPos, _dir + 90*_i, _dist] spawn dzn_fnc_draw; };
+
 			_xMin = if (_pointPos select 0 < _xMin) then { _pointPos select 0 } else { _xMin };
 			_xMax = if (_pointPos select 0 > _xMax) then { _pointPos select 0 } else { _xMax };
 			_yMin = if (_pointPos select 1 < _yMin) then { _pointPos select 1 } else { _yMin };
-			_yMax = if (_pointPos select 1 > _yMax) then { _pointPos select 1 } else { _yMax };
+			_yMax = if (_pointPos select 1 > _yMax) then { _pointPos select 1 } else { _yMax };			
 		};
 		
+		// player sideChat format ["End Pos: %1, %2, %3, %4, %5", str(_pointPos), str(_xMin), str(_xMax), str(_yMin), str(_yMax)];
 		#define AVG_POS(X, Y, IDX)	((X select IDX) + (Y select IDX))/2
 		_cPos = if (_cPos isEqualTo []) then {
 			_locPos 
 		} else { 
 			[AVG_POS(_cPos, _locPos, 0), AVG_POS(_cPos, _locPos, 1), 0] 
 		};
+		
+		// player sideChat format ["cPos: %1", str(_cPos)];
 	} forEach _this;
 
 	[_cPos, _xMin, _yMin, _xMax, _yMax]
@@ -102,25 +108,25 @@ dzn_fnc_getRandomPointInZone = {
 	private ["_locs","_min","_max","_randomPoint"];
 	
 	_locs = _this select 0;
-	_min = if (!isNil {_this select 1})) then { _this select 1 } else { [0,0] };
-	_max = if (!isNil {_this select 2})) then { _this select 2 } else { [20000,20000] };
+	_min = if (!isNil {_this select 1}) then { _this select 1 } else { [0,0] };
+	_max = if (!isNil {_this select 2}) then { _this select 2 } else { [20000,20000] };
 	
 	_randomPoint = [-100,-100,0];
 	
 	// Get random points while point not in location or in water
-	while { !([_randomPoint, _locs] call dzn_fnc_dynai_isInLocation) || (_randomPoint call dzn_fnc_isInWater) } do {
+	while { !([_randomPoint, _locs] call dzn_fnc_isInLocation) || (_randomPoint call dzn_fnc_isInWater) } do {
 		#define GET_RANDOM_FROM_LIMIT(IDX)	(_min select IDX) + random((_max select IDX) - (_min select IDX))
 		_randomPoint = [
 			GET_RANDOM_FROM_LIMIT(0),
 			GET_RANDOM_FROM_LIMIT(1),
 			0
-		];
+		];		
 	};
 	
 	_randomPoint
 };
 
-dzn_fnc_dynai_assignInVehicle = {
+dzn_fnc_assignInVehicle = {
 	/*
 		Assign unit in given vehicle as given role
 		INPUT:
@@ -129,15 +135,19 @@ dzn_fnc_dynai_assignInVehicle = {
 			2: STRING	- role in vehicle
 		OUTPUT:	NULL
 	*/
-	private[];
+	private["_unit","_veh","_path"];
 	
 	_unit = _this select 0;
 	_veh = _this select 1;
-	
-	switch { _this select 2 } do {
+	player sideChat format [
+		"Unit: %1, Vehicle: %2, Path: %3", 
+		str(_unit), str(_veh), _this select 2
+	];
+
+	switch (_this select 2) do {
 		case "driver": {
 			_unit assignAsDriver _veh;
-			_unit moveInDriver _veh;
+			_unit moveInDriver _veh;			
 		};
 		case "gunner": {
 			_unit assignAsGunner _veh;
@@ -151,8 +161,29 @@ dzn_fnc_dynai_assignInVehicle = {
 			_unit assignAsCargo _veh;
 			_unit moveInCargo _veh;
 		};
-		case default: {
-			if ([]) then {};
+		default {
+			if (["turret", _this select 2, false] call BIS_fnc_inString) then {
+				_path = if ( ((_this select 2) select [6,1]) != "" ) then { [parseNumber ((_this select 2) select [6,1])] };				
+				player sideChat str(_path);
+				if (!isNil {_path}) then {
+					if ( ((_this select 2) select [7,1]) != "" ) then {
+						_path = _path + [ parseNumber ((_this select 2) select [7,1]) ];
+					};
+				
+					_unit assignAsTurret [_veh, _path];
+					_unit moveInTurret [_veh, _path];				
+				} else {
+					player sideChat format [
+						"Wrong vehicle assign path. Unit: %1, Vehicle: %2, Path: %3", 
+						str(_unit), str(_veh), _this select 2
+					];
+				};
+			} else {
+				player sideChat format [
+					"Wrong assign role. Unit: %1, Vehicle: %2, Role: %3", 
+					str(_unit), str(_veh), _this select 2
+				];
+			};
 		};
 	};
 };
@@ -166,7 +197,8 @@ dzn_fnc_dynai_assignInVehicle = {
 
 dzn_fnc_draw = {
 	// pos, dir, dist
-	
+	private ["_pos", "_mrk"];
+	sleep (random 5);
 	_pos = [_this select 0, _this select 1, _this select 2] call dzn_fnc_getPosOnGivenDir;
 	
 	_mrk = createMarker [format["mrk%1", str(time)], _pos];
