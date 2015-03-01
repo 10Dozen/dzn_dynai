@@ -114,6 +114,9 @@ dzn_fnc_dynai_createZone = {
 		for "_i" from 0 to (_x select 0) do {
 			_groupPos = [_locs, _zonePos select 1, _zonePos select 2] call dzn_fnc_getRandomPointInZone; // return Pos3D
 			_grp = createGroup _side;
+			
+			
+			
 			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];
 			[_grpLogic] joinSilent grpNull;
 			_grpLogic setVariable ["units", []];
@@ -121,9 +124,12 @@ dzn_fnc_dynai_createZone = {
 			// Create units of group
 			{
 				//  0: class, 1: assigne, 2: gear
+				
 				_unit = _grp createUnit [(_x select 0), _groupPos, [], 0, "NONE"];
+				player sideChat format ["Unit create %1", str(_x select 0)];
 				_unit setSkill 0;
-				_grpLogic setVariable ["units", (_grpLogic getVariable "units" + [_unit])];
+				_grpLogic setVariable ["units", (_grpLogic getVariable "units") + [_unit]];
+				
 				if !((_x select 2) == "") then { /* Call AssignGear */ };
 				if !((_x select 1) isEqualTo []) then {
 					[
@@ -135,7 +141,7 @@ dzn_fnc_dynai_createZone = {
 			} forEach (_x select 1);			
 			
 			// Synhronize units with groupLogic
-			_grpLogic synchronizeObjectsAdd (units group _grp);
+			_grpLogic synchronizeObjectsAdd (units _grp);
 			
 			// Set group behavior
 			_grp setSpeedMode (_behavior select 0);
