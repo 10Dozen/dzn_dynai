@@ -188,6 +188,24 @@ dzn_fnc_assignInVehicle = {
 	};
 };
 
+dzn_fnc_createPathFromKeypoints = {
+	/*
+		Creates waypoint throu 3 to 6 randomly chosen points. Last will cycle.
+		INPUT:
+			0: GROUP		- Group which will get waypoints
+			1: ARRAY		- Keypoints			
+		OUTPUT: NULL
+	*/
+	private ["_grp","_keypoints","_iMax","_i","_wp"];
+	_grp = _this select 0;
+	_keypoints = _this select 1;
+	_iMax = 2 + round(random(4));
+	
+	for "_i" from 0 to _iMax do {
+		_wp = _grp addWaypoint [_keypoints call BIS_fnc_selectRandom, 100];
+	};
+	_wp setWaypointType "CYCLE";	
+};
 
 
 
