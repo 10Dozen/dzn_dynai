@@ -88,7 +88,7 @@ dzn_fnc_dynai_initialize = {
 dzn_fnc_dynai_createZone = {
 	private [
 		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_zonePos","_count","_groupUnits",
-		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit",
+		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit"
 	];
 	
 	// Wait for zone activation (_isActive = _this select 2)
