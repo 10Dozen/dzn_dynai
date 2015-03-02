@@ -123,6 +123,8 @@ dzn_fnc_dynai_createZone = {
 		
 		// For count of templated groups
 		for "_i" from 0 to _count do {
+			player sideChat format ["|| Spawning group %1", str(_i)];
+			
 			// Creates group
 			_groupPos = [_area, _zonePos select 1, _zonePos select 2] call dzn_fnc_getRandomPointInZone; // return Pos3D
 			_grp = createGroup _side;
@@ -134,12 +136,14 @@ dzn_fnc_dynai_createZone = {
 			
 			// For each unit in group
 			{
+				player sideChat format ["|||| Spawning group %1 - Unit: %2 (%3)", str(_i), str(_forEachIndex), _x select 0];
+				
 				_classname = _x select 0;
 				_assigned = _x select 1;
 				_gear = _x select 2;
 				
 				_unit = _grp createUnit [_classname , _groupPos, [], 0, "NONE"];
-				player sideChat format ["Unit create %1", str(_x select 0)];
+				player sideChat format ["|||||| Unit created %1 (%2)", str(_unit), _classname];
 				
 				_unit setSkill 0;
 				_grpLogic setVariable ["units", (_grpLogic getVariable "units") + [_unit]];
