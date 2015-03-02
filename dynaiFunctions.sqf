@@ -86,13 +86,21 @@ dzn_fnc_dynai_initialize = {
 };
 
 dzn_fnc_dynai_createZone = {
-	private [];
+	private [
+		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_zonePos","_count","_groupUnits",
+		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit",
+	];
 	
-	// Wait for zone activation
-	waitUntil { _this select 2 };
+	// Wait for zone activation (_isActive = _this select 2)
+	waitUntil { _this select 2 }; // 
 	player sideChat "Zone is activated";
 	
+	_name = _this select 0;
 	_side = _this select 1;
+	_area = _this select 3;
+	_wps = _this select 4;
+	_refUnits = _this select 5;
+	_behavior = _this select 6;
 	
 	// Creating center of side if not exists
 	call compile format ["
@@ -105,40 +113,46 @@ dzn_fnc_dynai_createZone = {
 	];
 	
 	player sideChat "Calculating zone position";
-	_locs = _this select 3;	
-	_zonePos = _locs call dzn_fnc_getZonePosition; //[CentralPos, xMin, yMin, xMax, yMax]
-	_behavior = _this select 6;
+	_zonePos = _area call dzn_fnc_getZonePosition; //[CentralPos, xMin, yMin, xMax, yMax]
 	
-	// Creation of Groups and Units
+	player sideChat "Spawning groups";
+	// For each groups templates
 	{
-		for "_i" from 0 to (_x select 0) do {
-			_groupPos = [_locs, _zonePos select 1, _zonePos select 2] call dzn_fnc_getRandomPointInZone; // return Pos3D
+		_count = _x select 0;
+		_groupUnits = _x select 1;
+		
+		// For count of templated groups
+		for "_i" from 0 to _count do {
+			// Creates group
+			_groupPos = [_area, _zonePos select 1, _zonePos select 2] call dzn_fnc_getRandomPointInZone; // return Pos3D
 			_grp = createGroup _side;
 			
-			
-			
+			// Creates GameLogic for group control
 			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];
-			[_grpLogic] joinSilent grpNull;
+			[_grpLogic] joinSilent grpNull;			// Unassign GameLogic from group
 			_grpLogic setVariable ["units", []];
 			
-			// Create units of group
+			// For each unit in group
 			{
-				//  0: class, 1: assigne, 2: gear
+				_classname = _x select 0;
+				_assigned = _x select 1;
+				_gear = _x select 2;
 				
-				_unit = _grp createUnit [(_x select 0), _groupPos, [], 0, "NONE"];
+				_unit = _grp createUnit [_classname , _groupPos, [], 0, "NONE"];
 				player sideChat format ["Unit create %1", str(_x select 0)];
+				
 				_unit setSkill 0;
 				_grpLogic setVariable ["units", (_grpLogic getVariable "units") + [_unit]];
 				
-				if !((_x select 2) == "") then { /* Call AssignGear */ };
-				if !((_x select 1) isEqualTo []) then {
+				if !(_gear == "") then { /* Call AssignGear _gear */ };
+				if !(_assigned isEqualTo []) then {
 					[
 						_unit, 
-						(_grpLogic getVariable "units") select (_x select 1 select 0),	// ID of created unit/vehicle
-						_x select 1 select 1	// string of assigned role - e.g. driver, gunner
+						(_grpLogic getVariable "units") select (_assigned select 0),	// ID of created unit/vehicle
+						_assigned select 1												// string of assigned role - e.g. driver, gunner
 					] call dzn_fnc_assignInVehicle; 
 				};
-			} forEach (_x select 1);			
+			} forEach _groupUnits;			
 			
 			// Synhronize units with groupLogic
 			_grpLogic synchronizeObjectsAdd (units _grp);
@@ -150,8 +164,9 @@ dzn_fnc_dynai_createZone = {
 			_grp setFormation (_behavior select 3);
 			
 			// Assign waypoints
+			// function here
 		};
-	} forEach (_this select 5);
+	} forEach _refUnits;
 	
 };
 
