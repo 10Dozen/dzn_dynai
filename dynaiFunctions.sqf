@@ -48,7 +48,7 @@ dzn_fnc_dynai_initialize = {
 			[
 				[
 					// Infantry units
-					4,
+					2,
 					[
 						["B_officer_F",[],""],
 						["B_Soldier_SL_F",[],""],
@@ -58,19 +58,26 @@ dzn_fnc_dynai_initialize = {
 				],
 				[
 					// SpecOps units
+					4,
+					[
+						["B_CTRG_soldier_AR_A_F",[],""],
+						["B_CTRG_soldier_engineer_exp_F",[],""]
+					]
+				],
+				[
 					3,
 					[
-						["B_RangeMaster_F",[],""],
-						["B_recon_medic_F",[],""],
-						["B_CTRG_soldier_engineer_exp_F",[],""],
-						["B_recon_F",[],""]
-					]
-				]
+						["B_APC_Wheeled_01_cannon_F","isVehicle",""],
+						["B_CTRG_soldier_AR_A_F",[0, "commander"],""],
+						["B_CTRG_soldier_AR_A_F",[0, "driver"],""],
+						["B_CTRG_soldier_AR_A_F",[0, "gunner"],""]
+					]				
+				]				
 			],
 			[
 				"LIMITED",
-				"CARELESS",
-				"GREEN",
+				"SAFE",
+				"YELLOW",
 				"COLUMN"				
 			]
 		]
@@ -130,10 +137,9 @@ dzn_fnc_dynai_createZone = {
 			_grp = createGroup _side;
 			
 			// Creates GameLogic for group control
-			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];
-			[_grpLogic] joinSilent grpNull;			// Unassign GameLogic from group
+			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];			
 			_grpLogic setVariable ["units", []];
-			
+			_grpLogic setVariable ["vehicles", []];
 			// For each unit in group
 			{
 				player sideChat format ["|||| Spawning group %1 - Unit: %2 (%3)", str(_i), str(_forEachIndex), _x select 0];
@@ -142,33 +148,41 @@ dzn_fnc_dynai_createZone = {
 				_assigned = _x select 1;
 				_gear = _x select 2;
 				
-				_unit = _grp createUnit [_classname , _groupPos, [], 0, "NONE"];
-				player sideChat format ["|||||| Unit created %1 (%2)", str(_unit), _classname];
-				
-				_unit setSkill 0;
-				_grpLogic setVariable ["units", (_grpLogic getVariable "units") + [_unit]];
-				
-				if !(_gear == "") then { /* Call AssignGear _gear */ };
-				if !(_assigned isEqualTo []) then {
-					[
-						_unit, 
-						(_grpLogic getVariable "units") select (_assigned select 0),	// ID of created unit/vehicle
-						_assigned select 1												// string of assigned role - e.g. driver, gunner
-					] call dzn_fnc_assignInVehicle; 
-				};
+				_unit = objNull;
+				if (typename _assigned == "ARRAY") then {
+					_unit = _grp createUnit [_classname , _groupPos, [], 0, "NONE"];
+					player sideChat format ["|||||| Unit created %1 (%2)", str(_unit), _classname];
+					
+					_unit setSkill 0;
+					
+					_grpLogic setVariable ["units", (_grpLogic getVariable "units") + [_unit]];
+					
+					if !(_gear == "") then { /* Call AssignGear _gear */ };
+					if !(_assigned isEqualTo []) then {
+						[
+							_unit, 
+							(_grpLogic getVariable "vehicles") select (_assigned select 0),	// ID of created unit/vehicle
+							_assigned select 1												// string of assigned role - e.g. driver, gunner
+						] call dzn_fnc_assignInVehicle; 
+					};
+				} else {
+					_unit = createVehicle [_classname, _groupPos, [], 0, "NONE"];	
+					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];
+				};			
 			} forEach _groupUnits;			
 			
 			// Synhronize units with groupLogic
 			_grpLogic synchronizeObjectsAdd (units _grp);
+			[_grpLogic] joinSilent grpNull;			// Unassign GameLogic from group
 			
 			// Set group behavior
-			_grp setSpeedMode (_behavior select 0);
-			_grp setBehaviour (_behavior select 1);
-			_grp setCombatMode (_behavior select 2);
-			_grp setFormation (_behavior select 3);
+			if !(_behavior select 0 == "") then { _grp setSpeedMode (_behavior select 0); };
+			if !(_behavior select 1 == "") then { _grp setBehaviour (_behavior select 1); };
+			if !(_behavior select 2 == "") then { _grp setCombatMode (_behavior select 2); };
+			if !(_behavior select 3 == "") then { _grp setFormation (_behavior select 3); };
 			
 			// Assign waypoints
-			// function here
+			[_grp, _wps] spawn dzn_fnc_createPathFromKeypoints;			
 		};
 	} forEach _refUnits;
 	
