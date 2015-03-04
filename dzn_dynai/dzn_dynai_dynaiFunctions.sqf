@@ -32,6 +32,7 @@ dzn_fnc_dynai_initZones = {
 						_loc setDirection (triggerArea _x select 2);
 						_loc setRectangular (triggerArea _x select 3);
 						_locations = _locations + [_loc];
+						_loc attachOnject _zone;
 						deleteVehicle _x;	
 					};
 				} forEach _synced;
@@ -42,7 +43,7 @@ dzn_fnc_dynai_initZones = {
 				
 			};
 			
-			// Get waypoints and convert them into locations
+			// Get waypoints and convert them into keypoints (coordinates)
 			if ( ["dzn_dynai_wp", str(_x), false] call BIS_fnc_inString ) then {
 				_wps = waypoints _x;
 				_keypoints = [];
