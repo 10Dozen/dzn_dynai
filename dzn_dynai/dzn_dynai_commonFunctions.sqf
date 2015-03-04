@@ -140,10 +140,6 @@ dzn_fnc_assignInVehicle = {
 	
 	_unit = _this select 0;
 	_veh = _this select 1;
-	player sideChat format [
-		"Unit: %1, Vehicle: %2, Path: %3", 
-		str(_unit), str(_veh), _this select 2
-	];
 
 	switch (_this select 2) do {
 		case "driver": {
@@ -224,8 +220,7 @@ dzn_fnc_createPathFromRandom = {
 	
 	_grp = _this select 0;
 	_iMax = 2 + round(random(4));
-	for "_i" from 0 to _iMax do {
-			[ [loc1,loc2], [2000,2000], [3000,3000] ] call dzn_fnc_getRandomPointInZone
+	for "_i" from 0 to _iMax do {		
 		_wp = _grp addWaypoint [
 			[_this select 1, _this select 2, _this select 3] call dzn_fnc_getRandomPointInZone,
 			100
