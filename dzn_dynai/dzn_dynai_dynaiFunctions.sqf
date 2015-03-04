@@ -31,7 +31,10 @@ dzn_fnc_dynai_initZones = {
 						_loc = createLocation ["Name", getPosASL _x, triggerArea _x select 0, triggerArea _x select 1];
 						_loc setDirection (triggerArea _x select 2);
 						_loc setRectangular (triggerArea _x select 3);
+						
 						_locations = _locations + [_loc];
+						_loc attachObject _zone;
+						
 						deleteVehicle _x;	
 					};
 				} forEach _synced;
@@ -42,13 +45,18 @@ dzn_fnc_dynai_initZones = {
 				
 			};
 			
-			// Get waypoints and convert them into locations
+			// Get waypoints and convert them into keypoints (coordinates)
 			if ( ["dzn_dynai_wp", str(_x), false] call BIS_fnc_inString ) then {
 				_wps = waypoints _x;
 				_keypoints = [];
-				{
-					_keypoints = _keypoints + [ waypointPosition _x ];					
-				} forEach _wps;
+				
+				if (_wps isEqualTo []) then {
+					_keypoints = "randomize";
+				} else {
+					{
+						_keypoints = _keypoints + [ waypointPosition _x ];					
+					} forEach _wps;
+				};
 				
 				deleteVehicle _x;
 				_properties set [4, _keypoints];
@@ -77,7 +85,8 @@ dzn_fnc_dynai_startZones = {
 	{
 		player sideChat format ["Creating zone: %1", str(_x)];
 		_x spawn {
-			waitUntil { _this getVariable "isActive" };
+			// Wait for zone activation (_this getVariable "isActive")
+			waitUntil { _this getVariable "isActive" };			
 			(_this getVariable "properties") call dzn_fnc_dynai_createZone;
 		};
 		sleep 0.5;	
@@ -95,17 +104,15 @@ dzn_fnc_dynai_createZone = {
 		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_zonePos","_count","_groupUnits",
 		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit"
 	];
-	
-	// Wait for zone activation (_isActive = _this select 2)
-	waitUntil { _this select 2 }; // 
-	player sideChat "Zone is activated";
-	
+
 	_name = _this select 0;
 	_side = _this select 1;
 	_area = _this select 3;
 	_wps = _this select 4;
 	_refUnits = _this select 5;
 	_behavior = _this select 6;
+	
+	player sideChat format ["(%1) Zone is activated", _name];
 	
 	// Creating center of side if not exists
 	call compile format ["
@@ -117,10 +124,10 @@ dzn_fnc_dynai_createZone = {
 		str(_side)
 	];
 	
-	player sideChat "Calculating zone position";
+	player sideChat format ["(%1) Calculating zone position", _name];
 	_zonePos = _area call dzn_fnc_getZonePosition; //[CentralPos, xMin, yMin, xMax, yMax]
 	
-	player sideChat "Spawning groups";
+	// player sideChat "Spawning groups";
 	// For each groups templates
 	{
 		_count = _x select 0;
@@ -128,7 +135,7 @@ dzn_fnc_dynai_createZone = {
 		
 		// For count of templated groups
 		for "_i" from 0 to _count do {
-			player sideChat format ["|| Spawning group %1", str(_i)];
+			// player sideChat format ["|| Spawning group %1", str(_i)];
 			
 			// Creates group
 			_groupPos = [_area, _zonePos select 1, _zonePos select 2] call dzn_fnc_getRandomPointInZone; // return Pos3D
@@ -140,7 +147,7 @@ dzn_fnc_dynai_createZone = {
 			_grpLogic setVariable ["vehicles", []];
 			// For each unit in group
 			{
-				player sideChat format ["|||| Spawning group %1 - Unit: %2 (%3)", str(_i), str(_forEachIndex), _x select 0];
+				// player sideChat format ["|||| Spawning group %1 - Unit: %2 (%3)", str(_i), str(_forEachIndex), _x select 0];
 				
 				_classname = _x select 0;
 				_assigned = _x select 1;
@@ -149,7 +156,7 @@ dzn_fnc_dynai_createZone = {
 				_unit = objNull;
 				if (typename _assigned == "ARRAY") then {
 					_unit = _grp createUnit [_classname , _groupPos, [], 0, "NONE"];
-					player sideChat format ["|||||| Unit created %1 (%2)", str(_unit), _classname];
+					// player sideChat format ["|||||| Unit created %1 (%2)", str(_unit), _classname];
 					
 					_unit setSkill 0;
 					
@@ -183,8 +190,13 @@ dzn_fnc_dynai_createZone = {
 			if !(_behavior select 3 == "") then { _grp setFormation (_behavior select 3); };
 			
 			// Assign waypoints
-			[_grp, _wps] spawn dzn_fnc_createPathFromKeypoints;			
+			if (typename _wps == "ARRAY") then {
+				[_grp, _wps] spawn dzn_fnc_createPathFromKeypoints;
+			} else {
+				[_grp, _area, _zonePos select 1, _zonePos select 2] spawn dzn_fnc_createPathFromRandom;
+			};			
 		};
 	} forEach _refUnits;
 	
+	player sideChat format ["(%1) Zone Created", _name];
 };
