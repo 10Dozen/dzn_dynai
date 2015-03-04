@@ -11,7 +11,7 @@ dzn_dynai_afterInitTimeout			=	10;
 //	**************	SERVER OR HEADLESS	*****************
 
 // If a player - exits script
-if (hasInterface) exitWith {};
+if (hasInterface && !isServer) exitWith {};
 
 // Get HC unit (Mission parameter "HeadlessClient" should be defined, see F3 Framework)
 if (("HeadlessClient" call BIS_fnc_GetParamValue) == 1) then {
