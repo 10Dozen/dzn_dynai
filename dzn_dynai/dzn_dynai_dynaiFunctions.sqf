@@ -46,9 +46,14 @@ dzn_fnc_dynai_initZones = {
 			if ( ["dzn_dynai_wp", str(_x), false] call BIS_fnc_inString ) then {
 				_wps = waypoints _x;
 				_keypoints = [];
-				{
-					_keypoints = _keypoints + [ waypointPosition _x ];					
-				} forEach _wps;
+				
+				if (_wps isEqualTo []) then {
+					_keypoints = "randomize";
+				} else {
+					{
+						_keypoints = _keypoints + [ waypointPosition _x ];					
+					} forEach _wps;
+				};
 				
 				deleteVehicle _x;
 				_properties set [4, _keypoints];
@@ -183,7 +188,11 @@ dzn_fnc_dynai_createZone = {
 			if !(_behavior select 3 == "") then { _grp setFormation (_behavior select 3); };
 			
 			// Assign waypoints
-			[_grp, _wps] spawn dzn_fnc_createPathFromKeypoints;			
+			if (typename _wps == "ARRAY) then {
+				[_grp, _wps] spawn dzn_fnc_createPathFromKeypoints;
+			} else {
+				[_grp, _area, _zonePos select 1, _zonePos select 2] spawn dzn_fnc_createPathFromRandom;
+			}
 		};
 	} forEach _refUnits;
 	
