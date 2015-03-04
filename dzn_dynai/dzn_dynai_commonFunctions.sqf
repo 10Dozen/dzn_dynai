@@ -98,6 +98,7 @@ dzn_fnc_isInWater = {
 dzn_fnc_getRandomPointInZone = {
 	/*
 		Return random position inside given location or locations
+		EXAMPLE:	[ [loc1,loc2], [2000,2000], [3000,3000] ] call dzn_fnc_getRandomPointInZone
 		INPUT:
 			0: ARRAY	- locations to find
 			Optional (if not given, then search for 20x20km):
@@ -139,10 +140,6 @@ dzn_fnc_assignInVehicle = {
 	
 	_unit = _this select 0;
 	_veh = _this select 1;
-	player sideChat format [
-		"Unit: %1, Vehicle: %2, Path: %3", 
-		str(_unit), str(_veh), _this select 2
-	];
 
 	switch (_this select 2) do {
 		case "driver": {
@@ -190,7 +187,7 @@ dzn_fnc_assignInVehicle = {
 
 dzn_fnc_createPathFromKeypoints = {
 	/*
-		Creates waypoint throu 3 to 6 randomly chosen points. Last will cycle.
+		Creates waypoints throu 3 to 6 randomly chosen keypoints. Last will cycle.
 		INPUT:
 			0: GROUP		- Group which will get waypoints
 			1: ARRAY		- Keypoints			
@@ -207,44 +204,27 @@ dzn_fnc_createPathFromKeypoints = {
 	_wp setWaypointType "CYCLE";	
 };
 
-
-
-
-
-
-
-dzn_fnc_draw = {
-	// pos, dir, dist
-	private ["_pos", "_mrk"];
-	sleep (random 5);
-	_pos = [_this select 0, _this select 1, _this select 2] call dzn_fnc_getPosOnGivenDir;
+// [_grp, _area, _zonePos select 1, _zonePos select 2] spawn dzn_fnc_createPathFromRandom;
+dzn_fnc_createPathFromRandom = {
+	/*
+		Creates waypoints throu 3 to 6 randomly chosen points inside area. Last will cycle.
+		INPUT:
+			0: GROUP		- Group which will get waypoints
+			1: ARRAY		- Array of locations
+			2: ARRAY		- Minimum X and Y to search
+			3: ARRAY		- Maximum X and Y to search
+		OUTPUT: NULL
+	*/
 	
-	_mrk = createMarker [format["mrk%1", str(time)], _pos];
-	_mrk setMarkerShape "ICON";
-	_mrk setMarkerType "hd_dot";
-	_mrk setMarkerText format["%1", str(time)];
-};
-
-dzn_fnc_createLocation = {	
-	private ["_locloc","_pos","_dir","_a","_b"];
-	_loc = createLocation ["Name", getPosASL player, 100+random(500), 300+random(500)];
-	_loc setDirection random(359);
+	private ["_grp","_iMax","_i","_wp"];
 	
-	_locpos = locationPosition _loc;
-	_dir = direction _loc;
-	_a = size _loc select 0;
-	_b = size _loc select 1;
-	
-	[_locpos, _dir, _b] call dzn_fnc_draw;
-	sleep 1;
-	
-	[_locpos, _dir + 90, _a] call dzn_fnc_draw;
-	sleep 1;
-	
-	[_locpos, _dir + 180, _b] call dzn_fnc_draw;
-	sleep 1;	
-	
-	[_locpos, _dir + 270, _a] call dzn_fnc_draw;	
-	
-	_loc
+	_grp = _this select 0;
+	_iMax = 2 + round(random(4));
+	for "_i" from 0 to _iMax do {		
+		_wp = _grp addWaypoint [
+			[_this select 1, _this select 2, _this select 3] call dzn_fnc_getRandomPointInZone,
+			100
+		];
+	};
+	_wp setWaypointType "CYCLE";
 };
