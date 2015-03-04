@@ -3,9 +3,9 @@
 // Delay before and after zones initializations
 dzn_dynai_preInitTimeout			=	3;
 dzn_dynai_afterInitTimeout			=	10;
+dzn_dynai_conditionBeforeInit		=	{true};
 
-
-
+waitUntil { dzn_dynai_conditionBeforeInit };
 // Initialization of dzn_gear
 waitUntil { !isNil {dzn_gear_kitsInitialized} };
 
