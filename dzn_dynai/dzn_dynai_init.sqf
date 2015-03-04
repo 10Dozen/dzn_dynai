@@ -1,14 +1,14 @@
 //	************** DZN_DYNAI PARAMETERS ******************
 
 // Condition of initialization
-dzn_dynai_conditionBeforeInit		=	{true};
+#define	dzn_dynai_CONDITION_BEFORE_INIT	true
 
 // Delay before and after zones initializations
 dzn_dynai_preInitTimeout			=	3;
-dzn_dynai_afterInitTimeout			=	10;
+dzn_dynai_afterInitTimeout			=	3;
 
 
-//	**************	SERVER OR HEADLESS	*****************
+//	**************	SERVER OR HEADLESS *****************
 
 // If a player - exits script
 if (hasInterface && !isServer) exitWith {};
@@ -21,7 +21,7 @@ if (("HeadlessClient" call BIS_fnc_GetParamValue) == 1) then {
 
 //	**************	INITIALIZATION *********************
 
-waitUntil { dzn_dynai_conditionBeforeInit };
+waitUntil { dzn_dynai_CONDITION_BEFORE_INIT };
 
 // Initialization of dzn_gear
 waitUntil { !isNil {dzn_gear_kitsInitialized} };
