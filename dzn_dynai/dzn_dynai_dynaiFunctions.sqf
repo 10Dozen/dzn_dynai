@@ -158,7 +158,13 @@ dzn_fnc_dynai_createZone = {
 					_unit = _grp createUnit [_classname , _groupPos, [], 0, "NONE"];
 					// player sideChat format ["|||||| Unit created %1 (%2)", str(_unit), _classname];
 					
-					_unit setSkill 0;
+					if (dzn_dynai_complexSkill) then {
+						_unit setSkill dzn_dynai_skill;
+					} else {
+						{
+							_unit setSkill _x;
+						} forEach dzn_dynai_skill;
+					};
 					
 					_grpLogic setVariable ["units", (_grpLogic getVariable "units") + [_unit]];
 					
