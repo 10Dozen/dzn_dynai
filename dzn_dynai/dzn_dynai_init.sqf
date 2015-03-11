@@ -7,8 +7,25 @@
 dzn_dynai_preInitTimeout			=	3;
 dzn_dynai_afterInitTimeout			=	3;
 
-// Default skill of units
+// Default simple skill of units
+dzn_dynai_complexSkill				=	false;
 dzn_dynai_skill					=	0;
+
+// Or detailed skill (comment skills that shouldn't be changed):
+dzn_dynai_complexSkill				=	true;
+dzn_dynai_skill					=	[
+								["general", 0.5]
+								,["aimingAccuracy", 0.5]
+							//	,["aimingShake", 0.5]
+							//	,["aimingSpeed", 0.5]
+								,["endurance", 0.5]
+								,["spotDistance", 0.5]
+								,["spotTime", 0.5]
+								,["courage", 0.5]
+							//	,["reloadSpeed", 0.5]
+								,["commanding", 0.5]
+							];
+
 
 
 //	**************	SERVER OR HEADLESS	*****************
