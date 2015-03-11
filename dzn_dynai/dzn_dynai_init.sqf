@@ -7,6 +7,9 @@
 dzn_dynai_preInitTimeout			=	3;
 dzn_dynai_afterInitTimeout			=	3;
 
+// Default skill of units
+dzn_dynai_skill					=	0;
+
 
 //	**************	SERVER OR HEADLESS	*****************
 
