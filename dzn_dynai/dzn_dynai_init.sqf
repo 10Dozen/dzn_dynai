@@ -12,6 +12,7 @@ dzn_dynai_complexSkill				=	false;
 dzn_dynai_skill					=	0;
 
 // Or detailed skill (comment skills that shouldn't be changed):
+// More info about skills https://community.bistudio.com/wiki/AI_Sub-skills
 dzn_dynai_complexSkill				=	true;
 dzn_dynai_skill					=	[
 								["general", 0.5]
