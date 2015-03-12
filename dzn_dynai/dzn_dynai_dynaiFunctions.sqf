@@ -121,7 +121,7 @@ dzn_fnc_dynai_createZone = {
 			dzn_dynai_center_%1 = true;
 		};	
 		",
-		str(_side)
+		_side
 	];
 	
 	player sideChat format ["(%1) Calculating zone position", _name];
@@ -139,7 +139,7 @@ dzn_fnc_dynai_createZone = {
 			
 			// Creates group
 			_groupPos = [_area, _zonePos select 1, _zonePos select 2] call dzn_fnc_getRandomPointInZone; // return Pos3D
-			_grp = createGroup _side;
+			_grp = createGroup call compile _side;
 			
 			// Creates GameLogic for group control
 			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];			
