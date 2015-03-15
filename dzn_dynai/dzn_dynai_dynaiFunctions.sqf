@@ -72,6 +72,7 @@ dzn_fnc_dynai_initZones = {
 };
 
 dzn_fnc_dynai_startZones = {
+	
 	/*
 		Start all zones
 		INPUT: 		NULL
@@ -94,6 +95,7 @@ dzn_fnc_dynai_startZones = {
 };
 
 dzn_fnc_dynai_createZone = {
+	
 	/*
 		Create zone from parameters
 		INPUT: 		NULL
@@ -145,6 +147,7 @@ dzn_fnc_dynai_createZone = {
 			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];			
 			_grpLogic setVariable ["units", []];
 			_grpLogic setVariable ["vehicles", []];
+			
 			// For each unit in group
 			{
 				// player sideChat format ["|||| Spawning group %1 - Unit: %2 (%3)", str(_i), str(_forEachIndex), _x select 0];
@@ -154,7 +157,11 @@ dzn_fnc_dynai_createZone = {
 				_gear = _x select 2;
 				
 				_unit = objNull;
+				
+				
 				if (typename _assigned == "ARRAY") then {
+					// Not assigned, Assigned in vehicle, Assigned to house
+					
 					_unit = _grp createUnit [_classname , _groupPos, [], 0, "NONE"];
 					// player sideChat format ["|||||| Unit created %1 (%2)", str(_unit), _classname];
 					
@@ -177,6 +184,8 @@ dzn_fnc_dynai_createZone = {
 						] call dzn_fnc_assignInVehicle; 
 					};
 				} else {
+					// Is vehicle
+					
 					_unit = createVehicle [_classname, _groupPos, [], 0, "NONE"];
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
 					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];					
