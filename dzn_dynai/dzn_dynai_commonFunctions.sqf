@@ -245,6 +245,8 @@ dzn_fnc_getHousesNear = {
 		OUTPUT: ARRAY (list of houses)
 	*/
 	private["_pos","_dist","_structures","_buildings"];
+	_pos = _this select 0;
+	_dist = _this select 1;	
 	
 	_structures = if (isNil {_this select 2} || {_this select 2 isEqualTo []}) then {
 		nearestObjects [_pos, ["House"], _dist];
@@ -268,43 +270,41 @@ dzn_fnc_getHousePositions = {
 		EXAMPLE: _building call dzn_fnc_getHousePositions
 		INPUT:
 			0: OBJECT	- House to be checked
-		OUTPUT: NUMBER (maximum of positions)
+		OUTPUT: ARRAY (array of position ids)
 	*/
 	
-	private ["_house","_positions"];
+	private ["_house","_index","_positions"];
 	_house = _this;
 	_index = 0;
-	while { !((_house buildingPos _index) isEqualTo []) } then {
+	_positions = [];
+	
+	while { !((_house buildingPos _index) isEqualTo [0,0,0]) } do {
+		_positions = _positions + [_index];
 		_index = _index + 1;
 	};
 
-	_index
+	_positions
 };
 
 dzn_fnc_assignInBuilding = {
 	/*
 		Search for building wither inner positions in location and move unit to position inside. 
 		If no building with inner positons were found - don't move unit to any building (if no building near - do nothing).
-		EXAMPLE: [_unit, _area, _zonePos select 1, _zonePos select 2, _listOfBuildings, ] spawn dzn_fnc_createPathFromRandom;
+		EXAMPLE: [_unit, _zoneBuildings, (Optional)_filter] spawn dzn_fnc_createPathFromRandom;
 		INPUT:
 			0: UNIT				- Unit which will get position in building
-			1: ARRAY				- List of zone's buildings
-			2: ARRAY 			- List of classnames to find 
-			3: ARRAY				- Locations
-			
-			
+			1: ARRAY			- List of zone's buildings
+			2: ARRAY (Optional)	- List of classnames to find 
 		OUTPUT: NULL
 	*/
 	
-	private ["_pos","_locations","_filter","_buildings"];
+	private ["_unit","_zoneBuildings","_filteredBuildings","_found","_house","_housePosId","_objectId","_wp","_max"];
 	
 	_unit = _this select 0;
 	_zoneBuildings = _this select 1;	
-	_filter = _this select 2;
-	_locations = _this select 3;
-	
+
 	// If filter passed - get filtered list
-	if (typename _filter == "ARRAY") then {
+	if (!isNil {_this select 2}) then {
 		_filteredBuildings = [];
 		{
 			if (typeOf _x in _filter) then {_filteredBuildings = _filteredBuildings + [_x];};
@@ -312,25 +312,45 @@ dzn_fnc_assignInBuilding = {
 		
 		_zoneBuildings = _filteredBuildings;
 	};
-	
+
 	if (_zoneBuildings isEqualTo []) exitWith {};
-	
+
 	_found = false;
+	_max = 0;
 	
-	while { !_found } do {
-		
+	while { !(_found) } do {		
 		_house = _zoneBuildings call BIS_fnc_selectRandom;
-		if ([getPosASL _house, _locations] call dzn_fnc_isInLocation) then {
-			_housePositions = 
-		
-		
+		if (isNil {_house getVariable "housePositions"}) then {
+			_house setVariable ["housePositions", _house call dzn_fnc_getHousePositions];
+				hint str(_house getVariable "housePositions");
+		};			
+
+		if !((_house getVariable "housePositions") isEqualTo []) then {
+			_housePosId = (_house getVariable "housePositions") call BIS_fnc_selectRandom;
+			_house setVariable ["housePositions", ((_house getVariable "housePositions") - [_housePosId])];
+			_unit setPos (_house buildingPos _housePosId);
+			
+			_objectId = parseNumber (([([str(_house), " "] call BIS_fnc_splitString) select 1, ":"] call BIS_fnc_splitString) select 0);
+			
+			_wp = (group _unit) addWaypoint [getPosATL _unit, 0];
+			_wp waypointAttachObject _objectId;
+			_wp setWaypointHousePosition _housePosId;
+			(group _unit) addWaypoint [getPosATL _unit, 0];
+			_wp setWaypointType "CYCLE";
+			
+			
+	_markerstr = createMarker [format ["markername%1", str(time)],[getPos _unit select 0,getPos _unit select 1 ]];
+_markerstr setMarkerShape "ICON";
+_markerstr setMarkerType "HD_DOT";
+	
+	
+			(group _unit) setVariable ["wpSet", true];			
+			_found = true;
 		};
+		sleep .1;
+		
+		_max = _max + 1;
+		if (_max > 15) then { _found = true; };
 	};
-	
-	
-	
-	
-	
-	
-	
+	player sideChat "Searched";
 };
