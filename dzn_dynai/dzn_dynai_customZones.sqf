@@ -24,7 +24,7 @@
 			"YELLOW",				// combat mode
 			"COLUMN"				// formation
 		]	
-	]	
+	]	I_MRAP_03_hmg_F
 
 */
 
@@ -32,71 +32,44 @@
 // *********** This array defines detailed properties of zones **************************
 dzn_dynai_zoneProperties = [	
 	[
-		"dzn_zone0",WEST,true,[],[],
+		"dzn_zoneSeize_1","RESISTANCE",true,[],[],
 		[
 			[
 				/* Infantry units */
-				1,
-				[
-					["B_MRAP_01_F","isVehicle", "vehicleKit"],
-					["B_officer_F",[0, "driver"], "specForKit"],
-					["B_officer_F",[0, "cargo"], "specForKit"]
-				]
-			]	,
-			[
-				/* Infantry units */
-				1,
-				[
-					["I_APC_Wheeled_03_cannon_F","isVehicle", "vehicleKit"],
-					["B_officer_F",[0, "commander"], "specForKit"],
-					["B_officer_F",[0, "gunner"], "specForKit"],
-					["B_officer_F",[0, "driver"], "specForKit"]
+				4,
+				[					
+					["I_G_Soldier_F",[], ""],
+					["I_G_Soldier_GL_F",[], ""],
+					["I_G_Soldier_AR_F",[], ""],
+					["I_G_Soldier_GL_F",[], ""],
+					["I_G_Soldier_LAT_F",[], ""]
 				]
 			],
 			[
 				/* Infantry units */
-				1,
-				[
-					["B_officer_F",[], "specForKit"],
-					["B_officer_F",[], "specForKit"],
-					["B_officer_F",[], "specForKit"],
-					["B_officer_F",[], "specForKit"]
+				6,
+				[					
+					["I_MRAP_03_hmg_F","isVehicle", ""],
+					["I_G_Soldier_GL_F",[0, "gunner"], ""],
+					["I_G_Soldier_AR_F",[0, "driver"], ""],
+					["I_G_Soldier_GL_F",[], ""],
+					["I_G_Soldier_LAT_F",[], ""]
 				]
 			]
 		],
 		["LIMITED",	"SAFE",	"YELLOW", "COLUMN"]
 	],
 	[
-		"dzn_zone1",WEST,false,[],[],
+		"dzn_zoneSeize_2","RESISTANCE",true,[],[],
 		[
 			[
 				/* Infantry units */
-				12,
-				[
-					["B_MBT_01_TUSK_F","", ""],
-					["B_officer_F",[0, "commander"], "specForKit"],
-					["B_officer_F",[0, "gunner"], "specForKit"],
-					["B_officer_F",[0, "driver"], "specForKit"]
-				]
-			]			
-		],
-		["LIMITED",	"SAFE",	"YELLOW", "COLUMN"]
-	],
-	[
-		"dzn_zone2",WEST,false,[],[],
-		[
-			
-			[
-				/* Infantry units */
-				12,
-				[
-					["B_officer_F",[], "specForKit"],
-					["B_officer_F",[], "specForKit"],
-					["B_officer_F",[], "specForKit"],
-					["B_officer_F",[], "specForKit"]
+				30,
+				[					
+					["I_G_Soldier_F",["indoors"], ""]
 				]
 			]
 		],
 		["LIMITED",	"SAFE",	"YELLOW", "COLUMN"]
-	]
+	]	
 ];
