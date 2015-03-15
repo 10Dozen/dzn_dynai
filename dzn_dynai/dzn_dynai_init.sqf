@@ -28,7 +28,7 @@ dzn_dynai_skill						=	[
 ];
 
 // Building list
-dzn_dynai_allowedHouses				= [];
+dzn_dynai_allowedHouses				= ["House"];
 
 //	**************	SERVER OR HEADLESS	*****************
 
