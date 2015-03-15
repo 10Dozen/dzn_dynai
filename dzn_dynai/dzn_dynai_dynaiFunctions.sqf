@@ -6,19 +6,21 @@ dzn_fnc_dynai_initZones = {
 		OUTPUT: 	NULL
 	*/
 	
-	private ["_modules", "_zone", "_properties","_syncObj", "_locations", "_synced", "_wps", "_keypoints"];
+	private ["_modules", "_zone", "_properties","_syncObj", "_locations", "_synced", "_wps", "_keypoints","_locationBuildings"];
 	
 	_modules = entities "ModuleSpawnAIPoint_F";
 	
 	{
 		_zone = _x;
+		
+		_zone setVariable ["initialized", false];
+		_zoneBuildings = [];
 		_properties = [];
 		{
 			if ( (_x select 0) == str (_zone) ) then {
 				_properties = _x;
 			};
 		} forEach dzn_dynai_zoneProperties;
-		
 		
 		_syncObj = synchronizedObjects _x;
 		{
@@ -35,14 +37,27 @@ dzn_fnc_dynai_initZones = {
 						_locations = _locations + [_loc];
 						_loc attachObject _zone;
 						
+						_locationBuildings = [
+							getPosASL _x, 
+							(triggerArea _x select 0) max (triggerArea _x select 1),
+							dzn_dynai_allowedHouses
+						] call dzn_fnc_getHousesNear;
+						
+						{
+							if (!(_x in _zoneBuildings) && ([getPosASL _x, [_loc]] call dzn_fnc_isInLocation)) then {
+								_zoneBuildings = _zoneBuildings + [_x];								
+								_x setVariable ["posNumber", _x call dzn_fnc_getHousePositions];
+							};
+						} forEach _locationBuildings;
+						
 						deleteVehicle _x;	
 					};
 				} forEach _synced;
 				
 				deleteVehicle _x;
 				_properties set [3, _locations];
-				// _zone setVariable ["locations", _locations];
-				
+				_properties = _properties + [_zoneBuildings];
+				// _zone setVariable ["locations", _locations];				
 			};
 			
 			// Get waypoints and convert them into keypoints (coordinates)
@@ -61,13 +76,14 @@ dzn_fnc_dynai_initZones = {
 				deleteVehicle _x;
 				_properties set [4, _keypoints];
 				// _zone setVariable ["keypoins", _keypoints];
-			};
-			
+			};			
 		} forEach _syncObj;	
 		sleep 1;
 		
 		_zone setVariable ["properties", _properties];
 		_zone setVariable ["isActive", _properties select 2];
+		
+		_zone setVariable ["initialized", true];
 	} forEach _modules;
 };
 
@@ -87,7 +103,9 @@ dzn_fnc_dynai_startZones = {
 		player sideChat format ["Creating zone: %1", str(_x)];
 		_x spawn {
 			// Wait for zone activation (_this getVariable "isActive")
-			waitUntil { _this getVariable "isActive" };			
+			waitUntil {!isNil {_this getVariable "initialized"} && {_this getVariable "initialized"}};
+			waitUntil {!isNil {_this getVariable "isActive"} && {_this getVariable "isActive"}};
+			
 			(_this getVariable "properties") call dzn_fnc_dynai_createZone;
 		};
 		sleep 0.5;	
@@ -113,6 +131,9 @@ dzn_fnc_dynai_createZone = {
 	_wps = _this select 4;
 	_refUnits = _this select 5;
 	_behavior = _this select 6;
+	_zoneBuildings = _this select 7;
+	
+	_zoneUsedBuildings = [];
 	
 	player sideChat format ["(%1) Zone is activated", _name];
 	
@@ -177,7 +198,7 @@ dzn_fnc_dynai_createZone = {
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear] spawn dzn_fnc_gear_assignKit; };
 					if !(_assigned isEqualTo []) then {
 						if ((_assigned select 0) == "inBuilding") then {
-							[] call dzn_fnc_assignInBuilding;
+							[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
 						} else {
 							[
 								_unit, 
