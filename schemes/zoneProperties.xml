@@ -60,6 +60,7 @@
 	<formation><!-- wpFormation --></formation>
 	<courage><!-- wpDescription."courage" --></courage>
 </behavior>
+<zoneBuildings id="7"><!-- List of objects --></zoneBuildings>
 
 <!--
 	ARMA ARRAY-STYLE VIEW
