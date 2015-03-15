@@ -72,6 +72,7 @@ dzn_fnc_getPosOnGivenDir = {
 dzn_fnc_isInLocation = {
 	/*
 		Return is position is in any of given location
+		EXAMPLE: [_pos, _locations] call dzn_fnc_isInLocation
 		INPUT:
 			0: POS3d	- Position to check
 			1: ARRAY	- Array of locations to check
@@ -206,10 +207,11 @@ dzn_fnc_createPathFromKeypoints = {
 	_wp setWaypointType "CYCLE";	
 };
 
-// [_grp, _area, _zonePos select 1, _zonePos select 2] spawn dzn_fnc_createPathFromRandom;
+
 dzn_fnc_createPathFromRandom = {
 	/*
 		Creates waypoints throu 3 to 6 randomly chosen points inside area. Last will cycle.
+		EXAMPLE: [_grp, _area, _zonePos select 1, _zonePos select 2] spawn dzn_fnc_createPathFromRandom;
 		INPUT:
 			0: GROUP		- Group which will get waypoints
 			1: ARRAY		- Array of locations
@@ -229,4 +231,106 @@ dzn_fnc_createPathFromRandom = {
 		];
 	};
 	_wp setWaypointType "CYCLE";
+};
+
+
+dzn_fnc_getHousesNear = {
+	/*
+		Return list of structures with 'buildingPos'es
+		EXAMPLE: [_pos, _dist, (Optinoal) _list] call dzn_fnc_getHousesNear
+		INPUT:
+			0: POS3D			- Position to search around
+			1: NUMBER			- Distance in meters to search
+			2: ARRAY	(Optional)	- List of classnames to search
+		OUTPUT: ARRAY (list of houses)
+	*/
+	private["_pos","_dist","_structures","_buildings"];
+	
+	_structures = if (isNil {_this select 2} || {_this select 2 isEqualTo []}) then {
+		nearestObjects [_pos, ["House"], _dist];
+	} else {
+		nearestObjects [_pos, _this select 2, _dist];
+	};
+	
+	_buildings = [];
+	{
+		if !((_x buildingPos 0) isEqualTo []) then {
+			_buildings = _buildings + [_x];
+		};
+	} forEach _structures;
+	
+	_buildings
+};
+
+dzn_fnc_getHousePositions = {
+	/*
+		Return number of building positions
+		EXAMPLE: _building call dzn_fnc_getHousePositions
+		INPUT:
+			0: OBJECT	- House to be checked
+		OUTPUT: NUMBER (maximum of positions)
+	*/
+	
+	private ["_house","_positions"];
+	_house = _this;
+	_index = 0;
+	while { !((_house buildingPos _index) isEqualTo []) } then {
+		_index = _index + 1;
+	};
+
+	_index
+};
+
+dzn_fnc_assignInBuilding = {
+	/*
+		Search for building wither inner positions in location and move unit to position inside. 
+		If no building with inner positons were found - don't move unit to any building (if no building near - do nothing).
+		EXAMPLE: [_unit, _area, _zonePos select 1, _zonePos select 2, _listOfBuildings, ] spawn dzn_fnc_createPathFromRandom;
+		INPUT:
+			0: UNIT				- Unit which will get position in building
+			1: ARRAY				- List of zone's buildings
+			2: ARRAY 			- List of classnames to find 
+			3: ARRAY				- Locations
+			
+			
+		OUTPUT: NULL
+	*/
+	
+	private ["_pos","_locations","_filter","_buildings"];
+	
+	_unit = _this select 0;
+	_zoneBuildings = _this select 1;	
+	_filter = _this select 2;
+	_locations = _this select 3;
+	
+	// If filter passed - get filtered list
+	if (typename _filter == "ARRAY") then {
+		_filteredBuildings = [];
+		{
+			if (typeOf _x in _filter) then {_filteredBuildings = _filteredBuildings + [_x];};
+		} forEach _zoneBuildings;
+		
+		_zoneBuildings = _filteredBuildings;
+	};
+	
+	if (_zoneBuildings isEqualTo []) exitWith {};
+	
+	_found = false;
+	
+	while { !_found } do {
+		
+		_house = _zoneBuildings call BIS_fnc_selectRandom;
+		if ([getPosASL _house, _locations] call dzn_fnc_isInLocation) then {
+			_housePositions = 
+		
+		
+		};
+	};
+	
+	
+	
+	
+	
+	
+	
 };
