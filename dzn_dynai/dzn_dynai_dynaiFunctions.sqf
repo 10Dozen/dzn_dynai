@@ -158,7 +158,6 @@ dzn_fnc_dynai_createZone = {
 				
 				_unit = objNull;
 				
-				
 				if (typename _assigned == "ARRAY") then {
 					// Not assigned, Assigned in vehicle, Assigned to house
 					
@@ -177,11 +176,15 @@ dzn_fnc_dynai_createZone = {
 					
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear] spawn dzn_fnc_gear_assignKit; };
 					if !(_assigned isEqualTo []) then {
-						[
-							_unit, 
-							(_grpLogic getVariable "vehicles") select (_assigned select 0),	// ID of created unit/vehicle
-							_assigned select 1												// string of assigned role - e.g. driver, gunner
-						] call dzn_fnc_assignInVehicle; 
+						if ((_assigned select 0) == "inBuilding") then {
+							[] call dzn_fnc_assignInBuilding;
+						} else {
+							[
+								_unit, 
+								(_grpLogic getVariable "vehicles") select (_assigned select 0),	// ID of created unit/vehicle
+								_assigned select 1												// string of assigned role - e.g. driver, gunner
+							] call dzn_fnc_assignInVehicle; 
+						};
 					};
 				} else {
 					// Is vehicle
