@@ -18,9 +18,33 @@
 		<refGroup>
 			<refUnit id="0">
 				<classname><!-- Classname --></classname>
+				<assignedTo><!-- :isVehicle" for vehicle unit --></assignedTo>
+				<gear><!-- Gear String --></gear>
+			</refUnit>
+			<refUnit id="1">
+				<classname><!-- Classname --></classname>
 				<assignedTo>
 					<vehicle><!-- Unit Id inside Group --></vehicle> 
 					<role><!-- Role --></role>
+				</assignedTo>
+				<gear><!-- Gear String --></gear>
+			</refUnit>
+			<refUnit id="2">
+				<classname><!-- Classname --></classname>
+				<assignedTo><!-- Empty array - no assignement--></assignedTo>
+				<gear><!-- Gear String --></gear>
+			</refUnit>
+			<refUnits id="n"><!-- ... --></refUnits>
+		</refGroup>
+	</refTemplate>
+	<refTemplate id="1">
+		<count><!-- getDir leader --></count>
+		<refGroup>
+			<refUnit id="0">
+				<classname><!-- Classname --></classname>
+				<assignedTo>
+					<inBuilding><!-- "inBuilding" for spawn inside houses --></inBuilding>
+					<buildingList><!-- List of buildings to use. If empty - default is used --></buildingList>
 				</assignedTo>
 				<gear><!-- Gear String --></gear>
 			</refUnit>
