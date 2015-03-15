@@ -45,8 +45,7 @@ dzn_fnc_dynai_initZones = {
 						
 						{
 							if (!(_x in _zoneBuildings) && ([getPosASL _x, [_loc]] call dzn_fnc_isInLocation)) then {
-								_zoneBuildings = _zoneBuildings + [_x];								
-								_x setVariable ["posNumber", _x call dzn_fnc_getHousePositions];
+								_zoneBuildings = _zoneBuildings + [_x];	
 							};
 						} forEach _locationBuildings;
 						
@@ -122,7 +121,7 @@ dzn_fnc_dynai_createZone = {
 	
 	private [
 		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_zonePos","_count","_groupUnits",
-		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit"
+		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit","_zoneBuildings"
 	];
 
 	_name = _this select 0;
@@ -197,8 +196,12 @@ dzn_fnc_dynai_createZone = {
 					
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear] spawn dzn_fnc_gear_assignKit; };
 					if !(_assigned isEqualTo []) then {
-						if ((_assigned select 0) == "inBuilding") then {
-							[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
+						if ((_assigned select 0) == "indoors") then {
+							if (isNil {_assigned select 1}) then {
+								[_unit, _zoneBuildings] call dzn_fnc_assignInBuilding;
+							} else {
+								[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
+							};							
 						} else {
 							[
 								_unit, 
@@ -229,11 +232,13 @@ dzn_fnc_dynai_createZone = {
 			if !(_behavior select 3 == "") then { _grp setFormation (_behavior select 3); };
 			
 			// Assign waypoints
-			if (typename _wps == "ARRAY") then {
-				[_grp, _wps] spawn dzn_fnc_createPathFromKeypoints;
-			} else {
-				[_grp, _area, _zonePos select 1, _zonePos select 2] spawn dzn_fnc_createPathFromRandom;
-			};			
+			if !(_grp getVariable "wpSet") then {
+				if (typename _wps == "ARRAY") then {
+					[_grp, _wps] spawn dzn_fnc_createPathFromKeypoints;
+				} else {
+					[_grp, _area, _zonePos select 1, _zonePos select 2] spawn dzn_fnc_createPathFromRandom;
+				};
+			};
 		};
 	} forEach _refUnits;
 	
