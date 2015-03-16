@@ -6,7 +6,7 @@ dzn_fnc_dynai_initZones = {
 		OUTPUT: 	NULL
 	*/
 	
-	private ["_modules", "_zone", "_properties","_syncObj", "_locations", "_synced", "_wps", "_keypoints","_locationBuildings"];
+	private ["_modules", "_zone", "_properties","_syncObj", "_locations", "_synced", "_wps", "_keypoints","_locationBuildings","_locPos"];
 	
 	_modules = entities "ModuleSpawnAIPoint_F";
 	
@@ -22,11 +22,13 @@ dzn_fnc_dynai_initZones = {
 			};
 		} forEach dzn_dynai_zoneProperties;
 		
+		_locations = [];
+		_keypoints = [];
 		_syncObj = synchronizedObjects _x;
 		{
 			// Get triggers and convert them into locations
 			if ( ["dzn_dynai_area", str(_x), false] call BIS_fnc_inString ) then {
-				_locations = [];
+				
 				_synced = synchronizedObjects _x;
 				{
 					if (_x isKindOf "EmptyDetector") then {
@@ -35,7 +37,6 @@ dzn_fnc_dynai_initZones = {
 						_loc setRectangular (triggerArea _x select 3);
 						
 						_locations = _locations + [_loc];
-						_loc attachObject _zone;
 						
 						_locationBuildings = [
 							getPosASL _x, 
@@ -54,15 +55,30 @@ dzn_fnc_dynai_initZones = {
 				} forEach _synced;
 				
 				deleteVehicle _x;
+				
+				#define GET_AVERAGE(PAR1,PAR2)		((PAR1) + (PAR2))/2
+				_locPos = [];
+				{
+					_locPos = if (_locPos isEqualTo []) then {
+						locationPosition _x
+					} else {
+						[
+							GET_AVERAGE(_locPos select 0, (locationPosition _x) select 0), 
+							GET_AVERAGE(_locPos select 1, (locationPosition _x) select 1), 
+							GET_AVERAGE(_locPos select 2, (locationPosition _x) select 2)
+						]
+					};
+				} forEach _locations;
+				
+				_zone setPosASL _locPos;		
+				
 				_properties set [3, _locations];
 				_properties = _properties + [_zoneBuildings];
-				// _zone setVariable ["locations", _locations];				
 			};
 			
 			// Get waypoints and convert them into keypoints (coordinates)
 			if ( ["dzn_dynai_wp", str(_x), false] call BIS_fnc_inString ) then {
 				_wps = waypoints _x;
-				_keypoints = [];
 				
 				if (_wps isEqualTo []) then {
 					_keypoints = "randomize";
@@ -73,11 +89,13 @@ dzn_fnc_dynai_initZones = {
 				};
 				
 				deleteVehicle _x;
-				_properties set [4, _keypoints];
-				// _zone setVariable ["keypoins", _keypoints];
+				_properties set [4, _keypoints];				
 			};			
 		} forEach _syncObj;	
 		sleep 1;
+		
+		_zone setVariable ["locations", _locations];
+		_zone setVariable ["keypoints", _keypoints];
 		
 		_zone setVariable ["properties", _properties];
 		_zone setVariable ["isActive", _properties select 2];
@@ -162,6 +180,7 @@ dzn_fnc_dynai_createZone = {
 			// Creates group
 			_groupPos = [_area, _zonePos select 1, _zonePos select 2] call dzn_fnc_getRandomPointInZone; // return Pos3D
 			_grp = createGroup call compile _side;
+			_grp setVariable ["wpSet",false];
 			
 			// Creates GameLogic for group control
 			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];			
@@ -194,15 +213,32 @@ dzn_fnc_dynai_createZone = {
 					
 					_grpLogic setVariable ["units", (_grpLogic getVariable "units") + [_unit]];
 					
+					// Gear
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear] spawn dzn_fnc_gear_assignKit; };
+					
+					// Assignement	
+					/*
+						[] - no assignement
+						[0, "role"] - assignement in vehicle
+						["indoors"]	- assignement in default house
+						["indoors", [classnames]] - assignement in specified house
+					*/	
 					if !(_assigned isEqualTo []) then {
-						if ((_assigned select 0) == "indoors") then {
-							if (isNil {_assigned select 1}) then {
-								[_unit, _zoneBuildings] call dzn_fnc_assignInBuilding;
-							} else {
-								[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
-							};							
+						if (typename (_assigned select 0) == "STRING") then {
+							// Indoors
+							switch (_assigned select 0) do {
+								case "indoors": {
+									if (isNil {_assigned select 1}) then {										
+										// Default houses
+										[_unit, _zoneBuildings] call dzn_fnc_assignInBuilding;
+									} else {
+										// Specified houses
+										[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
+									};								
+								};
+							};
 						} else {
+							// Assignement in vehicle
 							[
 								_unit, 
 								(_grpLogic getVariable "vehicles") select (_assigned select 0),	// ID of created unit/vehicle
@@ -211,8 +247,7 @@ dzn_fnc_dynai_createZone = {
 						};
 					};
 				} else {
-					// Is vehicle
-					
+					// Is vehicle					
 					_unit = createVehicle [_classname, _groupPos, [], 0, "NONE"];
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
 					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];					
@@ -220,6 +255,7 @@ dzn_fnc_dynai_createZone = {
 
 				
 			} forEach _groupUnits;			
+			
 			
 			// Synhronize units with groupLogic
 			_grpLogic synchronizeObjectsAdd (units _grp);
@@ -232,15 +268,110 @@ dzn_fnc_dynai_createZone = {
 			if !(_behavior select 3 == "") then { _grp setFormation (_behavior select 3); };
 			
 			// Assign waypoints
+			player globalChat "Before Waypoint creation";
 			if !(_grp getVariable "wpSet") then {
+				player globalChat "Waypoint creation";
 				if (typename _wps == "ARRAY") then {
+					player globalChat "Waypoint creation: Keypoint";
 					[_grp, _wps] spawn dzn_fnc_createPathFromKeypoints;
 				} else {
+				player globalChat "Waypoint creation: Random";
 					[_grp, _area, _zonePos select 1, _zonePos select 2] spawn dzn_fnc_createPathFromRandom;
 				};
+				_grp setVariable ["wpSet",true];
 			};
 		};
 	} forEach _refUnits;
 	
 	player sideChat format ["(%1) Zone Created", _name];
+};
+
+
+dzn_fnc_dynai_activateZone = {
+	/*
+		Set zone active.
+		EXAMPLE: dzn_zone1 call dzn_fnc_dynai_activateZone
+		INPUT:
+			0: OBJECT	- SpawnAI Module of zone
+		OUTPUT: NULL
+	*/
+	
+	if !(isNil {_this getVariable "isActive"} && isNil {_this getVariable "initialized"}) then {	
+		_this setVariable ["isActive", true, true];	
+	};
+};
+
+dzn_fnc_dynai_moveZone = {
+	/*
+		Move zone to given position.
+		EXAMPLE: [dzn_zone1, getPos player] call dzn_fnc_dynai_moveZone
+		INPUT:
+			0: OBJECT		- SpawnAI Module of zone
+			1: POS3D/OBJECT	- New zone position or object
+		OUTPUT: NULL
+	*/
+	
+	private["_zone","_newPos","_curPos","_locations","_offsets","_dir","_dist","_oldOffset","_newOffsetPos","_props","_wps","_wpOffsets"];
+	
+	_zone = if (!isNil {_this select 0}) then {_this select 0};
+	if (isNil "_zone") exitWith {};
+	if (_zone getVariable "isActive") exitWith {player globalChat "";};
+	_newPos = if (typename (_this select 1) == "ARRAY") then { _this select 1 } else { getPosASL (_this select 1) };
+
+	waitUntil { !isNil {_zone getVariable "initialized"} && { _zone getVariable "initialized" } };
+	
+	_curPos = getPosASL _zone;
+	_locations = _zone getVariable "locations";
+
+	// Get current offsets of locations
+	_offsets = [];
+	{
+		_dir = [_curPos, (locationPosition _x)] call BIS_fnc_dirTo;
+		_dist = _curPos distance (locationPosition _x);
+		_offsets = _offsets  + [ [_dir, _dist] ];
+	} forEach _locations;
+	
+	// Get current offsets of keypoints
+	_wps = _zone getVariable "keypoints";
+	_wpOffsets = [];
+	{
+		_dir = [_curPos, _x] call BIS_fnc_dirTo;
+		_dist = _curPos distance _x;
+		_wpOffsets = _wpOffsets  + [ [_dir, _dist] ];
+	} forEach _wps;
+
+	// Move zone
+	_zone setPosASL _newPos;
+	_zoneBuildings = [];
+	
+	// Move locations
+	{
+		_oldOffset = _offsets select _forEachIndex;	// return [_dir, _dist] 
+		_newOffsetPos = [_newPos, _oldOffset select 0, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
+		_x setPosition _newOffsetPos;
+
+		_locationBuildings = [
+			locationPosition _x, 
+			(size _x select 0) max (size _x select 1),
+			dzn_dynai_allowedHouses
+		] call dzn_fnc_getHousesNear;
+
+		{
+			if (!(_x in _zoneBuildings) && ([getPosASL _x, _locations] call dzn_fnc_isInLocation)) then {
+				_zoneBuildings = _zoneBuildings + [_x];	
+			};
+		} forEach _locationBuildings;
+	} forEach _locations;
+	
+	// Move keypoints
+	{
+		_oldOffset = _wpOffsets select _forEachIndex;
+		_newOffsetPos = [_newPos, _oldOffset select 0, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
+		_wps set [_forEachIndex, _newOffsetPos];
+	} forEach _wps;
+	
+	_props = _zone getVariable "properties";
+	_props set [4, _wps];
+	_props set [7, _zoneBuildings];
+	_zone setVariable ["properties", _props, true];
 };
