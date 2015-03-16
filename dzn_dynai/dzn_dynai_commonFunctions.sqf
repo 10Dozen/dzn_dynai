@@ -50,6 +50,7 @@ dzn_fnc_getZonePosition = {
 dzn_fnc_getPosOnGivenDir = {
 	/*
 		Return position on given direction and distance from base point
+		EXAMPLE: [getPos player, 270, 1000] call dzn_fnc_getPosOnGivenDir
 		INPUT:
 			0: Pos3d 		- StartPos
 			1: Number 		- Direction from start pos
@@ -256,13 +257,14 @@ dzn_fnc_getHousesNear = {
 	
 	_buildings = [];
 	{
-		if !((_x buildingPos 0) isEqualTo []) then {
+		if !((_x buildingPos 0) isEqualTo [0,0,0]) then {
 			_buildings = _buildings + [_x];
 		};
 	} forEach _structures;
 	
 	_buildings
 };
+
 
 dzn_fnc_getHousePositions = {
 	/*
@@ -321,8 +323,7 @@ dzn_fnc_assignInBuilding = {
 	while { !(_found) } do {		
 		_house = _zoneBuildings call BIS_fnc_selectRandom;
 		if (isNil {_house getVariable "housePositions"}) then {
-			_house setVariable ["housePositions", _house call dzn_fnc_getHousePositions];
-				hint str(_house getVariable "housePositions");
+			_house setVariable ["housePositions", _house call dzn_fnc_getHousePositions];				
 		};			
 
 		if !((_house getVariable "housePositions") isEqualTo []) then {
@@ -337,12 +338,6 @@ dzn_fnc_assignInBuilding = {
 			_wp setWaypointHousePosition _housePosId;
 			(group _unit) addWaypoint [getPosATL _unit, 0];
 			_wp setWaypointType "CYCLE";
-			
-			
-	_markerstr = createMarker [format ["markername%1", str(time)],[getPos _unit select 0,getPos _unit select 1 ]];
-_markerstr setMarkerShape "ICON";
-_markerstr setMarkerType "HD_DOT";
-	
 	
 			(group _unit) setVariable ["wpSet", true];			
 			_found = true;
