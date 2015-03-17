@@ -8,11 +8,11 @@
 		[],							// null - creates from init
 		[	
 			// units 
-			5,						// Quantity of groups for zone
+			5,						// Quantity of describer group for zone
 			[
 				[
 					"B_officer_F",	// classname
-					[],				// for infantry 0: ID of vehicle, 1: string-role "driver" or []; for vehicle - any string - ""
+					[],		// [] - for partol unit, [0, "driver"] - for crew of group vehicle, ["indoors"] - to spawn unit inside houses, "isVehicle" - for vehicle
 					"specForKit"	// Name of kit for dzn_gear
 				]
 			]
