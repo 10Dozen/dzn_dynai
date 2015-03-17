@@ -1,0 +1,18 @@
+scheme update:
+  [classname, [ "inBuilding", listOfBuildings ], "ktiName" ]
+
+Add var to zone - usedHouses
+
+if (typename == "ARRAY")
+|	if ("inBuilding")
+|	|	getNearestBuildings (all or listOfBuldings)
+|	|	getRandomBuilding
+|	|	if (building in ZONE location)
+|	|	|	if (house classname in listOfBuildings)
+|	|	|	|	getAllBuildingPoses
+|	|	|	|	if (noPoses) -> return to (7)
+|	|	|	|	if (alreadyUsed) -> return to (7)
+|	|	|	|	add building and pos to "usedHouse"
+|	|	|	|	setUnitPos (getRandom buildingPos)
+|	|	|	else
+|	|	|	|	getAllBuildingPoses
