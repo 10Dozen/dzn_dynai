@@ -165,7 +165,7 @@ dzn_fnc_assignInVehicle = {
 		default {
 			if (["turret", _this select 2, false] call BIS_fnc_inString) then {
 				_path = if ( ((_this select 2) select [6,1]) != "" ) then { [parseNumber ((_this select 2) select [6,1])] };				
-				player sideChat str(_path);
+				// player sideChat str(_path);
 				if (!isNil {_path}) then {
 					if ( ((_this select 2) select [7,1]) != "" ) then {
 						_path = _path + [ parseNumber ((_this select 2) select [7,1]) ];
@@ -174,16 +174,16 @@ dzn_fnc_assignInVehicle = {
 					_unit assignAsTurret [_veh, _path];
 					_unit moveInTurret [_veh, _path];				
 				} else {
-					player sideChat format [
+				/*	player sideChat format [
 						"Wrong vehicle assign path. Unit: %1, Vehicle: %2, Path: %3", 
 						str(_unit), str(_veh), _this select 2
-					];
+					];*/
 				};
 			} else {
-				player sideChat format [
+				/*player sideChat format [
 					"Wrong assign role. Unit: %1, Vehicle: %2, Role: %3", 
 					str(_unit), str(_veh), _this select 2
-				];
+				];*/
 			};
 		};
 	};
@@ -347,5 +347,5 @@ dzn_fnc_assignInBuilding = {
 		_max = _max + 1;
 		if (_max > 15) then { _found = true; };
 	};
-	player sideChat "Searched";
+	// player sideChat "Searched";
 };
