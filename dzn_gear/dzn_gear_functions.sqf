@@ -49,6 +49,10 @@ dzn_fnc_gear_assignKit = {
 			player sideChat format ["There is no kit with name %1", (_this select 1)];
 		};
 	};
+	
+	if (isNil { (_this select 0) getVariable "dzn_gear"} && ( (_this select 0) isKindOf "CAManBase" ) ) then { (_this select 0) setVariable ["dzn_gear", _this select 1, true]; };
+	if (isNil { (_this select 0) getVariable "dzn_gear_box"} && !( (_this select 0) isKindOf "CAManBase" ) ) then { (_this select 0) setVariable ["dzn_gear_box", _this select 1, true]; };
+	
 };
 
 dzn_fnc_gear_assignGear = {
@@ -65,6 +69,8 @@ dzn_fnc_gear_assignGear = {
 	
 	_unit = _this select 0;
 	_kit = _this select 1;
+	
+	_unit setVariable ["BIS_enableRandomization", false];
 	
 	// Clear Gear
 	removeUniform _unit;
