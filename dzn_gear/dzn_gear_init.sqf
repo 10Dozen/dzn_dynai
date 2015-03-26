@@ -44,7 +44,6 @@ if !(_logics isEqualTo []) then {
 				{
 					if (!(_x isKindOf "CAManBase") || {vehicle (crew _x select 0) != _x}) then {
 						_veh = if ((crew _x) isEqualTo []) then { _x } else { vehicle (crew _x select 0)};
-						_veh setVariable ["dzn_gear_box", _kitName, true];
 						assignGearKit(_veh, _kitName, true)
 					};
 				} forEach _synUnits;
