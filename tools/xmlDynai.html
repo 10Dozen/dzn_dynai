@@ -1,0 +1,74 @@
+<html>
+	<head>
+		<title>DYNAI Zone Configurator</title>
+		<script src="jquery-2.1.3.min"></script>	
+	</head>
+	<body>
+		<h1>xmlDynai</h1>
+		<div id="x1">
+			<p>text</p>
+		</div>
+		
+		
+
+		
+		<div align="left">
+			<p id="zone_name"><input placeholder="zoneName"></p>
+			<p id="zone_side">
+				<input type="radio" name="side" value="west">West
+				<input type="radio" name="side" value="east">East
+				<input type="radio" name="side" value="resistance">Indep
+				<input type="radio" name="side" value="civilian">Civ
+			<p>			
+			<p id="zone_status">Is Active<input type="checkbox" placeholder="is Active"></p>
+			<p id="zone_unit">Units</p>			
+				<!-- RefUnits -->				
+					<!-- Template -->
+						<!-- Count -->
+						<!-- Units -->
+							<!-- Unit 1 -->
+								<!-- Unit 1 Classname -->
+								<!-- Unit 1 Assignement-->
+									<!-- Unit 1 Assignement ID -->
+									<!-- Unit 1 Assignement Role -->
+								<!-- Unit 1 Kit-->
+			
+			<!-- Behavior -->
+					<!-- speedMode -->
+					<!-- behavior -->
+					<!-- combatMode -->
+					<!-- formation -->	
+			<p>Behavior Settings</p>		
+			<p id="zone_speedMode">Speed Mode<br>
+				<input type="radio" name="speedMode" value="limited">Limited
+				<input type="radio" name="speedMode" value="normal">Normal
+				<input type="radio" name="speedMode" value="full">Full
+			</p>					
+			<p id="zone_behavior">Behavior<br>
+				<input type="radio" name="behavior" value="careless">Careless
+				<input type="radio" name="behavior" value="safe">Safe
+				<input type="radio" name="behavior" value="aware">Aware
+				<input type="radio" name="behavior" value="combat">Combat
+				<input type="radio" name="behavior" value="stealth">Stealth
+			</p>
+			<p id="zone_combatMode"Combat Mode<br>
+				<input type="radio" name="combatMode" value="blue">Blue
+				<input type="radio" name="combatMode" value="green">Green
+				<input type="radio" name="combatMode" value="white">White
+				<input type="radio" name="combatMode" value="yellow">Yellow
+				<input type="radio" name="combatMode" value="red">Red
+			</p>
+			<p id="zone_formation">Formation<br>
+				<input type="radio" name="formation" value="COLUMN">Column<br>
+				<input type="radio" name="formation" value="STAG COLUMN">Staggered Column<br>
+				<input type="radio" name="formation" value="WEDGE">Wedge<br>
+				<input type="radio" name="formation" value="ECH LEFT">Echelon L(eft)<br>
+				<input type="radio" name="formation" value="ECH RIGHT">Echelon R(ight)<br>
+				<input type="radio" name="formation" value="VEE">Vee<br>
+				<input type="radio" name="formation" value="LINE">Line <br>
+				<input type="radio" name="formation" value="stealth">Delta<br>
+				<input type="radio" name="formation" value="stealth">Column (compact)<br>			
+			</p>			
+		</div>		
+	</body>
+</html>
