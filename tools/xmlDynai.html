@@ -10,38 +10,70 @@
 			var groupAddUnit = "<input class='unitAdd' type='button' value='Add Unit'>";
 			var groupAddHtml = "";
 			
-				
+			var unitRemove = "<input class='unitRemove' type='button' value='X'>";
+			
+			var vehicelAdd 	= "<div class='unit'>" + unitRemove + " <div class='unitName'> Vehicle ID 0 </div>"
+				+ "<input type='text' placeholder='Classname of vehicle'> | <input type='text' placeholder='Kit of vehicle'>";
+			var unitAdd 	= "<div class='unit'>" + unitRemove + " <div class='unitName'> Infantry </div>"
+				+ "<input type='text' placeholder='Classname of unit'> | "
+				+ "<input type='radio' name='unitType1' value='patrol'>Patrol"
+				+ "<input type='radio' name='unitType1' value='inBuilding'>In building"
+				+ "<input type='radio' name='unitType1' value='inVehicle'>In vehicle"
+				+ " | <input type='text' placeholder='Kit for unit'></div>";
+							
+							
+							
 			$( document ).ready(function() {
-				
-					
-			
-			
-			
-				$( "#groupAdd" ).click( function(event) { 
-				
+				$( "#groupAdd" ).click( function(event) {
+					// Add group
 					var groupName = $.map($('#groupName'), function (input) { return $(input).val() })
 					if (groupName == "") {
 						groupName = "Group Template #" + groupCounter;
 					} else {
 						groupName = '"' + groupName + '"';
-					}
+					}					
 					
 					groupAddHtml = "<div class='group" + groupCounter + "'>" 
-					+ groupName + " " + groupAddRemoveGroupButton +"<br><input type='number' placeholder='Count of groups'><div id='squad" + groupCounter + "'>"
+					+ groupName + " " + groupAddRemoveGroupButton +"<br><input type='number' placeholder='Count of groups'><div class='squad'><br></div>"
 					+ groupAddUnitVehicle + groupAddUnit				
-					+"</div><br></div>";
-				
-				
-				
+					+"</div>";
+	
 					$( groupAddHtml ).appendTo( "#zone_groups" );
+					groupCounter++;
 					
+					// Remove added group
 					$( ".groupRemove" ).click( function(event) {						
 						$( $( event.target ).parent() ).remove();
 					});
 					
+					// Add vehicle to group
+					$( ".vehicleAdd" ).click( function(event) {
+						$( vehicelAdd ).appendTo( $( event.target ).parent().find(".squad"));
+						
+						// Remove vehicle from group
+						$( "input[class='unitRemove']").click( function(event) {
+							$( $( event.target ).parent() ).remove();
+						});
+					});
 					
-					groupCounter++;
+					
+					// Add unit to group
+					$( ".unitAdd" ).click( function(event) {
+						$( unitAdd ).appendTo( $( event.target ).parent().find(".squad"));
+						
+						$( "input[value='inVehicle']" ).click( function(event) {
+							
+						});
+						
+						// Remove unit from group
+						$( "input[class='unitRemove']").click( function(event) {
+							$( $( event.target ).parent() ).remove();
+						});
+					});
+					
 				});
+				
+				
 				
 				
 			});
@@ -69,6 +101,11 @@
 			
 			.vehIdText {
 				width: 50px;
+			}
+			
+			.unitName {
+				display: inline-block;
+				width: 125px;
 			}
 		</style>
 	</head>
