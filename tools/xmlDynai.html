@@ -83,12 +83,17 @@
 						var unitId = squadItem.children().length;
 						console.log( unitId );
 						
-						var unitAdd = 	"<div class='unit'>" + unitRemove + " <div class='unitName'> Infantry </div>"
-							+ "<input type='text' placeholder='Classname of unit' value='"
-							+ defaultUnitClassname + "'> | <input type='text' placeholder='Kit for unit'> | "
-							+ "<input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol"
-							+ "<input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building"
-							+ "<input type='radio' name='unitType" + unitId + "' value='inVehicle'>In vehicle</div>";
+						var unitAdd = 
+							"<div class='unit'>" 
+								+ unitRemove 
+								+ " <div class='unitName'> Infantry </div>"
+								+ "<input type='text' placeholder='Classname of unit' value='" + defaultUnitClassname + "'> | <input type='text' placeholder='Kit for unit'> | "
+								+ "<div>"
+									+ "<input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol"
+									+ "<input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building"
+									+ "<input type='radio' name='unitType" + unitId + "' value='inVehicle'>In vehicle"
+								+ "</div>"
+							+ "</div>";
 						
 						$( unitAdd ).appendTo( $( event.target ).parent().find(".squad") );
 						
