@@ -3,21 +3,21 @@
 		<title>DYNAI Zone Configurator</title>
 		<script src="jquery-2.1.3.min.js"></script>
 		<script>
-			var westManDefault		= "B_Soldier_F";
-			var eastManDefault 		= "O_Soldier_F";
-			var resistanceManDefault 	= "I_soldier_F";
-			var civilianManDefault 		= "C_man_1";		
-			var defaultUnitClassname 	= "";
+			var westManDefault				= "B_Soldier_F";
+			var eastManDefault				= "O_Soldier_F";
+			var resistanceManDefault 		= "I_soldier_F";
+			var civilianManDefault 			= "C_man_1";		
+			var defaultUnitClassname 		= "";
 		
-			var groupCounter 		= 0;
-			var groupAddRemoveGroupButton 	= "<input class='groupRemove' type='button' value='Remove Group'>";
-			var groupAddUnitVehicle 	= "<input class='vehicleAdd' type='button' value='Add Vehicle'>";
-			var groupAddUnit 		= "<input class='unitAdd' type='button' value='Add Unit'>";
-			var groupAddHtml 		= "";
+			var groupCounter				= 0;
+			var groupAddRemoveGroupButton	= "<input class='groupRemove' type='button' value='Remove Group'>";
+			var groupAddUnitVehicle 		= "<input class='vehicleAdd' type='button' value='Add Vehicle'>";
+			var groupAddUnit 				= "<input class='unitAdd' type='button' value='Add Unit'>";
+			var groupAddHtml 				= "";
 			
-			var unitRemove 		= "<input class='unitRemove' type='button' value='X'>";
+			var unitRemove 					= "<input class='unitRemove' type='button' value='X'>";
 			
-			var vehAssignementRemove	= "<input class='unitAssignementRemove' type='button' value='X'>";
+			var vehAssignementRemove		= "<input class='unitAssignementRemove' type='button' value='X'>";
 							
 							
 							
@@ -81,14 +81,13 @@
 						
 						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
 						var unitId = squadItem.children().length;
-						console.log( unitId );
-						
+							
 						var unitAdd = 
 							"<div class='unit'>" 
 								+ unitRemove 
 								+ " <div class='unitName'> Infantry </div>"
 								+ "<input type='text' placeholder='Classname of unit' value='" + defaultUnitClassname + "'> | <input type='text' placeholder='Kit for unit'> | "
-								+ "<div>"
+								+ "<div class='horDiv1'>"
 									+ "<input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol"
 									+ "<input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building"
 									+ "<input type='radio' name='unitType" + unitId + "' value='inVehicle'>In vehicle"
@@ -97,13 +96,30 @@
 						
 						$( unitAdd ).appendTo( $( event.target ).parent().find(".squad") );
 						
-						$( "input[value='inVehicle']" ).click( function(event) {
-							$ ( $(event.target).parent() ).append(" <div class='horDiv'><input type='text' placeholder='VehID'><input type='text' placeholder='Vehicle crew role'>" + vehAssignementRemove + "</div>");
+						$( "input[name='unitType" + unitId + "']" ).click( function(event) {
+							console.log( $(event.target).parent().first() );
+							$ ( $(event.target).parent() ).append(" <div class='horDiv' name='vehIdAndRole'><input type='text' placeholder='VehID'><input type='text' placeholder='Vehicle crew role'></div>");
 							
-							$( "input[class='unitAssignementRemove']" ).click( function(event) {
-								$( $(event.target).parent() ).remove();
+							
+						
+							//	$ ( $(event.target).parent() ).append(" <div class='horDiv' name='vehIdAndRole'><input type='text' placeholder='VehID'><input type='text' placeholder='Vehicle crew role'></div>");
+							
+							/*
+							
+							$( "input[value='patrol']" ).click( function(event) {
+								//console.log(event.target);
+								$( ($(event.target).parent()).find( "div[class='horDiv'][name-'vehIdAndRole']") ).remove();
 							});
+							
+							$( "input[value='inBuilding']" ).click( function(event) {
+								//console.log(event.target);
+								$( ($(event.target).parent()).find( "div[class='horDiv']") ).remove();
+							});
+							
+							*/
 						});
+						
+						
 						
 						// Remove unit from group
 						$( "input[class='unitRemove']").click( function(event) {
