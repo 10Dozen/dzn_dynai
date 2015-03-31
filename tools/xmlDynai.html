@@ -97,26 +97,22 @@
 						$( unitAdd ).appendTo( $( event.target ).parent().find(".squad") );
 						
 						$( "input[name='unitType" + unitId + "']" ).click( function(event) {
-							console.log( $(event.target).parent().first() );
-							$ ( $(event.target).parent() ).append(" <div class='horDiv' name='vehIdAndRole'><input type='text' placeholder='VehID'><input type='text' placeholder='Vehicle crew role'></div>");
+							console.log( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0);
 							
-							
-						
-							//	$ ( $(event.target).parent() ).append(" <div class='horDiv' name='vehIdAndRole'><input type='text' placeholder='VehID'><input type='text' placeholder='Vehicle crew role'></div>");
-							
-							/*
-							
-							$( "input[value='patrol']" ).click( function(event) {
-								//console.log(event.target);
-								$( ($(event.target).parent()).find( "div[class='horDiv'][name-'vehIdAndRole']") ).remove();
-							});
-							
-							$( "input[value='inBuilding']" ).click( function(event) {
-								//console.log(event.target);
-								$( ($(event.target).parent()).find( "div[class='horDiv']") ).remove();
-							});
-							
-							*/
+							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {
+								$ ( $(event.target).parent() ).append(" <div class='horDiv' name='vehIdAndRole'><input type='text' placeholder='VehID'><input type='text' placeholder='Vehicle crew role'></div>");
+								
+								
+								$( "input[value='patrol']" ).click( function(event) {
+									//console.log(event.target);
+									$( ($(event.target).parent()).find( "div[class='horDiv']") ).remove();
+								});
+								
+								$( "input[value='inBuilding']" ).click( function(event) {
+									//console.log(event.target);
+									$( ($(event.target).parent()).find( "div[class='horDiv']") ).remove();
+								});								
+							}
 						});
 						
 						
