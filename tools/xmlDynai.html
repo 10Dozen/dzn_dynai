@@ -17,9 +17,7 @@
 			
 			var unitRemove = "<input class='unitRemove' type='button' value='X'>";
 			
-			var vehicelAdd 	= "<div class='unit'>" + unitRemove + " <div class='unitName'> Vehicle ID 0 </div>"
-				+ "<input type='text' placeholder='Classname of vehicle'> | <input type='text' placeholder='Kit of vehicle'>";
-
+			
 							
 							
 							
@@ -51,6 +49,15 @@
 					// Add vehicle to group
 					// *********************
 					$( ".vehicleAdd" ).click( function(event) {
+						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
+						var unitId = (squadItem.children().length) - 1;
+						console.log( unitId );
+						
+						var vehicelAdd =  "<div class='unit'>" + unitRemove + " <div class='unitName'> Vehicle ID " + unitId + " </div>"
+							+ "<input type='text' placeholder='Classname of vehicle'> | <input type='text' placeholder='Kit of vehicle'>";
+						
+					
+					
 						$( vehicelAdd ).appendTo( $( event.target ).parent().find(".squad"));
 						
 						// Remove vehicle from group
