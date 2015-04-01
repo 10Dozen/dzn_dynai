@@ -9,9 +9,9 @@
 			var civilianManDefault 			= "C_man_1";		
 			var defaultUnitClassname 		= "";
 		
-			var groupCounter				= 0;
+			var groupCounter				= -1;
 			var groupAddRemoveGroupButton	= "<input class='groupRemove' type='button' value='Remove Group'>";
-			var groupAddUnitVehicle 		= "<input class='vehicleAdd' type='button' value='Add Vehicle'>";
+			
 			var groupAddUnit 				= "<input class='unitAdd' type='button' value='Add Unit'>";
 			var groupAddHtml 				= "";
 			
@@ -22,22 +22,31 @@
 							
 							
 			$( document ).ready(function() {
+			
+				// Adding a group button
 				$( "#groupAdd" ).click( function(event) {
+					groupCounter++;
 					// Add group
 					var groupName = $.map($('#groupName'), function (input) { return $(input).val() })
 					if (groupName == "") {
 						groupName = "Group Template #" + groupCounter;
 					} else {
 						groupName = '"' + groupName + '"';
-					}					
+					}		
+
+					var groupAddUnitVehicle 		= "<input class='vehicleAdd" + groupCounter + "' type='button' value='Add Vehicle'>";
 					
-					groupAddHtml = "<div class='group" + groupCounter + "'><br>" 
-					+ groupName + " " + groupAddRemoveGroupButton +"<br><input type='number' placeholder='Count of groups'><div class='squad'><br></div>"
-					+ groupAddUnitVehicle + groupAddUnit				
+					groupAddHtml = 
+					"<div class='group" + groupCounter + "'>"
+						+ "<br>" 
+						+ groupName + " " + groupAddRemoveGroupButton +"<br>"
+						+ "<input type='number' placeholder='Count of groups'>"
+						+" <div class='squad'><br></div>"
+						+ groupAddUnitVehicle + groupAddUnit				
 					+"</div>";
 	
 					$( groupAddHtml ).appendTo( "#zone_groups" );
-					groupCounter++;
+					
 					
 					// Remove added group
 					$( ".groupRemove" ).click( function(event) {						
@@ -48,27 +57,33 @@
 					// *********************
 					// Add vehicle to group
 					// *********************
-					$( ".vehicleAdd" ).click( function(event) {
+					var addVehicleItem = "input[class='vehicleAdd" + groupCounter + "'][type='button']";
+					$( addVehicleItem ).click( function(event) {
+						console.log("vehicle added");
+						
 						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
-						var unitId = (squadItem.children().length) - 1;
-						console.log( unitId );
-						
-						var vehicelAdd =  "<div class='unit'>" + unitRemove + " <div class='unitName'> Vehicle ID " + unitId + " </div>"
-							+ "<input type='text' placeholder='Classname of vehicle'> | <input type='text' placeholder='Kit of vehicle'>";
-						
-					
-					
+						var unitId = (squadItem.children().length) - 1;	
+						var vehicelAdd = ""
+							+ "<div class='unit'>" 
+								+ unitRemove 
+								+ " <div class='unitName'> Vehicle ID " + unitId + " </div>"
+								+ "<input type='text' placeholder='Classname of vehicle'> | <input type='text' placeholder='Kit of vehicle'>"
+							+ "</div>";
+							
 						$( vehicelAdd ).appendTo( $( event.target ).parent().find(".squad"));
 						
 						// Remove vehicle from group
 						$( "input[class='unitRemove']").click( function(event) {
 							$( $( event.target ).parent() ).remove();
-						});
+						});						
 					});
+					
+					
 					
 					// *********************
 					// Add unit to group
 					// *********************
+					/*
 					$( ".unitAdd" ).click( function(event) {
 						var defaultUnitClassname = "";
 						switch ( $( "input[name='side']:checked" ).val() ) {
@@ -146,9 +161,8 @@
 							$( $( event.target ).parent() ).remove();
 						});
 					});
-					
+					*/
 				});
-				
 				
 				
 				
@@ -212,7 +226,54 @@
 				<div id="zone_groups">					
 				</div>
 			</p>
+			
+			<hr>
+			<p>Behavior Settings</p>		
+			<p id="zone_speedMode">Speed Mode<br>
+				<div class="hRadio"><input type="radio" name="speedMode" value="limited">Limited</div>
+				<div class="hRadio"><input type="radio" name="speedMode" value="normal">Normal</div>
+				<div class="hRadio"><input type="radio" name="speedMode" value="full">Full</div>
+			</p>					
+			<p id="zone_behavior">Behavior<br>
+				<div class="hRadio"><input type="radio" name="behavior" value="careless">Careless</div>
+				<div class="hRadio"><input type="radio" name="behavior" value="safe">Safe</div>
+				<div class="hRadio"><input type="radio" name="behavior" value="aware">Aware</div>
+				<div class="hRadio"><input type="radio" name="behavior" value="combat">Combat</div>
+				<div class="hRadio"><input type="radio" name="behavior" value="stealth">Stealth</div>
+			</p>
+			<p id="zone_combatMode">Combat Mode<br>
+				<div class="hRadio"><input type="radio" name="combatMode" value="blue">Blue</div>
+				<div class="hRadio"><input type="radio" name="combatMode" value="green">Green</div>
+				<div class="hRadio"><input type="radio" name="combatMode" value="white">White</div>
+				<div class="hRadio"><input type="radio" name="combatMode" value="yellow">Yellow</div>
+				<div class="hRadio"><input type="radio" name="combatMode" value="red">Red</div>
+			</p>
+			<p id="zone_formation">Formation<br>
 				
+			
+			
+				<input type="radio" name="formation" value="COLUMN">Column<br>
+				<input type="radio" name="formation" value="STAG COLUMN">Staggered Column<br>
+				<input type="radio" name="formation" value="WEDGE">Wedge<br>
+				<input type="radio" name="formation" value="ECH LEFT">Echelon L(eft)<br>
+				<input type="radio" name="formation" value="ECH RIGHT">Echelon R(ight)<br>
+				<input type="radio" name="formation" value="VEE">Vee<br>
+				<input type="radio" name="formation" value="LINE">Line <br>
+				<input type="radio" name="formation" value="stealth">Delta<br>
+				<input type="radio" name="formation" value="stealth">Column (compact)<br>			
+			</p>			
+		</div>
+		
+		<hr>
+		<div align="center"><input id="configButton" type="button" value="Create Zone Config"></div>
+		<hr>	
+		<div id="zoneArray" align="center">
+			<textarea name="comment" cols="85" rows="5">Arma SQF here..</textarea>
+		<div>
+		
+	</body>
+	
+		
 				<!-- <div class='group'>	
 						Group 1<br>
 						<input type='number' placeholder='Count of groups'><br>
@@ -286,49 +347,4 @@
 					<!-- behavior -->
 					<!-- combatMode -->
 					<!-- formation -->
-			<hr>
-			<p>Behavior Settings</p>		
-			<p id="zone_speedMode">Speed Mode<br>
-				<div class="hRadio"><input type="radio" name="speedMode" value="limited">Limited</div>
-				<div class="hRadio"><input type="radio" name="speedMode" value="normal">Normal</div>
-				<div class="hRadio"><input type="radio" name="speedMode" value="full">Full</div>
-			</p>					
-			<p id="zone_behavior">Behavior<br>
-				<div class="hRadio"><input type="radio" name="behavior" value="careless">Careless</div>
-				<div class="hRadio"><input type="radio" name="behavior" value="safe">Safe</div>
-				<div class="hRadio"><input type="radio" name="behavior" value="aware">Aware</div>
-				<div class="hRadio"><input type="radio" name="behavior" value="combat">Combat</div>
-				<div class="hRadio"><input type="radio" name="behavior" value="stealth">Stealth</div>
-			</p>
-			<p id="zone_combatMode">Combat Mode<br>
-				<div class="hRadio"><input type="radio" name="combatMode" value="blue">Blue</div>
-				<div class="hRadio"><input type="radio" name="combatMode" value="green">Green</div>
-				<div class="hRadio"><input type="radio" name="combatMode" value="white">White</div>
-				<div class="hRadio"><input type="radio" name="combatMode" value="yellow">Yellow</div>
-				<div class="hRadio"><input type="radio" name="combatMode" value="red">Red</div>
-			</p>
-			<p id="zone_formation">Formation<br>
-				
-			
-			
-				<input type="radio" name="formation" value="COLUMN">Column<br>
-				<input type="radio" name="formation" value="STAG COLUMN">Staggered Column<br>
-				<input type="radio" name="formation" value="WEDGE">Wedge<br>
-				<input type="radio" name="formation" value="ECH LEFT">Echelon L(eft)<br>
-				<input type="radio" name="formation" value="ECH RIGHT">Echelon R(ight)<br>
-				<input type="radio" name="formation" value="VEE">Vee<br>
-				<input type="radio" name="formation" value="LINE">Line <br>
-				<input type="radio" name="formation" value="stealth">Delta<br>
-				<input type="radio" name="formation" value="stealth">Column (compact)<br>			
-			</p>			
-		</div>
-		
-		<hr>
-		<div align="center"><input id="configButton" type="button" value="Create Zone Config"></div>
-		<hr>	
-		<div id="zoneArray" align="center">
-			<textarea name="comment" cols="85" rows="5">Arma SQF here..</textarea>
-		<div>
-		
-	</body>
 </html>
