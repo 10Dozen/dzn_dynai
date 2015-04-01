@@ -88,33 +88,57 @@
 								+ " <div class='unitName'> Infantry </div>"
 								+ "<input type='text' placeholder='Classname of unit' value='" + defaultUnitClassname + "'> | <input type='text' placeholder='Kit for unit'> | "
 								+ "<div class='horDiv1'>"
-									+ "<input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol"
-									+ "<input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building"
-									+ "<input type='radio' name='unitType" + unitId + "' value='inVehicle'>In vehicle"
+									+ "<div class='horDiv1' name='patrol'><input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol</div>"
+									+ "<div class='horDiv1' name='inBuilding'><input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building</div>"
+									+ "<div class='horDiv1' name='inVehicle'><input type='radio' name='unitType" + unitId + "' value='inVehicle'>In vehicle</div>"
 								+ "</div>"
 							+ "</div>";
 						
 						$( unitAdd ).appendTo( $( event.target ).parent().find(".squad") );
 						
-						$( "input[name='unitType" + unitId + "']" ).click( function(event) {
-							console.log( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0);
-							
-							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {
-								$ ( $(event.target).parent() ).append(" <div class='horDiv' name='vehIdAndRole'><input type='text' placeholder='VehID'><input type='text' placeholder='Vehicle crew role'></div>");
+						$( "input[name='unitType" + unitId + "'][value='inVehicle']" ).click( function(event) {
+							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {							
+								var addVehicleIdAndRole = 
+									" <div class='horDiv1' name='vehIdAndRole'>"
+										+ "<input class='vehIdInput' type='text' placeholder='VehID'>"
+										+ "<input type='text' placeholder='Vehicle crew role'>"
+									+ "</div>";
+									
+								$ ( $(event.target).parent() ).append( addVehicleIdAndRole );
 								
 								
+								// Chosing another options:	
+								//	PARTOL
 								$( "input[value='patrol']" ).click( function(event) {
-									//console.log(event.target);
-									$( ($(event.target).parent()).find( "div[class='horDiv']") ).remove();
+									$( ($(event.target).parent().parent() ).find( "div[name='inVehicle']").find( "div" )).remove();
+									
+									$(  $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
+									$( $( event.target ).parent() ).css( "color", "red" );
 								});
-								
+								//	IN BUILDING
 								$( "input[value='inBuilding']" ).click( function(event) {
-									//console.log(event.target);
-									$( ($(event.target).parent()).find( "div[class='horDiv']") ).remove();
-								});								
+									$( ($(event.target).parent().parent() ).find( "div[name='inVehicle']").find( "div" )).remove();
+									
+									$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
+									$( $( event.target ).parent() ).css( "color", "red" );
+								});			
+
+								$( $( event.target ).parent().parent().find( "div" ) ).css( "color", "blue" );
+								$( $( event.target ).parent() ).css( "color", "red" );
+								
 							}
 						});
 						
+						
+						$( "input[name='unitType" + unitId + "'][value='patrol']" ).click( function(event) {
+							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
+							$( $( event.target ).parent() ).css( "color", "red" );
+						});
+						
+						$( "input[name='unitType" + unitId + "'][value='inBuilding']" ).click( function(event) {
+							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
+							$( $( event.target ).parent() ).css( "color", "red" );
+						});
 						
 						
 						// Remove unit from group
@@ -143,6 +167,14 @@
 		
 		
 		<style>
+			.horDiv1 {
+				display: inline-block;
+			}
+			
+			.vehIdInput {
+				width: 45px;
+			}
+		
 			.hRadio {
 				position: relative;				
 				display: inline-block;
