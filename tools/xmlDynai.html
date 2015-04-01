@@ -45,12 +45,15 @@
 						+ groupAddUnitVehicle + groupAddUnit				
 					+"</div>";
 	
-					$( groupAddHtml ).appendTo( "#zone_groups" );
-					
+					$( groupAddHtml ).appendTo( "#zone_groups" );					
 					
 					// Remove added group
-					$( ".groupRemove" ).click( function(event) {						
-						$( $( event.target ).parent() ).remove();
+					$( ".groupRemove" ).click( function(event) {	
+						$( $( event.target ).parent() ).fadeOut(200, function(){
+						   setTimeout($(this).remove(), 200)
+						});
+						
+						//.hide( "slow" ).delay(1000).remove();
 					});
 					
 					
