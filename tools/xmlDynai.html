@@ -175,9 +175,14 @@
 				console.log (  $($( "div[id='zone_side']" ).find( "div[class='hRadio']"))[0] );
 				
 				$($($( "div[id='zone_side']" ).find( "div[class='hRadio']"))).click( function(event) {
-					console.log('111');
+					console.log( this );
+					console.log( $( event.target) );
 					
+					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
+					$( this ).css( "color", "red" );
 					
+				//	$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
+					//		$( $( event.target ).parent() ).css( "color", "red" );
 				});
 			});
 			
