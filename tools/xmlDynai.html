@@ -12,7 +12,6 @@
 			var groupCounter				= -1;
 			var groupAddRemoveGroupButton	= "<input class='groupRemove' type='button' value='Remove Group'>";
 			
-			var groupAddUnit 				= "<input class='unitAdd' type='button' value='Add Unit'>";
 			var groupAddHtml 				= "";
 			
 			var unitRemove 					= "<input class='unitRemove' type='button' value='X'>";
@@ -35,6 +34,8 @@
 					}		
 
 					var groupAddUnitVehicle 		= "<input class='vehicleAdd" + groupCounter + "' type='button' value='Add Vehicle'>";
+					var groupAddUnit				= "<input class='unitAdd" + groupCounter + "' type='button' value='Add Unit'>";
+					
 					
 					groupAddHtml = 
 					"<div class='group" + groupCounter + "'>"
@@ -86,6 +87,120 @@
 					// *********************
 					// Add unit to group
 					// *********************
+					var addUnitItem = "input[class='unitAdd" + groupCounter + "'][type='button']";
+					$( addUnitItem ).click( function(event) {
+						console.log("unit added");
+						
+						var defaultUnitClassname = "";
+						switch ( $( "input[name='side']:checked" ).val() ) {
+							case "west": 	defaultUnitClassname = westManDefault; break;
+							case "east": 	defaultUnitClassname = eastManDefault; break;
+							case "resistance": 	defaultUnitClassname = resistanceManDefault; break;
+							case "civilian": 	defaultUnitClassname = civilianManDefault; break;
+							default: 		defaultUnitClassname = "";								
+						}	
+						
+						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
+						var unitId = squadItem.children().length;
+						
+						var unitAdd = 
+							"<div class='unit'>" 
+								+ unitRemove 
+								+ " <div class='unitName'> Infantry </div>"
+								+ "<input type='text' placeholder='Classname of unit' value='" + defaultUnitClassname + "'> | <input type='text' placeholder='Kit for unit'> | "
+								+ "<div class='horDiv1'>"
+									+ "<div class='horDiv1' name='patrol'><input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol</div>"
+									+ "<div class='horDiv1' name='inBuilding'><input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building</div>"
+									+ "<div class='horDiv1' name='inVehicle'><input type='radio' name='unitType" + unitId + "' value='inVehicle'>In vehicle</div>"
+								+ "</div>"
+							+ "</div>";
+							
+						$( unitAdd ).appendTo( $( event.target ).parent().find(".squad") );	
+						
+						// Remove unit from group
+						$( "input[class='unitRemove']").click( function(event) {
+							$( $( event.target ).parent() ).remove();
+						});
+						
+						$( "input[name='unitType" + unitId + "'][value='patrol']" ).click( function(event) {
+							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
+							$( $( event.target ).parent() ).css( "color", "red" );
+							
+							if ( $( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).length != 0 ) {
+								console.log("Delete input field");
+								
+								$( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).remove();
+							}
+						});
+						
+						$( "input[name='unitType" + unitId + "'][value='inBuilding']" ).click( function(event) {
+							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
+							$( $( event.target ).parent() ).css( "color", "red" );
+							
+							if ( $( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).length != 0 ) {
+								console.log("Delete input field");
+								
+								$( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).remove();
+							}
+						});
+						
+						$( "input[name='unitType" + unitId + "'][value='inVehicle']" ).click( function(event) {
+							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
+							$( $( event.target ).parent() ).css( "color", "red" );
+							
+							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {							
+								var addVehicleIdAndRole = 
+									" <div class='horDiv1' name='vehIdAndRole'>"
+										+ "<input class='vehIdInput' type='text' placeholder='VehID'>"
+										+ "<input type='text' placeholder='Vehicle crew role'>"
+									+ "</div>";
+									
+								$ ( $(event.target).parent() ).append( addVehicleIdAndRole );
+							}							
+						});
+						
+						
+						
+						/*
+						// unit action
+						$( "input[name='unitType" + unitId + "'][value='inVehicle']" ).click( function(event) {
+							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {							
+								var addVehicleIdAndRole = 
+									" <div class='horDiv1' name='vehIdAndRole'>"
+										+ "<input class='vehIdInput' type='text' placeholder='VehID'>"
+										+ "<input type='text' placeholder='Vehicle crew role'>"
+									+ "</div>";
+									
+								$ ( $(event.target).parent() ).append( addVehicleIdAndRole );
+								
+								
+								// Chosing another options:	
+								//	PARTOL
+								$( "input[value='patrol']" ).click( function(event) {
+									$( ($(event.target).parent().parent() ).find( "div[name='inVehicle']").find( "div" )).remove();
+									
+									$(  $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
+									$( $( event.target ).parent() ).css( "color", "red" );
+								});
+								//	IN BUILDING
+								$( "input[value='inBuilding']" ).click( function(event) {
+									$( ($(event.target).parent().parent() ).find( "div[name='inVehicle']").find( "div" )).remove();
+									
+									$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
+									$( $( event.target ).parent() ).css( "color", "red" );
+								});			
+
+								$( $( event.target ).parent().parent().find( "div" ) ).css( "color", "blue" );
+								$( $( event.target ).parent() ).css( "color", "red" );
+								
+							}
+						});
+						
+						*/
+					});
+					
+					
+					
 					/*
 					$( ".unitAdd" ).click( function(event) {
 						var defaultUnitClassname = "";
