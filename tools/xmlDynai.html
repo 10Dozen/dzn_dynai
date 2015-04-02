@@ -201,9 +201,11 @@
 					$( this ).find( "input").prop('checked', true);
 				});
 				// Formation
-				$($($( "div[id='zone_formation']" ).find( "div[class='hRadio']"))).click( function(event) {					
-					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
-					$( this ).css( "color", "red" );
+				
+				$( "input[name='formation']" ).click( function(event) {						
+					$( $( this ).parent().parent().find('div')).css( "color", "blue" );
+					
+					$( $( this ).parent() ).css( "color", "red" );
 					$( this ).find( "input").prop('checked', true);
 				});
 				
@@ -280,19 +282,18 @@
 				<div class="hRadio"><input type="radio" name="combatMode" value="yellow">Yellow</div>
 				<div class="hRadio"><input type="radio" name="combatMode" value="red">Red</div>
 			</div>
-			<div id="zone_formation">Formation<br>
-				
-			
-			
-				<input type="radio" name="formation" value="COLUMN">Column<br>
-				<input type="radio" name="formation" value="STAG COLUMN">Staggered Column<br>
-				<input type="radio" name="formation" value="WEDGE">Wedge<br>
-				<input type="radio" name="formation" value="ECH LEFT">Echelon L(eft)<br>
-				<input type="radio" name="formation" value="ECH RIGHT">Echelon R(ight)<br>
-				<input type="radio" name="formation" value="VEE">Vee<br>
-				<input type="radio" name="formation" value="LINE">Line <br>
-				<input type="radio" name="formation" value="stealth">Delta<br>
-				<input type="radio" name="formation" value="stealth">Column (compact)<br>			
+			<div id="zone_formation">Formation<br>		
+				<div>
+					<div><input type="radio" name="formation" value="COLUMN">Column<br></div>
+					<div><input type="radio" name="formation" value="STAG COLUMN">Staggered Column<br></div>
+					<div><input type="radio" name="formation" value="WEDGE">Wedge<br></div>
+					<div><input type="radio" name="formation" value="ECH LEFT">Echelon L(eft)<br></div>
+					<div><input type="radio" name="formation" value="ECH RIGHT">Echelon R(ight)<br></div>
+					<div><input type="radio" name="formation" value="VEE">Vee<br></div>
+					<div><input type="radio" name="formation" value="LINE">Line <br></div>
+					<div><input type="radio" name="formation" value="stealth">Delta<br></div>
+					<div><input type="radio" name="formation" value="stealth">Column (compact)<br></div>
+				</div>
 			</div>			
 		</div>
 		
