@@ -122,6 +122,7 @@
 							$( $( event.target ).parent() ).remove();
 						});
 						
+						// Remove VehID + Role	:: PATROL
 						$( "input[name='unitType" + unitId + "'][value='patrol']" ).click( function(event) {
 							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
 							$( $( event.target ).parent() ).css( "color", "red" );
@@ -133,6 +134,7 @@
 							}
 						});
 						
+						// Remove VehID + Role	:: IN BUILDING
 						$( "input[name='unitType" + unitId + "'][value='inBuilding']" ).click( function(event) {
 							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
 							$( $( event.target ).parent() ).css( "color", "red" );
@@ -144,6 +146,7 @@
 							}
 						});
 						
+						// Add VehID + Role	:: IN VEHICLE
 						$( "input[name='unitType" + unitId + "'][value='inVehicle']" ).click( function(event) {
 							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
 							$( $( event.target ).parent() ).css( "color", "red" );
@@ -157,147 +160,31 @@
 									
 								$ ( $(event.target).parent() ).append( addVehicleIdAndRole );
 							}							
-						});
+						});					
 						
 						
-						
-						/*
-						// unit action
-						$( "input[name='unitType" + unitId + "'][value='inVehicle']" ).click( function(event) {
-							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {							
-								var addVehicleIdAndRole = 
-									" <div class='horDiv1' name='vehIdAndRole'>"
-										+ "<input class='vehIdInput' type='text' placeholder='VehID'>"
-										+ "<input type='text' placeholder='Vehicle crew role'>"
-									+ "</div>";
-									
-								$ ( $(event.target).parent() ).append( addVehicleIdAndRole );
-								
-								
-								// Chosing another options:	
-								//	PARTOL
-								$( "input[value='patrol']" ).click( function(event) {
-									$( ($(event.target).parent().parent() ).find( "div[name='inVehicle']").find( "div" )).remove();
-									
-									$(  $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
-									$( $( event.target ).parent() ).css( "color", "red" );
-								});
-								//	IN BUILDING
-								$( "input[value='inBuilding']" ).click( function(event) {
-									$( ($(event.target).parent().parent() ).find( "div[name='inVehicle']").find( "div" )).remove();
-									
-									$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
-									$( $( event.target ).parent() ).css( "color", "red" );
-								});			
-
-								$( $( event.target ).parent().parent().find( "div" ) ).css( "color", "blue" );
-								$( $( event.target ).parent() ).css( "color", "red" );
-								
-							}
-						});
-						
-						*/
 					});
 					
 					
-					
-					/*
-					$( ".unitAdd" ).click( function(event) {
-						var defaultUnitClassname = "";
-						switch ( $( "input[name='side']:checked" ).val() ) {
-							case "west": 	defaultUnitClassname = westManDefault; break;
-							case "east": 	defaultUnitClassname = eastManDefault; break;
-							case "resistance": 	defaultUnitClassname = resistanceManDefault; break;
-							case "civilian": 	defaultUnitClassname = civilianManDefault; break;
-							default: 		defaultUnitClassname = "";								
-						}	
-						
-						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
-						var unitId = squadItem.children().length;
-							
-						var unitAdd = 
-							"<div class='unit'>" 
-								+ unitRemove 
-								+ " <div class='unitName'> Infantry </div>"
-								+ "<input type='text' placeholder='Classname of unit' value='" + defaultUnitClassname + "'> | <input type='text' placeholder='Kit for unit'> | "
-								+ "<div class='horDiv1'>"
-									+ "<div class='horDiv1' name='patrol'><input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol</div>"
-									+ "<div class='horDiv1' name='inBuilding'><input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building</div>"
-									+ "<div class='horDiv1' name='inVehicle'><input type='radio' name='unitType" + unitId + "' value='inVehicle'>In vehicle</div>"
-								+ "</div>"
-							+ "</div>";
-						
-						$( unitAdd ).appendTo( $( event.target ).parent().find(".squad") );
-						
-						$( "input[name='unitType" + unitId + "'][value='inVehicle']" ).click( function(event) {
-							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {							
-								var addVehicleIdAndRole = 
-									" <div class='horDiv1' name='vehIdAndRole'>"
-										+ "<input class='vehIdInput' type='text' placeholder='VehID'>"
-										+ "<input type='text' placeholder='Vehicle crew role'>"
-									+ "</div>";
-									
-								$ ( $(event.target).parent() ).append( addVehicleIdAndRole );
-								
-								
-								// Chosing another options:	
-								//	PARTOL
-								$( "input[value='patrol']" ).click( function(event) {
-									$( ($(event.target).parent().parent() ).find( "div[name='inVehicle']").find( "div" )).remove();
-									
-									$(  $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
-									$( $( event.target ).parent() ).css( "color", "red" );
-								});
-								//	IN BUILDING
-								$( "input[value='inBuilding']" ).click( function(event) {
-									$( ($(event.target).parent().parent() ).find( "div[name='inVehicle']").find( "div" )).remove();
-									
-									$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
-									$( $( event.target ).parent() ).css( "color", "red" );
-								});			
-
-								$( $( event.target ).parent().parent().find( "div" ) ).css( "color", "blue" );
-								$( $( event.target ).parent() ).css( "color", "red" );
-								
-							}
-						});
-						
-						
-						$( "input[name='unitType" + unitId + "'][value='patrol']" ).click( function(event) {
-							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
-							$( $( event.target ).parent() ).css( "color", "red" );
-						});
-						
-						$( "input[name='unitType" + unitId + "'][value='inBuilding']" ).click( function(event) {
-							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
-							$( $( event.target ).parent() ).css( "color", "red" );
-						});
-						
-						
-						// Remove unit from group
-						$( "input[class='unitRemove']").click( function(event) {
-							$( $( event.target ).parent() ).remove();
-						});
-					});
-					*/
 				});
 				
 				
 				
+				// Effects for another radiobuttons
+				//$( $( "div[id='zone_name']" ).find( "div[class='hRadio']") ).
+				console.log (  $($( "div[id='zone_side']" ).find( "div[class='hRadio']"))[0] );
+				
+				$($($( "div[id='zone_side']" ).find( "div[class='hRadio']"))).click( function(event) {
+					console.log('111');
+					
+					
+				});
 			});
 			
 			
 				
 				
 		</script>
-
-		
-		
-		
-		
-		
-		
-		
 		<style>
 			.horDiv1 {
 				display: inline-block;
@@ -312,7 +199,6 @@
 				display: inline-block;
 				width: 85px;
 			
-				color: #FF6666;
 			}
 			
 			.vehIdText {
