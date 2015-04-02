@@ -171,19 +171,42 @@
 				
 				
 				// Effects for another radiobuttons
-				//$( $( "div[id='zone_name']" ).find( "div[class='hRadio']") ).
+				
+				// SIDE
 				console.log (  $($( "div[id='zone_side']" ).find( "div[class='hRadio']"))[0] );
 				
-				$($($( "div[id='zone_side']" ).find( "div[class='hRadio']"))).click( function(event) {
-					console.log( this );
-					console.log( $( event.target) );
-					
+				$($($( "div[id='zone_side']" ).find( "div[class='hRadio']"))).click( function(event) {					
+					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
+					$( this ).css( "color", "red" );				
+					$( this ).find( "input").prop('checked', true);
+				});
+				
+				// SpeedMode
+				$($($( "div[id='zone_speedMode']" ).find( "div[class='hRadio']"))).click( function(event) {					
 					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
 					$( this ).css( "color", "red" );
-					
-				//	$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
-					//		$( $( event.target ).parent() ).css( "color", "red" );
+					$( this ).find( "input").prop('checked', true);
 				});
+				
+				// Behavior
+				$($($( "div[id='zone_behavior']" ).find( "div[class='hRadio']"))).click( function(event) {					
+					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
+					$( this ).css( "color", "red" );
+					$( this ).find( "input").prop('checked', true);
+				});
+				// CombatMode
+				$($($( "div[id='zone_combatMode']" ).find( "div[class='hRadio']"))).click( function(event) {					
+					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
+					$( this ).css( "color", "red" );
+					$( this ).find( "input").prop('checked', true);
+				});
+				// Formation
+				$($($( "div[id='zone_formation']" ).find( "div[class='hRadio']"))).click( function(event) {					
+					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
+					$( this ).css( "color", "red" );
+					$( this ).find( "input").prop('checked', true);
+				});
+				
 			});
 			
 			
@@ -227,37 +250,37 @@
 				<div class="hRadio"><input type="radio" name="side" value="resistance">Indep</div>
 				<div class="hRadio"><input type="radio" name="side" value="civilian">Civ</div>
 			</div>			
-			<p id="zone_status">Is Active<input type="checkbox" placeholder="is Active"></p>
+			<div id="zone_status">Is Active<input type="checkbox" placeholder="is Active"></div>
 			<hr>
-			<p id="zone_unit">Units<br>
+			<div id="zone_unit">Units<br>
 				<input id="groupName" type="text" placeholder="Name of the groop (optional)">
 				<input id="groupAdd" type="button" value="Add Group">
 				<div id="zone_groups">					
 				</div>
-			</p>
+			</div>
 			
 			<hr>
 			<p>Behavior Settings</p>		
-			<p id="zone_speedMode">Speed Mode<br>
+			<div id="zone_speedMode">Speed Mode<br>
 				<div class="hRadio"><input type="radio" name="speedMode" value="limited">Limited</div>
 				<div class="hRadio"><input type="radio" name="speedMode" value="normal">Normal</div>
 				<div class="hRadio"><input type="radio" name="speedMode" value="full">Full</div>
-			</p>					
-			<p id="zone_behavior">Behavior<br>
+			</div>					
+			<div id="zone_behavior">Behavior<br>
 				<div class="hRadio"><input type="radio" name="behavior" value="careless">Careless</div>
 				<div class="hRadio"><input type="radio" name="behavior" value="safe">Safe</div>
 				<div class="hRadio"><input type="radio" name="behavior" value="aware">Aware</div>
 				<div class="hRadio"><input type="radio" name="behavior" value="combat">Combat</div>
 				<div class="hRadio"><input type="radio" name="behavior" value="stealth">Stealth</div>
-			</p>
-			<p id="zone_combatMode">Combat Mode<br>
+			</div>
+			<div id="zone_combatMode">Combat Mode<br>
 				<div class="hRadio"><input type="radio" name="combatMode" value="blue">Blue</div>
 				<div class="hRadio"><input type="radio" name="combatMode" value="green">Green</div>
 				<div class="hRadio"><input type="radio" name="combatMode" value="white">White</div>
 				<div class="hRadio"><input type="radio" name="combatMode" value="yellow">Yellow</div>
 				<div class="hRadio"><input type="radio" name="combatMode" value="red">Red</div>
-			</p>
-			<p id="zone_formation">Formation<br>
+			</div>
+			<div id="zone_formation">Formation<br>
 				
 			
 			
@@ -270,7 +293,7 @@
 				<input type="radio" name="formation" value="LINE">Line <br>
 				<input type="radio" name="formation" value="stealth">Delta<br>
 				<input type="radio" name="formation" value="stealth">Column (compact)<br>			
-			</p>			
+			</div>			
 		</div>
 		
 		<hr>
