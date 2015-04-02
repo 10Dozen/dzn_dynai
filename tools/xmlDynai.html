@@ -211,10 +211,36 @@
 				
 				// Button "GET"
 				$( "input[id='configButton']" ).click( function(event) {
-					console.log("Getting Valuessss");
-					
+					console.log("Getting Valuessss");					
 					var output = "Output Value. Go get it!";
 					
+					/*
+						var zoneName = "";
+						var zoneAreaAndWP = ",[],[]";
+						var zoneActive = "";
+						var zoneRefs = "";
+						var zoneSpeed = "";
+						var zoneBehavior = "";
+						var zoneMode = "";
+						var zoneForm = "";
+					*/
+					
+					var zoneName = "'dzn_name'";		
+					var zoneSide = "'RESISTANCE'";
+					var zoneActive = "false";
+					var zoneAreaAndWP = "[],[]";
+					var zoneRefs = "[[/* Infantry units */4,[['I_G_Soldier_F',[], ''],['I_G_Soldier_F',[],'']]]]";
+					var zoneSpeed = "'LIMITED'";
+					var zoneBehavior = "'SAFE'";
+					var zoneMode = "'YELLOW'";
+					var zoneForm = "'COLUMN'";
+					
+					
+					
+					
+					output = "[" + zoneName + "," + zoneSide + "," + zoneActive + "," + zoneAreaAndWP
+						+ "," + zoneRefs
+						+ ",[" + zoneSpeed + "," + zoneBehavior + "," + zoneMode + "," + zoneForm + "]";
 					$( "textarea[name='comment']" ).html( output );
 					
 				});
