@@ -231,8 +231,10 @@
 						var zoneForm = "";
 					*/
 					
-					var zoneName = "'dzn_name'";		
-					var zoneSide = "'RESISTANCE'";
+					var zoneName = "'" + $( "input[name='zoneNameInput']" ).val() + "'";
+
+					
+					var zoneSide = "'" +  $( "input[name='side']:checked" ).val().toUpperCase() + "'";
 					var zoneActive = "false";
 					var zoneAreaAndWP = "[],[]";
 					var zoneRefs = "[[/* Infantry units */4,[['I_G_Soldier_F',[], ''],['I_G_Soldier_F',[],'']]]]";
@@ -241,8 +243,15 @@
 					var zoneMode = "'YELLOW'";
 					var zoneForm = "'COLUMN'";
 					
+					console.log( $( "input[name='side']:checked" ).val() );
 					
 					
+					
+					
+					
+					
+					
+					console.log($( "input[name='zoneNameInput']" ).val());
 					
 					output = "[" + zoneName + "," + zoneSide + "," + zoneActive + "," + zoneAreaAndWP
 						+ "," + zoneRefs
@@ -328,7 +337,7 @@
 			<hr>
 			<div class="titleDiv">ZONE PROPERTIES</div>
 			<hr>
-			<p id="zone_name"><input placeholder="zoneName"></p>
+			<p id="zone_name"><input name="zoneNameInput" placeholder="zoneName"></p>
 			<div id="zone_side">Side
 				<div class="hRadio"><input type="radio" name="side" value="west">West</div>
 				<div class="hRadio"><input type="radio" name="side" value="east">East</div>
