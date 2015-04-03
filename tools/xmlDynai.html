@@ -96,13 +96,12 @@
 					$( addUnitItem ).click( function(event) {
 						console.log("unit added");
 						
-						var defaultUnitClassname = "";
+						var defaultUnitClassname = $( "div[id='defaultUnitClassname']" ).find( "input" ).val();
 						switch ( $( "input[name='side']:checked" ).val() ) {
 							case "west": 	defaultUnitClassname = westManDefault; break;
 							case "east": 	defaultUnitClassname = eastManDefault; break;
 							case "resistance": 	defaultUnitClassname = resistanceManDefault; break;
-							case "civilian": 	defaultUnitClassname = civilianManDefault; break;
-							default: 		defaultUnitClassname = "";								
+							case "civilian": 	defaultUnitClassname = civilianManDefault; break;													
 						}	
 						
 						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
@@ -236,6 +235,16 @@
 							
 							if ( $( element ).find( "div[class='unit']").length > 0 ) {
 								$( element ).find( "div[class='unit']").each( function (index, element) {
+									var unitType = "";
+									
+									if ( $( element ).find( "div[class='vehName']" ).length > 0 ) {
+										unitType = 'vehicle';
+									}
+									
+									if ( $( element ).find( "div[class='unitName']" ).length > 0 ) {
+										unitType = 'infantry';
+									}
+									
 								
 									console.log( element );
 								
