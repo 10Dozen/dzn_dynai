@@ -17,9 +17,14 @@
 			var unitRemove 					= "<input class='unitRemove' type='button' value='X'>";
 			
 			var vehAssignementRemove		= "<input class='unitAssignementRemove' type='button' value='X'>";
-							
-							
-							
+
+			var cssActiveStyle				= "background";
+			var cssActiveStyleAttr			= "#99CC00";
+			var cssInactiveStyle			= "background";
+			var cssInactiveStyleAttr		= "#FFFFFF";
+			
+			
+			
 			$( document ).ready(function() {
 			
 				// Adding a group button
@@ -124,8 +129,8 @@
 						
 						// Remove VehID + Role	:: PATROL
 						$( "input[name='unitType" + unitId + "'][value='patrol']" ).click( function(event) {
-							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
-							$( $( event.target ).parent() ).css( "color", "red" );
+							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
+							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 							
 							if ( $( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).length != 0 ) {
 								console.log("Delete input field");
@@ -136,8 +141,8 @@
 						
 						// Remove VehID + Role	:: IN BUILDING
 						$( "input[name='unitType" + unitId + "'][value='inBuilding']" ).click( function(event) {
-							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
-							$( $( event.target ).parent() ).css( "color", "red" );
+							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
+							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 							
 							if ( $( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).length != 0 ) {
 								console.log("Delete input field");
@@ -148,8 +153,8 @@
 						
 						// Add VehID + Role	:: IN VEHICLE
 						$( "input[name='unitType" + unitId + "'][value='inVehicle']" ).click( function(event) {
-							$( $( event.target ).parent().parent().find( "div" )  ).css( "color", "blue" );
-							$( $( event.target ).parent() ).css( "color", "red" );
+							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
+							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 							
 							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {							
 								var addVehicleIdAndRole = 
@@ -175,36 +180,37 @@
 				console.log (  $($( "div[id='zone_side']" ).find( "div[class='hRadio']"))[0] );
 				
 				$($($( "div[id='zone_side']" ).find( "div[class='hRadio']"))).click( function(event) {					
-					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
-					$( this ).css( "color", "red" );				
+					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
+					$( this ).css( cssActiveStyle, cssActiveStyleAttr );				
 					$( this ).find( "input").prop('checked', true);
 				});
 				
 				// SpeedMode
 				$($($( "div[id='zone_speedMode']" ).find( "div[class='hRadio']"))).click( function(event) {					
-					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
-					$( this ).css( "color", "red" );
+					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
+					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
 					$( this ).find( "input").prop('checked', true);
 				});
 				
 				// Behavior
 				$($($( "div[id='zone_behavior']" ).find( "div[class='hRadio']"))).click( function(event) {					
-					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
-					$( this ).css( "color", "red" );
+					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
+					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
 					$( this ).find( "input").prop('checked', true);
 				});
 				// CombatMode
 				$($($( "div[id='zone_combatMode']" ).find( "div[class='hRadio']"))).click( function(event) {					
-					$( $( this ).parent().find( "div" ) ).css( "color", "blue" );
-					$( this ).css( "color", "red" );
+					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
+					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
 					$( this ).find( "input").prop('checked', true);
 				});
 				// Formation
 				
-				$( "input[name='formation']" ).click( function(event) {						
-					$( $( this ).parent().parent().find('div')).css( "color", "blue" );
+				$( "input[name='formation']" ).click( function(event) {	
 					
-					$( $( this ).parent() ).css( "color", "red" );
+					$( $( this ).parent().parent().find('div')).css( cssInactiveStyle, cssInactiveStyleAttr );
+					
+					$( $( this ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 					$( this ).find( "input").prop('checked', true);
 				});
 				
@@ -252,19 +258,25 @@
 				
 		</script>
 		<style>
+			div {
+				border-radius: 15px;
+			}
+		
+			.formDiv {
+				width: 200px;
+			}
 			.horDivLine {
 				display: inline-block;
 				width: 200px;
 			}
 			
-			.titleDiv {
-				border: 4px solid black;
+			.titleDiv {				
 				background-color: #3366CC;
 				text-align: center;
-				color: red;
+				color: #FFFFFF;
 			}
 		
-			.horDiv1 {
+			.horDiv1 {				
 				display: inline-block;
 			}
 			
@@ -272,7 +284,7 @@
 				width: 45px;
 			}
 		
-			.hRadio {
+			.hRadio {				
 				position: relative;				
 				display: inline-block;
 				width: 85px;
@@ -355,15 +367,15 @@
 			</div>
 			<div id="zone_formation">Formation<br>		
 				<div>
-					<div><input type="radio" name="formation" value="COLUMN">Column<br></div>
-					<div><input type="radio" name="formation" value="STAG COLUMN">Staggered Column<br></div>
-					<div><input type="radio" name="formation" value="WEDGE">Wedge<br></div>
-					<div><input type="radio" name="formation" value="ECH LEFT">Echelon L(eft)<br></div>
-					<div><input type="radio" name="formation" value="ECH RIGHT">Echelon R(ight)<br></div>
-					<div><input type="radio" name="formation" value="VEE">Vee<br></div>
-					<div><input type="radio" name="formation" value="LINE">Line <br></div>
-					<div><input type="radio" name="formation" value="stealth">Delta<br></div>
-					<div><input type="radio" name="formation" value="stealth">Column (compact)<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="COLUMN">Column<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="STAG COLUMN">Staggered Column<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="WEDGE">Wedge<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="ECH LEFT">Echelon L(eft)<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="ECH RIGHT">Echelon R(ight)<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="VEE">Vee<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="LINE">Line <br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="stealth">Delta<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="stealth">Column (compact)<br></div>
 				</div>
 			</div>			
 		</div>
