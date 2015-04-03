@@ -75,7 +75,7 @@
 						var vehicelAdd = ""
 							+ "<div class='unit'>" 
 								+ unitRemove 
-								+ " <div class='unitName'> Vehicle ID " + unitId + " </div>"
+								+ " <div class='vehName'> Vehicle ID " + unitId + " </div>"
 								+ "<input type='text' placeholder='Classname of vehicle'> | <input type='text' placeholder='Kit of vehicle'>"
 							+ "</div>";
 							
@@ -219,6 +219,50 @@
 				$( "input[id='configButton']" ).click( function(event) {										
 					var output = "Output Value. Go get it!";
 					
+					
+					
+					
+					
+					
+					
+					if ( $( "div[id='zone_groups']" ).find( "div[class^='group']" ).length >  0 ) {
+						
+						$( "div[class^='group']" ).each( function( index, element) {
+							
+							
+							
+							var count = $( element ).find( "input[type='number']" ).val();
+							
+							
+							if ( $( element ).find( "div[class='unit']").length > 0 ) {
+								$( element ).find( "div[class='unit']").each( function (index, element) {
+								
+									console.log( element );
+								
+								
+								});
+							}
+						
+							
+							
+							
+							
+							
+							
+						});
+					
+						
+						
+						
+						
+						
+					};
+					
+					
+					
+					
+					/*
+					
 					var zoneName = "'defaultZone'";
 					var zoneSide = "'WEST'";
 					var zoneActive = "'false'";
@@ -241,10 +285,7 @@
 					
 					if ($( "input[name='zoneActive']:checked" ).val() == "on") {
 						var zoneActive = "'" +  "true" + "'";
-					}
-					
-					
-					var zoneRefs = "[[/* Infantry units */4,[['I_G_Soldier_F',[], ''],['I_G_Soldier_F',[],'']]]]";
+					}				
 					
 					if (  $( "input[name='speedMode']:checked" ).length > 0 ) {
 						zoneSpeed = "'" +  $( "input[name='speedMode']:checked" ).val().toUpperCase() + "'";
@@ -261,16 +302,17 @@
 					if (  $( "input[name='formation']:checked" ).length > 0 ) {
 						zoneForm = "'" +  $( "input[name='formation']:checked" ).val().toUpperCase() + "'";
 					}
-										
 					
+					*/
+					//zoneRefs = "[[/* Infantry units */4,[['I_G_Soldier_F',[], ''],['I_G_Soldier_F',[],'']]]]";
 					
-					
+				/*
 					
 					output = "[" + zoneName + "," + zoneSide + "," + zoneActive + "," + zoneAreaAndWP
 						+ "," + zoneRefs
 						+ ",[" + zoneSpeed + "," + zoneBehavior + "," + zoneMode + "," + zoneForm + "]";
 					$( "textarea[name='comment']" ).html( output );
-					
+					*/
 				});
 				
 			});
@@ -321,6 +363,11 @@
 				display: inline-block;
 				width: 125px;
 			}
+			
+			.vehName {
+				display: inline-block;
+				width: 125px;
+			}
 		</style>
 	</head>
 	<body>
@@ -360,7 +407,7 @@
 			<div id="zone_status">Is Active<input type="checkbox" name="zoneActive" placeholder="is Active"></div>
 			<hr>
 			<div id="zone_unit">Units<br>
-				<input id="groupName" type="text" placeholder="Name of the groop (optional)">
+				<input id="groupName" type="text" placeholder="Name of the group (optional)">
 				<input id="groupAdd" type="button" value="Add Group">
 				<div id="zone_groups">					
 				</div>
