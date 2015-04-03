@@ -104,6 +104,9 @@
 							case "civilian": 	defaultUnitClassname = civilianManDefault; break;													
 						}	
 						
+						var defaultUnitKit = $( "div[id='defaultUnitKit']" ).find( "input" ).val();
+						
+						
 						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
 						var unitId = squadItem.children().length;
 						
@@ -111,7 +114,7 @@
 							"<div class='unit'>" 
 								+ unitRemove 
 								+ " <div class='unitName'> Infantry </div>"
-								+ "<input type='text' placeholder='Classname of unit' value='" + defaultUnitClassname + "'> | <input type='text' placeholder='Kit for unit'> | "
+								+ "<input type='text' placeholder='Classname of unit' value='" + defaultUnitClassname + "'> | <input type='text' placeholder='Kit for unit' value='" + defaultUnitKit + "'> | "
 								+ "<div class='horDiv1'>"
 									+ "<div class='horDiv1' name='patrol'><input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol</div>"
 									+ "<div class='horDiv1' name='inBuilding'><input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building</div>"
