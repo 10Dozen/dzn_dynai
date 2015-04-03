@@ -216,42 +216,55 @@
 				
 				
 				// Button "GET"
-				$( "input[id='configButton']" ).click( function(event) {
-					console.log("Getting Valuessss");					
+				$( "input[id='configButton']" ).click( function(event) {										
 					var output = "Output Value. Go get it!";
 					
-					/*
-						var zoneName = "";
-						var zoneAreaAndWP = ",[],[]";
-						var zoneActive = "";
-						var zoneRefs = "";
-						var zoneSpeed = "";
-						var zoneBehavior = "";
-						var zoneMode = "";
-						var zoneForm = "";
-					*/
-					
-					var zoneName = "'" + $( "input[name='zoneNameInput']" ).val() + "'";
-
-					
-					var zoneSide = "'" +  $( "input[name='side']:checked" ).val().toUpperCase() + "'";
-					var zoneActive = "false";
-					var zoneAreaAndWP = "[],[]";
-					var zoneRefs = "[[/* Infantry units */4,[['I_G_Soldier_F',[], ''],['I_G_Soldier_F',[],'']]]]";
+					var zoneName = "'defaultZone'";
+					var zoneSide = "'WEST'";
+					var zoneActive = "'false'";
+					var zoneAreaAndWP = ",[],[]";					
+					var zoneRefs = "";
 					var zoneSpeed = "'LIMITED'";
 					var zoneBehavior = "'SAFE'";
 					var zoneMode = "'YELLOW'";
 					var zoneForm = "'COLUMN'";
 					
-					console.log( $( "input[name='side']:checked" ).val() );
+					
+					
+					if ( $( "input[name='zoneNameInput']" ).val().length > 0 ) {
+						zoneName = "'" + $( "input[name='zoneNameInput']" ).val() + "'";
+					}
+					
+					if (  $( "input[name='side']:checked" ).length > 0 ) {
+						zoneSide = "'" +  $( "input[name='side']:checked" ).val().toUpperCase() + "'";
+					}
+					
+					if ($( "input[name='zoneActive']:checked" ).val() == "on") {
+						var zoneActive = "'" +  "true" + "'";
+					}
+					
+					
+					var zoneRefs = "[[/* Infantry units */4,[['I_G_Soldier_F',[], ''],['I_G_Soldier_F',[],'']]]]";
+					
+					if (  $( "input[name='speedMode']:checked" ).length > 0 ) {
+						zoneSpeed = "'" +  $( "input[name='speedMode']:checked" ).val().toUpperCase() + "'";
+					}
+					
+					if (  $( "input[name='behavior']:checked" ).length > 0 ) {
+						zoneBehavior = "'" +  $( "input[name='behavior']:checked" ).val().toUpperCase() + "'";
+					}
+					
+					if (  $( "input[name='combatMode']:checked" ).length > 0 ) {
+						zoneMode = "'" +  $( "input[name='combatMode']:checked" ).val().toUpperCase() + "'";
+					}
+					
+					if (  $( "input[name='formation']:checked" ).length > 0 ) {
+						zoneForm = "'" +  $( "input[name='formation']:checked" ).val().toUpperCase() + "'";
+					}
+										
 					
 					
 					
-					
-					
-					
-					
-					console.log($( "input[name='zoneNameInput']" ).val());
 					
 					output = "[" + zoneName + "," + zoneSide + "," + zoneActive + "," + zoneAreaAndWP
 						+ "," + zoneRefs
@@ -344,7 +357,7 @@
 				<div class="hRadio"><input type="radio" name="side" value="resistance">Indep</div>
 				<div class="hRadio"><input type="radio" name="side" value="civilian">Civ</div>
 			</div>			
-			<div id="zone_status">Is Active<input type="checkbox" placeholder="is Active"></div>
+			<div id="zone_status">Is Active<input type="checkbox" name="zoneActive" placeholder="is Active"></div>
 			<hr>
 			<div id="zone_unit">Units<br>
 				<input id="groupName" type="text" placeholder="Name of the groop (optional)">
