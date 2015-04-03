@@ -252,6 +252,18 @@
 				
 		</script>
 		<style>
+			.horDivLine {
+				display: inline-block;
+				width: 200px;
+			}
+			
+			.titleDiv {
+				border: 4px solid black;
+				background-color: #3366CC;
+				text-align: center;
+				color: red;
+			}
+		
 			.horDiv1 {
 				display: inline-block;
 			}
@@ -281,6 +293,29 @@
 		<h1>xmlDynai</h1>
 		
 		<div id="mainWrap" align="left">
+			<div id="defaults">
+			<div class="titleDiv">DEFAULT VALUES</div>
+			<hr>
+				<div id="defaultUnitClassname">
+					<div class="horDivLine">Default Unit Classname</div>
+					<div class="horDivLine"><input placeholder="Default unit classname"></div>				
+				</div>
+				<div id="defaultVehClassname">
+					<div class="horDivLine">Default Vehicle Classname</div>
+					<div class="horDivLine"><input placeholder="Default vehicle classname"></div>					
+				</div>
+				<div id="defaultUnitKit">
+					<div class="horDivLine">Default Unit Kit</div>
+					<div class="horDivLine"><input placeholder="Default unit kit"></div>
+				</div>
+				<div id="defaultVehKit">
+					<div class="horDivLine">Default Vehicle Kit</div>
+					<div class="horDivLine"><input placeholder="Default unit kit"></div>
+				</div>
+			</div>
+			<hr>
+			<div class="titleDiv">ZONE PROPERTIES</div>
+			<hr>
 			<p id="zone_name"><input placeholder="zoneName"></p>
 			<div id="zone_side">Side
 				<div class="hRadio"><input type="radio" name="side" value="west">West</div>
