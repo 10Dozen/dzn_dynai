@@ -36,10 +36,10 @@ dzn_dynai_allowedHouses				= ["House"];
 if (hasInterface && !isServer) exitWith {};
 
 // Get HC unit (Mission parameter "HeadlessClient" should be defined, see F3 Framework)
-if (("HeadlessClient" call BIS_fnc_GetParamValue) == 1) then {
+// if (("HeadlessClient" call BIS_fnc_GetParamValue) == 1) then {
 	// If Headless exists - server won't run script
-	if (isServer) exitWith {};
-};
+	// if (isServer) exitWith {};
+// };
 
 //	**************	INITIALIZATION *********************
 
@@ -59,3 +59,4 @@ call dzn_fnc_dynai_initZones;
 
 waitUntil { time > dzn_dynai_afterInitTimeout };
 call dzn_fnc_dynai_startZones;
+
