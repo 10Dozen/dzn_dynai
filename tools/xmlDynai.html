@@ -22,7 +22,8 @@
 			var cssActiveStyleAttr			= "#99CC00";
 			var cssInactiveStyle			= "background";
 			var cssInactiveStyleAttr		= "#FFFFFF";
-			
+			var cssWrongColor				= "#FA6464";
+			var cssDefColor					= "#FFFFFF";
 			
 			
 			$( document ).ready(function() {
@@ -74,11 +75,7 @@
 						var defaultVehicleKit = "";
 						if ( $( "div[id='defaultVehKit']" ).find( "input" ).val().length > 0 ) {
 							defaultVehicleKit = $( "div[id='defaultVehKit']" ).find( "input" ).val();
-						}
-						
-						console.log(defaultVehicleKit);
-						
-						
+						}					
 						
 						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
 						var unitId = (squadItem.children().length) - 1;	
@@ -86,8 +83,8 @@
 							+ "<div class='unit'>" 
 								+ unitRemove 
 								+ " <div class='vehName'> Vehicle ID " + unitId + " </div>"
-								+ "<input type='text' placeholder='Classname of vehicle' value='" + defaultVehicleClassname + "'> | "
-								+ "<input type='text' placeholder='Kit of vehicle' value='" + defaultVehicleKit + "'>"
+								+ "<input name='class' type='text' placeholder='Classname of vehicle' value='" + defaultVehicleClassname + "'> | "
+								+ "<input name='kit' type='text' placeholder='Kit of vehicle' value='" + defaultVehicleKit + "'>"
 							+ "</div>";
 							
 						$( vehicelAdd ).appendTo( $( event.target ).parent().find(".squad"));
@@ -125,7 +122,8 @@
 							"<div class='unit'>" 
 								+ unitRemove 
 								+ " <div class='unitName'> Infantry </div>"
-								+ "<input type='text' placeholder='Classname of unit' value='" + defaultUnitClassname + "'> | <input type='text' placeholder='Kit for unit' value='" + defaultUnitKit + "'> | "
+								+ "<input name='class' type='text' placeholder='Classname of unit' value='" + defaultUnitClassname 
+								+ "'> | <input name='kit' type='text' placeholder='Kit for unit' value='" + defaultUnitKit + "'> | "
 								+ "<div class='horDiv1'>"
 									+ "<div class='horDiv1' name='patrol'><input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol</div>"
 									+ "<div class='horDiv1' name='inBuilding'><input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building</div>"
@@ -172,8 +170,8 @@
 							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {							
 								var addVehicleIdAndRole = 
 									" <div class='horDiv1' name='vehIdAndRole'>"
-										+ "<input class='vehIdInput' type='text' placeholder='VehID'>"
-										+ "<input type='text' placeholder='Vehicle crew role'>"
+										+ "<input name='vehId' class='vehIdInput' type='text' placeholder='VehID'>"
+										+ "<input name='vehRole' type='text' placeholder='Vehicle crew role'>"
 									+ "</div>";
 									
 								$ ( $(event.target).parent() ).append( addVehicleIdAndRole );
@@ -232,28 +230,96 @@
 					if ( $( "div[id='zone_groups']" ).find( "div[class^='group']" ).length >  0 ) {
 						
 						$( "div[class^='group']" ).each( function( index, element) {
-							
-							
-							
+						
 							var count = $( element ).find( "input[type='number']" ).val();
-							
+							var units = [];
 							
 							if ( $( element ).find( "div[class='unit']").length > 0 ) {
 								$( element ).find( "div[class='unit']").each( function (index, element) {
-									var unitType = "";
+									var unitString = "";									
+									var unitClass = "";
+									var kit = "";
 									
-									if ( $( element ).find( "div[class='vehName']" ).length > 0 ) {
-										unitType = 'vehicle';
+									// Get unit classname
+									if ( $( element ).find( "input[name='class']" ).val().length > 0) {
+										unitClass = $( element ).find( "input[name='class']" ).val();
+										$( element ).find( "input[name='class']" ).css( "background-color", cssDefColor );
+									} else {
+										//alert( "No class given!" );
+										$( element ).find( "input[name='class']" ).css( "background-color", cssWrongColor );
+									}										
+									// Get unit kitname
+									if ( $( element ).find( "input[name='kit']").val().length > 0) {
+										kit =  $( element ).find( "input[name='kit']").val();
+									}
+
+									// Create string for VEHICLE
+									if ( $( element ).find( "div[class='vehName']" ).length > 0 ) {	
+										unitString = "['" + unitClass + "','isVehicle','" + kit + "']";
 									}
 									
-									if ( $( element ).find( "div[class='unitName']" ).length > 0 ) {
-										unitType = 'infantry';
+									// Create string for UNIT
+									if ( $( element ).find( "div[class='unitName']" ).length > 0 ) {										
+										// Get unit assignement
+										unitString = "['" + unitClass + "',";
+										
+										var isAssigned = false;
+										
+										// is Patroling										
+										if ( $( element ).find( "div[class='horDiv1']" ).find( "div[name='patrol']" ).find( "input:checked" ).length > 0 ) {
+											unitString = unitString + "[],";
+											isAssigned = true;
+										}
+										
+										// is In Building
+										if ( $( element ).find( "div[class='horDiv1']" ).find( "div[name='inBuilding']" ).find( "input:checked" ).length > 0) {
+											unitString = unitString + "['indoors'],";
+											isAssigned = true;
+										}
+										
+										console.log( $( element ).find( "div[class='horDiv1']" ).find( "div[name='inBuilding']" ).find( "input:checked" ).length );
+										// is in vehicle
+										if ( $( element ).find( "div[class='horDiv1']" ).find( "div[name='inVehicle']" ).find( "input:checked" ).length > 0) {
+											var vehicleItem =  $( element ).find( "div[class='horDiv1']" ).find( "div[name='inVehicle']" );
+											
+											var vehId = "ERROR";
+											// Get veh ID
+											if ( $( vehicleItem ).find( "div[name='vehIdAndRole']" ).find( "input[name='vehId']" ).val().length > 0 ) {											
+												vehId = $( vehicleItem ).find( "div[name='vehIdAndRole']" ).find( "input[name='vehId']" ).val();
+												$( vehicleItem ).find( "div[name='vehIdAndRole']" ).find( "input[name='vehId']" ).css( "background-color", cssDefColor );
+												isAssigned = true;
+											} else {
+												//alert( "No vehicle ID given for unit assignement!" );
+												$( vehicleItem ).find( "div[name='vehIdAndRole']" ).find( "input[name='vehId']" ).css( "background-color", cssWrongColor );
+												isAssigned = false;
+											}
+											
+											// Get veh role
+											var vehRole = "ERROR";
+											if ($( vehicleItem ).find( "div[name='vehIdAndRole']" ).find( "input[name='vehRole']").val().length > 0 ) {
+												vehRole = $( vehicleItem ).find( "div[name='vehIdAndRole']" ).find( "input[name='vehRole']").val();
+												$( vehicleItem ).find( "div[name='vehIdAndRole']" ).find( "input[name='vehRole']").css( "background-color", cssDefColor );
+												isAssigned = true;
+											} else {
+												//alert( "No vehicle ID given for unit assignement!" );
+												$( vehicleItem ).find( "div[name='vehIdAndRole']" ).find( "input[name='vehRole']").css( "background-color", cssWrongColor );
+												isAssigned = false;
+											}
+											
+											unitString = unitString + "[" + vehId + ",'" + vehRole + "'],";
+										}
+										
+										if ( isAssigned ) {
+											unitString = unitString + "'" + kit + "']";
+											$( element ).find( "div[class='horDiv1']" ).find( "div" ).css( "border", "0px solid #FFFFFF" );
+										} else {
+											$( element ).find( "div[class='horDiv1']" ).find( "div" ).css( "border", "1px solid red" );
+										}
 									}
 									
-								
-									console.log( element );
-								
-								
+									console.log(unitString);										
+									units.push(unitString);
+									console.log(units);								
 								});
 							}
 						
@@ -264,12 +330,6 @@
 							
 							
 						});
-					
-						
-						
-						
-						
-						
 					};
 					
 					
