@@ -58,8 +58,6 @@
 						$( $( event.target ).parent() ).fadeOut(200, function(){
 						   setTimeout($(this).remove(), 200)
 						});
-						
-						//.hide( "slow" ).delay(1000).remove();
 					});
 					
 					
@@ -67,8 +65,20 @@
 					// Add vehicle to group
 					// *********************
 					var addVehicleItem = "input[class='vehicleAdd" + groupCounter + "'][type='button']";
-					$( addVehicleItem ).click( function(event) {
-						console.log("vehicle added");
+					$( addVehicleItem ).click( function(event) {						
+						var defaultVehicleClassname = "";
+						if ( $( "div[id='defaultVehClassname']" ).find( "input" ).val().length > 0 ) {
+							defaultVehicleClassname = $( "div[id='defaultVehClassname']" ).find( "input" ).val();
+						}
+						
+						var defaultVehicleKit = "";
+						if ( $( "div[id='defaultVehKit']" ).find( "input" ).val().length > 0 ) {
+							defaultVehicleKit = $( "div[id='defaultVehKit']" ).find( "input" ).val();
+						}
+						
+						console.log(defaultVehicleKit);
+						
+						
 						
 						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
 						var unitId = (squadItem.children().length) - 1;	
@@ -76,7 +86,8 @@
 							+ "<div class='unit'>" 
 								+ unitRemove 
 								+ " <div class='vehName'> Vehicle ID " + unitId + " </div>"
-								+ "<input type='text' placeholder='Classname of vehicle'> | <input type='text' placeholder='Kit of vehicle'>"
+								+ "<input type='text' placeholder='Classname of vehicle' value='" + defaultVehicleClassname + "'> | "
+								+ "<input type='text' placeholder='Kit of vehicle' value='" + defaultVehicleKit + "'>"
 							+ "</div>";
 							
 						$( vehicelAdd ).appendTo( $( event.target ).parent().find(".squad"));
@@ -94,19 +105,19 @@
 					// *********************
 					var addUnitItem = "input[class='unitAdd" + groupCounter + "'][type='button']";
 					$( addUnitItem ).click( function(event) {
-						console.log("unit added");
-						
-						var defaultUnitClassname = $( "div[id='defaultUnitClassname']" ).find( "input" ).val();
-						switch ( $( "input[name='side']:checked" ).val() ) {
-							case "west": 	defaultUnitClassname = westManDefault; break;
-							case "east": 	defaultUnitClassname = eastManDefault; break;
-							case "resistance": 	defaultUnitClassname = resistanceManDefault; break;
-							case "civilian": 	defaultUnitClassname = civilianManDefault; break;													
-						}	
+						var defaultUnitClassname = "";
+						if ( $( "div[id='defaultUnitClassname']" ).find( "input" ).val().length > 0 ) {
+							defaultUnitClassname = defaultUnitClassname = $( "div[id='defaultUnitClassname']" ).find( "input" ).val();
+						} else {
+							switch ( $( "input[name='side']:checked" ).val() ) {
+								case "west": 			defaultUnitClassname = westManDefault; break;
+								case "east": 			defaultUnitClassname = eastManDefault; break;
+								case "resistance": 		defaultUnitClassname = resistanceManDefault; break;
+								case "civilian": 		defaultUnitClassname = civilianManDefault; break;
+							}
+						}
 						
 						var defaultUnitKit = $( "div[id='defaultUnitKit']" ).find( "input" ).val();
-						
-						
 						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
 						var unitId = squadItem.children().length;
 						
@@ -167,20 +178,13 @@
 									
 								$ ( $(event.target).parent() ).append( addVehicleIdAndRole );
 							}							
-						});					
-						
-						
+						});	
 					});
-					
-					
 				});
 				
-								
 				// Effects for another radiobuttons
 				
-				// SIDE
-				console.log (  $($( "div[id='zone_side']" ).find( "div[class='hRadio']"))[0] );
-				
+				// SIDE				
 				$($($( "div[id='zone_side']" ).find( "div[class='hRadio']"))).click( function(event) {					
 					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
 					$( this ).css( cssActiveStyle, cssActiveStyleAttr );				
@@ -206,16 +210,14 @@
 					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
 					$( this ).find( "input").prop('checked', true);
 				});
-				// Formation
 				
-				$( "input[name='formation']" ).click( function(event) {	
+				// Formation				
+				$( "div[class='formDiv']" ).click( function(event) {							
+					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
+					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
 					
-					$( $( this ).parent().parent().find('div')).css( cssInactiveStyle, cssInactiveStyleAttr );
-					
-					$( $( this ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 					$( this ).find( "input").prop('checked', true);
 				});
-				
 				
 				// Button "GET"
 				$( "input[id='configButton']" ).click( function(event) {										
@@ -403,7 +405,7 @@
 				</div>
 				<div id="defaultVehKit">
 					<div class="horDivLine">Default Vehicle Kit</div>
-					<div class="horDivLine"><input placeholder="Default unit kit"></div>
+					<div class="horDivLine"><input placeholder="Default vehicle kit"></div>
 				</div>
 			</div>
 			<hr>
