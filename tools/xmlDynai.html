@@ -241,9 +241,15 @@
 						
 						$( "div[class^='group']" ).each( function( index, element) {
 							var group = "";
-							var count = $( element ).find( "input[type='number']" ).val();
-							var units = [];
+							var count = 0;
+							if ( $( element ).find( "input[type='number']" ).val().length > 0 ) {
+								count = $( element ).find( "input[type='number']" ).val();
+								$( element ).find( "input[type='number']" ).css( "background-color", cssDefColor );
+							} else {
+								$( element ).find( "input[type='number']" ).css( "background-color", cssWrongColor );
+							}
 							
+							var units = [];							
 							// For each UNIT in GROUP
 							if ( $( element ).find( "div[class='unit']").length > 0 ) {
 								$( element ).find( "div[class='unit']").each( function (index, element) {
