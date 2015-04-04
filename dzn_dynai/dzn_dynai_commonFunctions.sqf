@@ -198,13 +198,20 @@ dzn_fnc_createPathFromKeypoints = {
 		OUTPUT: NULL
 	*/
 	private ["_grp","_keypoints","_iMax","_i","_wp"];
-	_grp = _this select 0;
+	_grp = _this select 0;	
 	_keypoints = _this select 1;
+	
+	// player sideChat str(_keypoints);
 	_iMax = 2 + round(random(4));
 	
+	if (_iMax > count _keypoints) then { _iMax =  count _keypoints };
+	
+	
+	// player sideChat str( _iMax);
 	for "_i" from 0 to _iMax do {
 		_wp = _grp addWaypoint [_keypoints call BIS_fnc_selectRandom, 100];
 	};
+	
 	_wp setWaypointType "CYCLE";	
 };
 
