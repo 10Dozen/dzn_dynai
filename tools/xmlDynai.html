@@ -1,0 +1,472 @@
+<html>
+	<head>
+		<title>DYNAI Zone Configurator</title>
+		<script src="jquery-2.1.3.min.js"></script>
+		<script>
+			var westManDefault				= "B_Soldier_F";
+			var eastManDefault				= "O_Soldier_F";
+			var resistanceManDefault 		= "I_soldier_F";
+			var civilianManDefault 			= "C_man_1";		
+			var defaultUnitClassname 		= "";
+		
+			var groupCounter				= -1;
+			var groupAddRemoveGroupButton	= "<input class='groupRemove' type='button' value='Remove Group'>";
+			
+			var groupAddHtml 				= "";
+			
+			var unitRemove 					= "<input class='unitRemove' type='button' value='X'>";
+			
+			var vehAssignementRemove		= "<input class='unitAssignementRemove' type='button' value='X'>";
+
+			var cssActiveStyle				= "background";
+			var cssActiveStyleAttr			= "#99CC00";
+			var cssInactiveStyle			= "background";
+			var cssInactiveStyleAttr		= "#FFFFFF";
+			
+			
+			
+			$( document ).ready(function() {
+			
+				// Adding a group button
+				$( "#groupAdd" ).click( function(event) {
+					groupCounter++;
+					// Add group
+					var groupName = $.map($('#groupName'), function (input) { return $(input).val() })
+					if (groupName == "") {
+						groupName = "Group Template #" + groupCounter;
+					} else {
+						groupName = '"' + groupName + '"';
+					}		
+
+					var groupAddUnitVehicle 		= "<input class='vehicleAdd" + groupCounter + "' type='button' value='Add Vehicle'>";
+					var groupAddUnit				= "<input class='unitAdd" + groupCounter + "' type='button' value='Add Unit'>";
+					
+					
+					groupAddHtml = 
+					"<div class='group" + groupCounter + "'>"
+						+ "<br>" 
+						+ groupName + " " + groupAddRemoveGroupButton +"<br>"
+						+ "<input type='number' placeholder='Count of groups'>"
+						+" <div class='squad'><br></div>"
+						+ groupAddUnitVehicle + groupAddUnit				
+					+"</div>";
+	
+					$( groupAddHtml ).appendTo( "#zone_groups" );					
+					
+					// Remove added group
+					$( ".groupRemove" ).click( function(event) {	
+						$( $( event.target ).parent() ).fadeOut(200, function(){
+						   setTimeout($(this).remove(), 200)
+						});
+						
+						//.hide( "slow" ).delay(1000).remove();
+					});
+					
+					
+					// *********************
+					// Add vehicle to group
+					// *********************
+					var addVehicleItem = "input[class='vehicleAdd" + groupCounter + "'][type='button']";
+					$( addVehicleItem ).click( function(event) {
+						console.log("vehicle added");
+						
+						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
+						var unitId = (squadItem.children().length) - 1;	
+						var vehicelAdd = ""
+							+ "<div class='unit'>" 
+								+ unitRemove 
+								+ " <div class='vehName'> Vehicle ID " + unitId + " </div>"
+								+ "<input type='text' placeholder='Classname of vehicle'> | <input type='text' placeholder='Kit of vehicle'>"
+							+ "</div>";
+							
+						$( vehicelAdd ).appendTo( $( event.target ).parent().find(".squad"));
+						
+						// Remove vehicle from group
+						$( "input[class='unitRemove']").click( function(event) {
+							$( $( event.target ).parent() ).remove();
+						});						
+					});
+					
+					
+					
+					// *********************
+					// Add unit to group
+					// *********************
+					var addUnitItem = "input[class='unitAdd" + groupCounter + "'][type='button']";
+					$( addUnitItem ).click( function(event) {
+						console.log("unit added");
+						
+						var defaultUnitClassname = $( "div[id='defaultUnitClassname']" ).find( "input" ).val();
+						switch ( $( "input[name='side']:checked" ).val() ) {
+							case "west": 	defaultUnitClassname = westManDefault; break;
+							case "east": 	defaultUnitClassname = eastManDefault; break;
+							case "resistance": 	defaultUnitClassname = resistanceManDefault; break;
+							case "civilian": 	defaultUnitClassname = civilianManDefault; break;													
+						}	
+						
+						var defaultUnitKit = $( "div[id='defaultUnitKit']" ).find( "input" ).val();
+						
+						
+						var squadItem = $( ($( event.target).parent()).find( "div[class='squad']") );
+						var unitId = squadItem.children().length;
+						
+						var unitAdd = 
+							"<div class='unit'>" 
+								+ unitRemove 
+								+ " <div class='unitName'> Infantry </div>"
+								+ "<input type='text' placeholder='Classname of unit' value='" + defaultUnitClassname + "'> | <input type='text' placeholder='Kit for unit' value='" + defaultUnitKit + "'> | "
+								+ "<div class='horDiv1'>"
+									+ "<div class='horDiv1' name='patrol'><input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol</div>"
+									+ "<div class='horDiv1' name='inBuilding'><input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building</div>"
+									+ "<div class='horDiv1' name='inVehicle'><input type='radio' name='unitType" + unitId + "' value='inVehicle'>In vehicle</div>"
+								+ "</div>"
+							+ "</div>";
+							
+						$( unitAdd ).appendTo( $( event.target ).parent().find(".squad") );	
+						
+						// Remove unit from group
+						$( "input[class='unitRemove']").click( function(event) {
+							$( $( event.target ).parent() ).remove();
+						});
+						
+						// Remove VehID + Role	:: PATROL
+						$( "input[name='unitType" + unitId + "'][value='patrol']" ).click( function(event) {
+							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
+							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
+							
+							if ( $( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).length != 0 ) {
+								console.log("Delete input field");
+								
+								$( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).remove();
+							}
+						});
+						
+						// Remove VehID + Role	:: IN BUILDING
+						$( "input[name='unitType" + unitId + "'][value='inBuilding']" ).click( function(event) {
+							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
+							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
+							
+							if ( $( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).length != 0 ) {
+								console.log("Delete input field");
+								
+								$( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).remove();
+							}
+						});
+						
+						// Add VehID + Role	:: IN VEHICLE
+						$( "input[name='unitType" + unitId + "'][value='inVehicle']" ).click( function(event) {
+							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
+							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
+							
+							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {							
+								var addVehicleIdAndRole = 
+									" <div class='horDiv1' name='vehIdAndRole'>"
+										+ "<input class='vehIdInput' type='text' placeholder='VehID'>"
+										+ "<input type='text' placeholder='Vehicle crew role'>"
+									+ "</div>";
+									
+								$ ( $(event.target).parent() ).append( addVehicleIdAndRole );
+							}							
+						});					
+						
+						
+					});
+					
+					
+				});
+				
+								
+				// Effects for another radiobuttons
+				
+				// SIDE
+				console.log (  $($( "div[id='zone_side']" ).find( "div[class='hRadio']"))[0] );
+				
+				$($($( "div[id='zone_side']" ).find( "div[class='hRadio']"))).click( function(event) {					
+					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
+					$( this ).css( cssActiveStyle, cssActiveStyleAttr );				
+					$( this ).find( "input").prop('checked', true);
+				});
+				
+				// SpeedMode
+				$($($( "div[id='zone_speedMode']" ).find( "div[class='hRadio']"))).click( function(event) {					
+					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
+					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
+					$( this ).find( "input").prop('checked', true);
+				});
+				
+				// Behavior
+				$($($( "div[id='zone_behavior']" ).find( "div[class='hRadio']"))).click( function(event) {					
+					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
+					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
+					$( this ).find( "input").prop('checked', true);
+				});
+				// CombatMode
+				$($($( "div[id='zone_combatMode']" ).find( "div[class='hRadio']"))).click( function(event) {					
+					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
+					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
+					$( this ).find( "input").prop('checked', true);
+				});
+				// Formation
+				
+				$( "input[name='formation']" ).click( function(event) {	
+					
+					$( $( this ).parent().parent().find('div')).css( cssInactiveStyle, cssInactiveStyleAttr );
+					
+					$( $( this ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
+					$( this ).find( "input").prop('checked', true);
+				});
+				
+				
+				// Button "GET"
+				$( "input[id='configButton']" ).click( function(event) {										
+					var output = "Output Value. Go get it!";
+					
+					
+					
+					
+					
+					
+					
+					if ( $( "div[id='zone_groups']" ).find( "div[class^='group']" ).length >  0 ) {
+						
+						$( "div[class^='group']" ).each( function( index, element) {
+							
+							
+							
+							var count = $( element ).find( "input[type='number']" ).val();
+							
+							
+							if ( $( element ).find( "div[class='unit']").length > 0 ) {
+								$( element ).find( "div[class='unit']").each( function (index, element) {
+									var unitType = "";
+									
+									if ( $( element ).find( "div[class='vehName']" ).length > 0 ) {
+										unitType = 'vehicle';
+									}
+									
+									if ( $( element ).find( "div[class='unitName']" ).length > 0 ) {
+										unitType = 'infantry';
+									}
+									
+								
+									console.log( element );
+								
+								
+								});
+							}
+						
+							
+							
+							
+							
+							
+							
+						});
+					
+						
+						
+						
+						
+						
+					};
+					
+					
+					
+					
+					/*
+					
+					var zoneName = "'defaultZone'";
+					var zoneSide = "'WEST'";
+					var zoneActive = "'false'";
+					var zoneAreaAndWP = ",[],[]";					
+					var zoneRefs = "";
+					var zoneSpeed = "'LIMITED'";
+					var zoneBehavior = "'SAFE'";
+					var zoneMode = "'YELLOW'";
+					var zoneForm = "'COLUMN'";
+					
+					
+					
+					if ( $( "input[name='zoneNameInput']" ).val().length > 0 ) {
+						zoneName = "'" + $( "input[name='zoneNameInput']" ).val() + "'";
+					}
+					
+					if (  $( "input[name='side']:checked" ).length > 0 ) {
+						zoneSide = "'" +  $( "input[name='side']:checked" ).val().toUpperCase() + "'";
+					}
+					
+					if ($( "input[name='zoneActive']:checked" ).val() == "on") {
+						var zoneActive = "'" +  "true" + "'";
+					}				
+					
+					if (  $( "input[name='speedMode']:checked" ).length > 0 ) {
+						zoneSpeed = "'" +  $( "input[name='speedMode']:checked" ).val().toUpperCase() + "'";
+					}
+					
+					if (  $( "input[name='behavior']:checked" ).length > 0 ) {
+						zoneBehavior = "'" +  $( "input[name='behavior']:checked" ).val().toUpperCase() + "'";
+					}
+					
+					if (  $( "input[name='combatMode']:checked" ).length > 0 ) {
+						zoneMode = "'" +  $( "input[name='combatMode']:checked" ).val().toUpperCase() + "'";
+					}
+					
+					if (  $( "input[name='formation']:checked" ).length > 0 ) {
+						zoneForm = "'" +  $( "input[name='formation']:checked" ).val().toUpperCase() + "'";
+					}
+					
+					*/
+					//zoneRefs = "[[/* Infantry units */4,[['I_G_Soldier_F',[], ''],['I_G_Soldier_F',[],'']]]]";
+					
+				/*
+					
+					output = "[" + zoneName + "," + zoneSide + "," + zoneActive + "," + zoneAreaAndWP
+						+ "," + zoneRefs
+						+ ",[" + zoneSpeed + "," + zoneBehavior + "," + zoneMode + "," + zoneForm + "]";
+					$( "textarea[name='comment']" ).html( output );
+					*/
+				});
+				
+			});
+			
+			
+				
+				
+		</script>
+		<style>
+			div {
+				border-radius: 15px;
+			}
+		
+			.formDiv {
+				width: 200px;
+			}
+			.horDivLine {
+				display: inline-block;
+				width: 200px;
+			}
+			
+			.titleDiv {				
+				background-color: #3366CC;
+				text-align: center;
+				color: #FFFFFF;
+			}
+		
+			.horDiv1 {				
+				display: inline-block;
+			}
+			
+			.vehIdInput {
+				width: 45px;
+			}
+		
+			.hRadio {				
+				position: relative;				
+				display: inline-block;
+				width: 85px;
+			
+			}
+			
+			.vehIdText {
+				width: 50px;
+			}
+			
+			.unitName {
+				display: inline-block;
+				width: 125px;
+			}
+			
+			.vehName {
+				display: inline-block;
+				width: 125px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>xmlDynai</h1>
+		
+		<div id="mainWrap" align="left">
+			<div id="defaults">
+			<div class="titleDiv">DEFAULT VALUES</div>
+			<hr>
+				<div id="defaultUnitClassname">
+					<div class="horDivLine">Default Unit Classname</div>
+					<div class="horDivLine"><input placeholder="Default unit classname"></div>				
+				</div>
+				<div id="defaultVehClassname">
+					<div class="horDivLine">Default Vehicle Classname</div>
+					<div class="horDivLine"><input placeholder="Default vehicle classname"></div>					
+				</div>
+				<div id="defaultUnitKit">
+					<div class="horDivLine">Default Unit Kit</div>
+					<div class="horDivLine"><input placeholder="Default unit kit"></div>
+				</div>
+				<div id="defaultVehKit">
+					<div class="horDivLine">Default Vehicle Kit</div>
+					<div class="horDivLine"><input placeholder="Default unit kit"></div>
+				</div>
+			</div>
+			<hr>
+			<div class="titleDiv">ZONE PROPERTIES</div>
+			<hr>
+			<p id="zone_name"><input name="zoneNameInput" placeholder="zoneName"></p>
+			<div id="zone_side">Side
+				<div class="hRadio"><input type="radio" name="side" value="west">West</div>
+				<div class="hRadio"><input type="radio" name="side" value="east">East</div>
+				<div class="hRadio"><input type="radio" name="side" value="resistance">Indep</div>
+				<div class="hRadio"><input type="radio" name="side" value="civilian">Civ</div>
+			</div>			
+			<div id="zone_status">Is Active<input type="checkbox" name="zoneActive" placeholder="is Active"></div>
+			<hr>
+			<div id="zone_unit">Units<br>
+				<input id="groupName" type="text" placeholder="Name of the group (optional)">
+				<input id="groupAdd" type="button" value="Add Group">
+				<div id="zone_groups">					
+				</div>
+			</div>
+			
+			<hr>
+			<p>Behavior Settings</p>		
+			<div id="zone_speedMode">Speed Mode<br>
+				<div class="hRadio"><input type="radio" name="speedMode" value="limited">Limited</div>
+				<div class="hRadio"><input type="radio" name="speedMode" value="normal">Normal</div>
+				<div class="hRadio"><input type="radio" name="speedMode" value="full">Full</div>
+			</div>					
+			<div id="zone_behavior">Behavior<br>
+				<div class="hRadio"><input type="radio" name="behavior" value="careless">Careless</div>
+				<div class="hRadio"><input type="radio" name="behavior" value="safe">Safe</div>
+				<div class="hRadio"><input type="radio" name="behavior" value="aware">Aware</div>
+				<div class="hRadio"><input type="radio" name="behavior" value="combat">Combat</div>
+				<div class="hRadio"><input type="radio" name="behavior" value="stealth">Stealth</div>
+			</div>
+			<div id="zone_combatMode">Combat Mode<br>
+				<div class="hRadio"><input type="radio" name="combatMode" value="blue">Blue</div>
+				<div class="hRadio"><input type="radio" name="combatMode" value="green">Green</div>
+				<div class="hRadio"><input type="radio" name="combatMode" value="white">White</div>
+				<div class="hRadio"><input type="radio" name="combatMode" value="yellow">Yellow</div>
+				<div class="hRadio"><input type="radio" name="combatMode" value="red">Red</div>
+			</div>
+			<div id="zone_formation">Formation<br>		
+				<div>
+					<div class="formDiv"><input type="radio" name="formation" value="COLUMN">Column<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="STAG COLUMN">Staggered Column<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="WEDGE">Wedge<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="ECH LEFT">Echelon L(eft)<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="ECH RIGHT">Echelon R(ight)<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="VEE">Vee<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="LINE">Line <br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="stealth">Delta<br></div>
+					<div class="formDiv"><input type="radio" name="formation" value="stealth">Column (compact)<br></div>
+				</div>
+			</div>			
+		</div>
+		
+		<hr>
+		<div align="center"><input id="configButton" type="button" value="Create Zone Config"></div>
+		<hr>	
+		<div id="zoneArray" align="center">
+			<textarea name="comment" cols="85" rows="5">Arma SQF here..</textarea>
+		<div>
+		
+	</body>		
+</html>
