@@ -22,6 +22,8 @@
 			var cssActiveStyleAttr			= "#99CC00";
 			var cssInactiveStyle			= "background";
 			var cssInactiveStyleAttr		= "#FFFFFF";
+			var cssWrongBorder				= "1px solid red";
+			var cssDefBorder				= "0px solid #FFFFFF";
 			var cssWrongColor				= "#FA6464";
 			var cssDefColor					= "#FFFFFF";
 			
@@ -219,21 +221,30 @@
 				
 				// Button "GET"
 				$( "input[id='configButton']" ).click( function(event) {										
-					var output = "Output Value. Go get it!";
+					var output = "Output Value. Go get it!";					
 					
+					var zoneName 		= "'defaultZone'";
+					var zoneSide 		= "'WEST'";
+					var zoneActive 		= "'false'";
+					var zoneAreaAndWP 	= "[],[]";					
+					var zoneRefs 		= "";
+					var zoneSpeed 		= "'LIMITED'";
+					var zoneBehavior 	= "'SAFE'";
+					var zoneMode 		= "'YELLOW'";
+					var zoneForm 		= "'COLUMN'";
 					
-					
-					
-					
-					
+					// Get unit reference templates	
 					
 					if ( $( "div[id='zone_groups']" ).find( "div[class^='group']" ).length >  0 ) {
+						// For each GROUP
+						var refTemplates = [];
 						
 						$( "div[class^='group']" ).each( function( index, element) {
-						
+							var group = "";
 							var count = $( element ).find( "input[type='number']" ).val();
 							var units = [];
 							
+							// For each UNIT in GROUP
 							if ( $( element ).find( "div[class='unit']").length > 0 ) {
 								$( element ).find( "div[class='unit']").each( function (index, element) {
 									var unitString = "";									
@@ -275,9 +286,8 @@
 										if ( $( element ).find( "div[class='horDiv1']" ).find( "div[name='inBuilding']" ).find( "input:checked" ).length > 0) {
 											unitString = unitString + "['indoors'],";
 											isAssigned = true;
-										}
+										}										
 										
-										console.log( $( element ).find( "div[class='horDiv1']" ).find( "div[name='inBuilding']" ).find( "input:checked" ).length );
 										// is in vehicle
 										if ( $( element ).find( "div[class='horDiv1']" ).find( "div[name='inVehicle']" ).find( "input:checked" ).length > 0) {
 											var vehicleItem =  $( element ).find( "div[class='horDiv1']" ).find( "div[name='inVehicle']" );
@@ -311,89 +321,92 @@
 										
 										if ( isAssigned ) {
 											unitString = unitString + "'" + kit + "']";
-											$( element ).find( "div[class='horDiv1']" ).find( "div" ).css( "border", "0px solid #FFFFFF" );
+											$( element ).find( "div[class='horDiv1']" ).find( "div" ).css( "border", cssDefBorder );
 										} else {
-											$( element ).find( "div[class='horDiv1']" ).find( "div" ).css( "border", "1px solid red" );
+											$( element ).find( "div[class='horDiv1']" ).find( "div" ).css( "border", cssWrongBorder );
 										}
 									}
-									
-									console.log(unitString);										
-									units.push(unitString);
-									console.log(units);								
+									// Add unit to list of units
+									units.push(unitString);									
 								});
-							}
-						
+							}							
+							//console.log(units);
 							
-							
-							
-							
-							
+							group = "[" + count + ",[" + units.join() + "]]";
+							//console.log(group);
+							refTemplates.push(group);
 							
 						});
-					};
-					
-					
-					
-					
-					/*
-					
-					var zoneName = "'defaultZone'";
-					var zoneSide = "'WEST'";
-					var zoneActive = "'false'";
-					var zoneAreaAndWP = ",[],[]";					
-					var zoneRefs = "";
-					var zoneSpeed = "'LIMITED'";
-					var zoneBehavior = "'SAFE'";
-					var zoneMode = "'YELLOW'";
-					var zoneForm = "'COLUMN'";
-					
-					
-					
+						
+						//console.log(refTemplates.join());
+						zoneRefs = refTemplates.join();
+						$( "input[id='groupName']" ).css( "background-color", cssDefColor );
+					} else {						
+						$(  "input[id='groupName']" ).css( "background-color", cssWrongColor );
+					}
+
+					// Zone nmae
 					if ( $( "input[name='zoneNameInput']" ).val().length > 0 ) {
 						zoneName = "'" + $( "input[name='zoneNameInput']" ).val() + "'";
+						$( "input[name='zoneNameInput']" ).css( "background-color", cssDefColor );
+					} else {
+						$( "input[name='zoneNameInput']" ).css( "background-color", cssWrongColor );
 					}
 					
+					// Zone side
 					if (  $( "input[name='side']:checked" ).length > 0 ) {
 						zoneSide = "'" +  $( "input[name='side']:checked" ).val().toUpperCase() + "'";
+						$( "input[name='side']" ).parent().css( "border", cssDefBorder );
+					} else {
+						$( "input[name='side']" ).parent().css( "border", cssWrongBorder );
 					}
 					
+					// Zone isActive
 					if ($( "input[name='zoneActive']:checked" ).val() == "on") {
 						var zoneActive = "'" +  "true" + "'";
-					}				
+					}
 					
+					// Behavior Properties
+					// Zone speedMode
 					if (  $( "input[name='speedMode']:checked" ).length > 0 ) {
 						zoneSpeed = "'" +  $( "input[name='speedMode']:checked" ).val().toUpperCase() + "'";
+						$( "input[name='speedMode']" ).parent().css( "border", cssDefBorder );
+					} else {
+						$( "input[name='speedMode']" ).parent().css( "border", cssWrongBorder );
 					}
 					
+					// Zone Behavior
 					if (  $( "input[name='behavior']:checked" ).length > 0 ) {
 						zoneBehavior = "'" +  $( "input[name='behavior']:checked" ).val().toUpperCase() + "'";
+						$( "input[name='behavior']" ).parent().css( "border", cssDefBorder );
+					} else {
+						$( "input[name='behavior']" ).parent().css( "border", cssWrongBorder );
 					}
 					
+					// Zone combatMode
 					if (  $( "input[name='combatMode']:checked" ).length > 0 ) {
 						zoneMode = "'" +  $( "input[name='combatMode']:checked" ).val().toUpperCase() + "'";
+						$( "input[name='combatMode']" ).parent().css( "border", cssDefBorder );
+					} else {
+						$( "input[name='combatMode']" ).parent().css( "border", cssWrongBorder );
 					}
 					
+					// Zone Formation
 					if (  $( "input[name='formation']:checked" ).length > 0 ) {
 						zoneForm = "'" +  $( "input[name='formation']:checked" ).val().toUpperCase() + "'";
+						$( "input[name='formation']" ).parent().css( "border", cssDefBorder );
+					} else {
+						$( "input[name='formation']" ).parent().css( "border", cssWrongBorder );
 					}
 					
-					*/
-					//zoneRefs = "[[/* Infantry units */4,[['I_G_Soldier_F',[], ''],['I_G_Soldier_F',[],'']]]]";
-					
-				/*
-					
 					output = "[" + zoneName + "," + zoneSide + "," + zoneActive + "," + zoneAreaAndWP
-						+ "," + zoneRefs
-						+ ",[" + zoneSpeed + "," + zoneBehavior + "," + zoneMode + "," + zoneForm + "]";
+						+ ",[" + zoneRefs
+						+ "],[" + zoneSpeed + "," + zoneBehavior + "," + zoneMode + "," + zoneForm + "]]";
+					
 					$( "textarea[name='comment']" ).html( output );
-					*/
 				});
 				
 			});
-			
-			
-				
-				
 		</script>
 		<style>
 			div {
