@@ -1,75 +1,120 @@
-/*	******************  zone example ******************************
-	
-	[
-		"zone1",					// zone name = name of module
-		WEST,						// side
-		true,						// isActive 
-		[],							// null - creates from init
-		[],							// null - creates from init
-		[	
-			// units 
-			5,						// Quantity of describer group for zone
-			[
-				[
-					"B_officer_F",	// classname
-					[],		// [] - for partol unit, [0, "driver"] - for crew of group vehicle, ["indoors"] - to spawn unit inside houses, "isVehicle" - for vehicle
-					"specForKit"	// Name of kit for dzn_gear
-				]
-			]
-		],
-		[
-			//behavior 
-			"LIMITED",				// Speed
-			"SAFE",					// Behavior
-			"YELLOW",				// combat mode
-			"COLUMN"				// formation
-		]	
-	]	I_MRAP_03_hmg_F
-
-*/
-
 
 // *********** This array defines detailed properties of zones **************************
-dzn_dynai_zoneProperties = [	
+dzn_dynai_zoneProperties = [
+	/* OPFOR */
+	
 	[
-		"dzn_zoneSeize_1","RESISTANCE",true,[],[],
+		"dzn_convoyStart","OPFOR",true,[],[],
 		[
 			[
-				/* Infantry units */
-				4,
+				1,
 				[					
-					["I_G_Soldier_F",[], ""],
-					["I_G_Soldier_GL_F",[], ""],
-					["I_G_Soldier_AR_F",[], ""],
-					["I_G_Soldier_GL_F",[], ""],
-					["I_G_Soldier_LAT_F",[], ""]
+					["rhs_bmp2_tv", "isVehicle", ""],
+						["O_Soldier_F",[0, "commander"], "asadLoyalistsKit_Crew"],
+						["O_Soldier_F",[0, "driver"], "asadLoyalistsKit_Crew"],
+						["O_Soldier_F",[0, "gunner"], "asadLoyalistsKit_Crew"],
+						
+					["rhs_uaz_vmf", "isVehicle", ""],
+						["O_Soldier_F",[4, "driver"], "asadLoyalistsKit_Crew"],
+						["O_Soldier_F",[4, "cargo"], "asadLoyalistsKit_Crew"],
+						["O_Soldier_F",[4, "cargo"], "asadLoyalistsKit_Crew"],
+			
+					["RHS_Ural_VMF_01", "isVehicle", ""],
+					["O_Soldier_F",[8, "driver"], "asadLoyalistsKit_R"],
+					
+					["RHS_Ural_VMF_01", "isVehicle", ""],
+					["O_Soldier_F",[10, "driver"], "asadLoyalistsKit_R"],
+						
+					["RHS_Ural_VMF_01", "isVehicle", ""],
+					["O_Soldier_F",[12, "driver"], "asadLoyalistsKit_R"],
+			
+					["RHS_Ural_Fuel_msv_01", "isVehicle", ""],
+					["O_Soldier_F",[14, "driver"], "asadLoyalistsKit_R"],
+					
+					["rhs_bmp2_tv", "isVehicle", ""],
+					["O_Soldier_F",[16, "commander"], "asadLoyalistsKit_Crew"],
+					["O_Soldier_F",[16, "driver"], "asadLoyalistsKit_Crew"],
+					["O_Soldier_F",[16, "gunner"], "asadLoyalistsKit_Crew"]
 				]
-			],
-			[
-				/* Infantry units */
-				6,
+			]			
+		],
+		["NORMAL","SAFE","YELLOW","COLUMN"]
+	]
+	,[
+		"dzn_baseOpfor","OPFOR",true,[],[],
+		[
+			[				
+				2,
 				[					
-					["I_MRAP_03_hmg_F","isVehicle", ""],
-					["I_G_Soldier_GL_F",[0, "gunner"], ""],
-					["I_G_Soldier_AR_F",[0, "driver"], ""],
-					["I_G_Soldier_GL_F",[], ""],
-					["I_G_Soldier_LAT_F",[], ""]
+					["O_Soldier_F",[], "asadLoyalistsKit_Squad"],
+					["O_Soldier_F",[], "asadLoyalistsKit_Squad"],
+					["O_Soldier_F",[], "asadLoyalistsKit_Squad"],
+					["O_Soldier_F",[], "asadLoyalistsKit_Squad"],
+					["O_Soldier_F",[], "asadLoyalistsKit_Squad"],
+					["O_Soldier_F",[], "asadLoyalistsKit_Squad"]					
 				]
 			]
 		],
 		["LIMITED",	"SAFE",	"YELLOW", "COLUMN"]
-	],
-	[
-		"dzn_zoneSeize_2","RESISTANCE",true,[],[],
+	]
+	
+	/* INSURGENTS */	
+	#define INS_TECHICAN					["I_G_Offroad_01_armed_F","isVehicle", "vehicleInsurgnetsKit"]
+	#define INS_INFANTRY					["I_G_Soldier_F",[], "insurgentRandomKit"]
+	#define INS_CREW(PAR1, PAR2)			["I_G_Soldier_F",[PAR1, PAR2], "insurgentRandomKit"]
+
+	#define INS_MANPAD_SQUAD				[["I_G_Soldier_F",[], "insurgentKit_Rifleman"],["I_G_Soldier_F",[], "insurgentKit_MANPAD"]]
+	#define INS_NSV_SQUAD					[["RHS_NSV_TriPod_MSV", "isVehicle", ""],["I_G_Soldier_F",[0, "gunner"], "insurgentKit_Rifleman"]]
+	#define	INS_SAM_ZONE_UNIT(PAR1,PAR2)	[[round(random PAR1),INS_MANPAD_SQUAD],[round(random PAR2),INS_NSV_SQUAD]]	
+	
+	,[	
+		"dzn_convoyAttackers1","RESISTANCE",false,[],[],
 		[
-			[
-				/* Infantry units */
-				30,
-				[					
-					["I_G_Soldier_F",["indoors"], ""]
-				]
-			]
+			[6,[INS_INFANTRY]],
+			[2,[INS_TECHICAN, INS_CREW(0, "driver"), INS_CREW(0, "gunner")]]
 		],
-		["LIMITED",	"SAFE",	"YELLOW", "COLUMN"]
-	]	
+		["FULL", "COMBAT", "YELLOW", "COLUMN"]
+	]
+	,[
+		"dzn_convoyAttackers2","RESISTANCE",false,[],[],
+		[
+			[4,[INS_INFANTRY,INS_INFANTRY,INS_INFANTRY,INS_INFANTRY]]
+		],
+		["FULL","COMBAT", "YELLOW", "COLUMN"]
+	]
+	,[
+		"dzn_convoyAttackers3","RESISTANCE",false,[],[],
+		[
+			[3,[INS_TECHICAN,INS_CREW(0, "driver"),INS_CREW(0, "gunner"),INS_TECHICAN,INS_CREW(3, "driver"),INS_CREW(3, "gunner")]],
+			[4,[INS_INFANTRY,INS_INFANTRY,INS_INFANTRY,INS_INFANTRY]]
+		],
+		["FULL","COMBAT", "YELLOW", "COLUMN"]
+	]
+	
+	
+	,[
+		"dzn_insSam0","RESISTANCE",false,[],[],
+		INS_SAM_ZONE_UNIT(4,2),
+		["FULL","COMBAT", "YELLOW", "COLUMN"]
+	]
+	,[
+		"dzn_insSam1","RESISTANCE",false,[],[],
+		INS_SAM_ZONE_UNIT(4,2),
+		["FULL","COMBAT", "YELLOW", "COLUMN"]
+	]
+	,[
+		"dzn_insSam2","RESISTANCE",false,[],[],
+		INS_SAM_ZONE_UNIT(4,2),
+		["FULL","COMBAT", "YELLOW", "COLUMN"]
+	]
+	,[
+		"dzn_insSam3","RESISTANCE",false,[],[],
+		INS_SAM_ZONE_UNIT(4,2),
+		["FULL","COMBAT", "YELLOW", "COLUMN"]
+	]
+	,[
+		"dzn_insSam4","RESISTANCE",false,[],[],
+		INS_SAM_ZONE_UNIT(4,2),
+		["FULL","COMBAT", "YELLOW", "COLUMN"]
+	]
 ];
