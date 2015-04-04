@@ -83,21 +83,22 @@ dzn_fnc_dynai_initZones = {
 			// Get waypoints and convert them into keypoints (coordinates)
 			if ( ["dzn_dynai_wp", str(_x), false] call BIS_fnc_inString ) then {
 				_wps = waypoints _x;
-				player sideChat format [ "WPS: %1", _wps];
+				// player sideChat format [ "WPS: %1", _wps];
 				
 				if (count _wps > 1) then {
 					_keypoints = [];
+					_wps = _wps - [_wps select 0];
 					{
 						_keypoints = _keypoints + [ waypointPosition _x ];					
 					} forEach _wps;
 				};
 				
 				deleteVehicle _x;
-				_properties set [4, _keypoints];				
 			};			
 		} forEach _syncObj;	
 		sleep 1;
 		
+		_properties set [4, _keypoints];	
 		if (_locations isEqualTo []) exitWith { hint "There is no linked 'dzn_dynai_area' object. Can't initialize zone."; };
 		_zone setVariable ["locations", _locations];
 		_zone setVariable ["keypoints", _keypoints];
@@ -144,7 +145,8 @@ dzn_fnc_dynai_createZone = {
 	
 	private [
 		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_zonePos","_count","_groupUnits",
-		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit","_zoneBuildings"
+		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit","_zoneBuildings",
+		"_road", "_nearRoads","_vehPos"
 	];
 
 	_name = _this select 0;
@@ -179,13 +181,15 @@ dzn_fnc_dynai_createZone = {
 		_groupUnits = _x select 1;
 		
 		// For count of templated groups
-		for "_i" from 0 to _count do {
+		for "_i" from 0 to (_count - 1) do {
 			if (DEBUG) then {  player sideChat format ["|| Spawning group %1", str(_i)]; };
 			
 			// Creates group
 			_groupPos = [_area, _zonePos select 1, _zonePos select 2] call dzn_fnc_getRandomPointInZone; // return Pos3D
 			_grp = createGroup call compile _side;
 			_grp setVariable ["wpSet",false];
+			
+			// _nearRoads = _groupPos nearRoads 100;
 			
 			// Creates GameLogic for group control
 			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];			
@@ -203,8 +207,8 @@ dzn_fnc_dynai_createZone = {
 				_unit = objNull;
 				
 				if (typename _assigned == "ARRAY") then {
-					// Not assigned, Assigned in vehicle, Assigned to house
-					
+					// Not assigned, Assigned in vehicle, Assigned to house			
+			
 					_unit = _grp createUnit [_classname , _groupPos, [], 0, "NONE"];
 					if (DEBUG) then { player sideChat format ["|||||| Unit created %1 (%2)", str(_unit), _classname]; };
 					
@@ -217,7 +221,7 @@ dzn_fnc_dynai_createZone = {
 					};
 					
 					_grpLogic setVariable ["units", (_grpLogic getVariable "units") + [_unit]];
-					
+					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [""]];	
 					// Gear
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear] spawn dzn_fnc_gear_assignKit; };
 					
@@ -251,9 +255,13 @@ dzn_fnc_dynai_createZone = {
 							] call dzn_fnc_assignInVehicle; 
 						};
 					};
+					
 				} else {
 					// Is vehicle					
-					_unit = createVehicle [_classname, _groupPos, [], 0, "NONE"];
+					_vehPos = [];
+					_vehPos = [(_groupPos select 0) + 6*_forEachIndex, (_groupPos select 1) + 6*_forEachIndex, 0];
+					
+					_unit = createVehicle [_classname, _vehPos, [], 0, "NONE"];
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
 					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];					
 				};
@@ -314,8 +322,7 @@ dzn_fnc_dynai_moveZone = {
 			0: OBJECT		- SpawnAI Module of zone
 			1: POS3D/OBJECT	- New zone position or object
 		OUTPUT: NULL
-	*/
-	
+	*/	
 	private["_zone","_newPos","_curPos","_locations","_offsets","_dir","_dist","_oldOffset","_newOffsetPos","_props","_wps","_wpOffsets"];
 	
 	_zone = if (!isNil {_this select 0}) then {_this select 0};
@@ -346,8 +353,6 @@ dzn_fnc_dynai_moveZone = {
 		_dist = _curPos distance _x;
 		_wpOffsets = _wpOffsets  + [ [_dir, _dist] ];
 	} forEach _wps;
-	
-	
 	
 	// player globalChat format ["dzn_fnc_dynai_moveZone Step 2 : %1", str(_offsets)];
 	// Move zone
