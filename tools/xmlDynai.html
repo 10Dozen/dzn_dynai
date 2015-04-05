@@ -165,18 +165,19 @@
 						});
 						
 						// Add VehID + Role	:: IN VEHICLE
-						$( "input[name='unitType" + groupId + unitId + "'][value='inVehicle']" ).click( function(event) {
-							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
-							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
+						$( "input[name='unitType" + groupId + unitId + "'][value='inVehicle']" ).parent().click( function(event) {
+							$( this ).parent().find( "div" ).css( cssInactiveStyle, cssInactiveStyleAttr );
+							$( this ).css( cssActiveStyle, cssActiveStyleAttr );
+							$( this ).find( "input").prop('checked', true);
 							
-							if ( ($( event.target ).parent().find( "div[name='vehIdAndRole']" )).length == 0 ) {							
+							if ( ($( this ).find( "div[name='vehIdAndRole']" )).length == 0 ) {							
 								var addVehicleIdAndRole = 
 									" <div class='horDiv1' name='vehIdAndRole'>"
 										+ "<input name='vehId' class='vehIdInput' type='text' placeholder='VehID'>"
 										+ "<input name='vehRole' type='text' placeholder='Vehicle crew role'>"
 									+ "</div>";
 									
-								$ ( $(event.target).parent() ).append( addVehicleIdAndRole );
+								$ ( this ).append( addVehicleIdAndRole );
 							}							
 						});	
 					});
