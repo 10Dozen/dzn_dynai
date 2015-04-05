@@ -419,16 +419,24 @@
 			});
 		</script>
 		<style>
+			.textInput {
+				width: 190px;
+			}
+		
 			div {
 				border-radius: 15px;
 			}
 		
 			.formDiv {
 				width: 200px;
-			}
+			}			
+			
 			.horDivLine {
 				display: inline-block;
 				width: 200px;
+				background-color: #AEE1F5;
+				color: #454545;
+				padding-left: 10px;
 			}
 			
 			.titleDiv {				
@@ -476,34 +484,45 @@
 			<hr>
 				<div id="defaultUnitClassname">
 					<div class="horDivLine">Default Unit Classname</div>
-					<div class="horDivLine"><input placeholder="Default unit classname"></div>				
+					<div class="horDivLine"><input class="textInput" placeholder="Default unit classname"></div>				
 				</div>
 				<div id="defaultVehClassname">
 					<div class="horDivLine">Default Vehicle Classname</div>
-					<div class="horDivLine"><input placeholder="Default vehicle classname"></div>					
+					<div class="horDivLine"><input class="textInput" placeholder="Default vehicle classname"></div>					
 				</div>
 				<div id="defaultUnitKit">
 					<div class="horDivLine">Default Unit Kit</div>
-					<div class="horDivLine"><input placeholder="Default unit kit"></div>
+					<div class="horDivLine"><input class="textInput" placeholder="Default unit kit"></div>
 				</div>
 				<div id="defaultVehKit">
 					<div class="horDivLine">Default Vehicle Kit</div>
-					<div class="horDivLine"><input placeholder="Default vehicle kit"></div>
+					<div class="horDivLine"><input class="textInput" placeholder="Default vehicle kit"></div>
 				</div>
 			</div>
 			<hr>
 			<div class="titleDiv">ZONE PROPERTIES</div>
 			<hr>
-			<p id="zone_name">NAME <input name="zoneNameInput" placeholder="zoneName"></p>
-			<div id="zone_side">Side
-				<div class="hRadio"><input type="radio" name="side" value="west">West</div>
-				<div class="hRadio"><input type="radio" name="side" value="east">East</div>
-				<div class="hRadio"><input type="radio" name="side" value="resistance">Indep</div>
-				<div class="hRadio"><input type="radio" name="side" value="civilian">Civ</div>
+			<div id="zone_name">
+				<div class="horDivLine">Name</div>
+				<div class="horDivLine"><input class="textInput" name="zoneNameInput" placeholder="zoneName"></div>
+			</div>
+			<div id="zone_side">
+				<div class="horDivLine">Side</div>
+				<div class="horDiv1">
+					<div class="hRadio"><input type="radio" name="side" value="west">West</div>
+					<div class="hRadio"><input type="radio" name="side" value="east">East</div>
+					<div class="hRadio"><input type="radio" name="side" value="resistance">Indep</div>
+					<div class="hRadio"><input type="radio" name="side" value="civilian">Civ</div>
+				</div>
 			</div>			
-			<div id="zone_status">Is Zone Active<input type="checkbox" name="zoneActive" placeholder="is Active"></div>
+			<div id="zone_status">
+				<div class="horDivLine">Is Zone Active</div>
+				<input type="checkbox" name="zoneActive" placeholder="is Active">
+			</div>
 			<hr>
-			<div id="zone_unit">Unit References<br>
+			<div id="zone_unit">
+				<div class="horDivLine">Unit References</div>
+				<br>
 				<input id="groupName" type="text" placeholder="Name of the group (optional)">
 				<input id="groupAdd" type="button" value="Add Group">
 				<div id="zone_groups">					
@@ -511,28 +530,38 @@
 			</div>
 			
 			<hr>
-			<p>Behavior Settings</p>		
-			<div id="zone_speedMode">Speed Mode<br>
-				<div class="hRadio"><input type="radio" name="speedMode" value="limited">Limited</div>
-				<div class="hRadio"><input type="radio" name="speedMode" value="normal">Normal</div>
-				<div class="hRadio"><input type="radio" name="speedMode" value="full">Full</div>
+			<div class="horDivLine">Behavior Settings</div>	
+			<div id="zone_speedMode">
+				<div class="horDivLine">Speed Mode</div>
+				<div class="horDiv1">
+					<div class="hRadio"><input type="radio" name="speedMode" value="limited">Limited</div>
+					<div class="hRadio"><input type="radio" name="speedMode" value="normal">Normal</div>
+					<div class="hRadio"><input type="radio" name="speedMode" value="full">Full</div>
+				</div>
 			</div>					
-			<div id="zone_behavior">Behavior<br>
-				<div class="hRadio"><input type="radio" name="behavior" value="careless">Careless</div>
-				<div class="hRadio"><input type="radio" name="behavior" value="safe">Safe</div>
-				<div class="hRadio"><input type="radio" name="behavior" value="aware">Aware</div>
-				<div class="hRadio"><input type="radio" name="behavior" value="combat">Combat</div>
-				<div class="hRadio"><input type="radio" name="behavior" value="stealth">Stealth</div>
+			<div id="zone_behavior">
+				<div class="horDivLine">Behavior</div>
+				<div class="horDiv1">
+					<div class="hRadio"><input type="radio" name="behavior" value="careless">Careless</div>
+					<div class="hRadio"><input type="radio" name="behavior" value="safe">Safe</div>
+					<div class="hRadio"><input type="radio" name="behavior" value="aware">Aware</div>
+					<div class="hRadio"><input type="radio" name="behavior" value="combat">Combat</div>
+					<div class="hRadio"><input type="radio" name="behavior" value="stealth">Stealth</div>
+				</div>
 			</div>
-			<div id="zone_combatMode">Combat Mode<br>
-				<div class="hRadio"><input type="radio" name="combatMode" value="blue">Blue</div>
-				<div class="hRadio"><input type="radio" name="combatMode" value="green">Green</div>
-				<div class="hRadio"><input type="radio" name="combatMode" value="white">White</div>
-				<div class="hRadio"><input type="radio" name="combatMode" value="yellow">Yellow</div>
-				<div class="hRadio"><input type="radio" name="combatMode" value="red">Red</div>
+			<div id="zone_combatMode">
+				<div class="horDivLine">Combat Mode</div>
+				<div class="horDiv1">
+					<div class="hRadio"><input type="radio" name="combatMode" value="blue">Blue</div>
+					<div class="hRadio"><input type="radio" name="combatMode" value="green">Green</div>
+					<div class="hRadio"><input type="radio" name="combatMode" value="white">White</div>
+					<div class="hRadio"><input type="radio" name="combatMode" value="yellow">Yellow</div>
+					<div class="hRadio"><input type="radio" name="combatMode" value="red">Red</div>
+				</div>
 			</div>
-			<div id="zone_formation">Formation<br>		
-				<div>
+			<div id="zone_formation">
+				<div class="horDivLine">Formation</div><br>		
+				<div class="horDiv1">
 					<div class="formDiv"><input type="radio" name="formation" value="COLUMN">Column<br></div>
 					<div class="formDiv"><input type="radio" name="formation" value="STAG COLUMN">Staggered Column<br></div>
 					<div class="formDiv"><input type="radio" name="formation" value="WEDGE">Wedge<br></div>
