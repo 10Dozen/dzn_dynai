@@ -139,9 +139,10 @@
 						});
 						
 						// Remove VehID + Role	:: PATROL
-						$( "input[name='unitType" + groupId + unitId + "'][value='patrol']" ).click( function(event) {
-							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
-							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
+						$( "input[name='unitType" + groupId + unitId + "'][value='patrol']" ).parent().click( function(event) {						
+							$( $( this ).parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
+							$( this ).css( cssActiveStyle, cssActiveStyleAttr );
+							$( this ).find( "input").prop('checked', true);
 							
 							if ( $( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).length != 0 ) {
 								console.log("Delete input field");
@@ -151,9 +152,10 @@
 						});
 						
 						// Remove VehID + Role	:: IN BUILDING
-						$( "input[name='unitType" + groupId + unitId + "'][value='inBuilding']" ).click( function(event) {
-							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
-							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
+						$( "input[name='unitType" + groupId + unitId + "'][value='inBuilding']" ).parent().click( function(event) {
+							$( $( this ).parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
+							$( this ).css( cssActiveStyle, cssActiveStyleAttr );
+							$( this ).find( "input").prop('checked', true);
 							
 							if ( $( $( event.target ).parent().parent().find( "div[name='inVehicle']" ).find( "div[name='vehIdAndRole']" ) ).length != 0 ) {
 								console.log("Delete input field");
