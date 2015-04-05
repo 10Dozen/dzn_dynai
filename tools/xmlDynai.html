@@ -2,13 +2,7 @@
 	<head>
 		<title>DYNAI Zone Configurator</title>
 		<script src="jquery-2.1.3.min.js"></script>
-		<script>
-			var westManDefault				= "B_Soldier_F";
-			var eastManDefault				= "O_Soldier_F";
-			var resistanceManDefault 		= "I_soldier_F";
-			var civilianManDefault 			= "C_man_1";		
-			var defaultUnitClassname 		= "";
-		
+		<script>			
 			var groupCounter				= -1;
 			var groupAddRemoveGroupButton	= "<input class='groupRemove' type='button' value='Remove Group'>";
 			
@@ -18,6 +12,12 @@
 			
 			var vehAssignementRemove		= "<input class='unitAssignementRemove' type='button' value='X'>";
 
+			var westManDefault				= "B_Soldier_F";
+			var eastManDefault				= "O_Soldier_F";
+			var resistanceManDefault 		= "I_soldier_F";
+			var civilianManDefault 			= "C_man_1";		
+			var defaultUnitClassname 		= "";
+			
 			var cssActiveStyle				= "background";
 			var cssActiveStyleAttr			= "#99CC00";
 			var cssInactiveStyle			= "background";
@@ -34,16 +34,15 @@
 				$( "#groupAdd" ).click( function(event) {
 					groupCounter++;
 					// Add group
-					var groupName = $.map($('#groupName'), function (input) { return $(input).val() })
+					var groupName = $('#groupName').val();
 					if (groupName == "") {
 						groupName = "Group Template #" + groupCounter;
 					} else {
 						groupName = '"' + groupName + '"';
 					}		
 
-					var groupAddUnitVehicle 		= "<input class='vehicleAdd" + groupCounter + "' type='button' value='Add Vehicle'>";
-					var groupAddUnit				= "<input class='unitAdd" + groupCounter + "' type='button' value='Add Unit'>";
-					
+					var groupAddUnitVehicle 		= "<input name='" + groupCounter + "' class='vehicleAdd" + groupCounter + "' type='button' value='Add Vehicle'>";
+					var groupAddUnit				= "<input name='" + groupCounter + "' class='unitAdd" + groupCounter + "' type='button' value='Add Unit'>";					
 					
 					groupAddHtml = 
 					"<div class='group" + groupCounter + "'>"
@@ -63,12 +62,11 @@
 						});
 					});
 					
-					
 					// *********************
 					// Add vehicle to group
 					// *********************
 					var addVehicleItem = "input[class='vehicleAdd" + groupCounter + "'][type='button']";
-					$( addVehicleItem ).click( function(event) {						
+					$( addVehicleItem ).click( function(event) {
 						var defaultVehicleClassname = "";
 						if ( $( "div[id='defaultVehClassname']" ).find( "input" ).val().length > 0 ) {
 							defaultVehicleClassname = $( "div[id='defaultVehClassname']" ).find( "input" ).val();
@@ -97,13 +95,13 @@
 						});						
 					});
 					
-					
-					
 					// *********************
 					// Add unit to group
 					// *********************
 					var addUnitItem = "input[class='unitAdd" + groupCounter + "'][type='button']";
 					$( addUnitItem ).click( function(event) {
+						var groupId = $( addUnitItem ).attr("name");
+					
 						var defaultUnitClassname = "";
 						if ( $( "div[id='defaultUnitClassname']" ).find( "input" ).val().length > 0 ) {
 							defaultUnitClassname = defaultUnitClassname = $( "div[id='defaultUnitClassname']" ).find( "input" ).val();
@@ -127,9 +125,9 @@
 								+ "<input name='class' type='text' placeholder='Classname of unit' value='" + defaultUnitClassname 
 								+ "'> | <input name='kit' type='text' placeholder='Kit for unit' value='" + defaultUnitKit + "'> | "
 								+ "<div class='horDiv1'>"
-									+ "<div class='horDiv1' name='patrol'><input type='radio' name='unitType" + groupCounter + unitId + "' value='patrol'>Patrol</div>"
-									+ "<div class='horDiv1' name='inBuilding'><input type='radio' name='unitType" + groupCounter + unitId + "' value='inBuilding'>In building</div>"
-									+ "<div class='horDiv1' name='inVehicle'><input type='radio' name='unitType" + groupCounter + unitId + "' value='inVehicle'>In vehicle</div>"
+									+ "<div class='horDiv1' name='patrol'><input type='radio' name='unitType" + groupId + unitId + "' value='patrol'>Patrol</div>"
+									+ "<div class='horDiv1' name='inBuilding'><input type='radio' name='unitType" + groupId + unitId + "' value='inBuilding'>In building</div>"
+									+ "<div class='horDiv1' name='inVehicle'><input type='radio' name='unitType" + groupId + unitId + "' value='inVehicle'>In vehicle</div>"
 								+ "</div>"
 							+ "</div>";
 							
@@ -141,7 +139,7 @@
 						});
 						
 						// Remove VehID + Role	:: PATROL
-						$( "input[name='unitType" + groupCounter + unitId + "'][value='patrol']" ).click( function(event) {
+						$( "input[name='unitType" + groupId + unitId + "'][value='patrol']" ).click( function(event) {
 							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
 							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 							
@@ -153,7 +151,7 @@
 						});
 						
 						// Remove VehID + Role	:: IN BUILDING
-						$( "input[name='unitType" + groupCounter + unitId + "'][value='inBuilding']" ).click( function(event) {
+						$( "input[name='unitType" + groupId + unitId + "'][value='inBuilding']" ).click( function(event) {
 							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
 							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 							
@@ -165,7 +163,7 @@
 						});
 						
 						// Add VehID + Role	:: IN VEHICLE
-						$( "input[name='unitType" + groupCounter + unitId + "'][value='inVehicle']" ).click( function(event) {
+						$( "input[name='unitType" + groupId + unitId + "'][value='inVehicle']" ).click( function(event) {
 							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
 							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 							
