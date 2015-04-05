@@ -133,6 +133,9 @@
 							
 						$( unitAdd ).appendTo( $( event.target ).parent().find(".squad") );	
 						
+						$( "input[name='unitType" + groupId + unitId + "'][value='patrol']" ).parent().css( cssActiveStyle, cssActiveStyleAttr );
+						$( "input[name='unitType" + groupId + unitId + "'][value='patrol']" ).prop('checked', true);
+						
 						// Remove unit from group
 						$( "input[class='unitRemove']").click( function(event) {
 							$( $( event.target ).parent() ).remove();
