@@ -127,9 +127,9 @@
 								+ "<input name='class' type='text' placeholder='Classname of unit' value='" + defaultUnitClassname 
 								+ "'> | <input name='kit' type='text' placeholder='Kit for unit' value='" + defaultUnitKit + "'> | "
 								+ "<div class='horDiv1'>"
-									+ "<div class='horDiv1' name='patrol'><input type='radio' name='unitType" + unitId + "' value='patrol'>Patrol</div>"
-									+ "<div class='horDiv1' name='inBuilding'><input type='radio' name='unitType" + unitId + "' value='inBuilding'>In building</div>"
-									+ "<div class='horDiv1' name='inVehicle'><input type='radio' name='unitType" + unitId + "' value='inVehicle'>In vehicle</div>"
+									+ "<div class='horDiv1' name='patrol'><input type='radio' name='unitType" + groupCounter + unitId + "' value='patrol'>Patrol</div>"
+									+ "<div class='horDiv1' name='inBuilding'><input type='radio' name='unitType" + groupCounter + unitId + "' value='inBuilding'>In building</div>"
+									+ "<div class='horDiv1' name='inVehicle'><input type='radio' name='unitType" + groupCounter + unitId + "' value='inVehicle'>In vehicle</div>"
 								+ "</div>"
 							+ "</div>";
 							
@@ -141,7 +141,7 @@
 						});
 						
 						// Remove VehID + Role	:: PATROL
-						$( "input[name='unitType" + unitId + "'][value='patrol']" ).click( function(event) {
+						$( "input[name='unitType" + groupCounter + unitId + "'][value='patrol']" ).click( function(event) {
 							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
 							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 							
@@ -153,7 +153,7 @@
 						});
 						
 						// Remove VehID + Role	:: IN BUILDING
-						$( "input[name='unitType" + unitId + "'][value='inBuilding']" ).click( function(event) {
+						$( "input[name='unitType" + groupCounter + unitId + "'][value='inBuilding']" ).click( function(event) {
 							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
 							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 							
@@ -165,7 +165,7 @@
 						});
 						
 						// Add VehID + Role	:: IN VEHICLE
-						$( "input[name='unitType" + unitId + "'][value='inVehicle']" ).click( function(event) {
+						$( "input[name='unitType" + groupCounter + unitId + "'][value='inVehicle']" ).click( function(event) {
 							$( $( event.target ).parent().parent().find( "div" )  ).css( cssInactiveStyle, cssInactiveStyleAttr );
 							$( $( event.target ).parent() ).css( cssActiveStyle, cssActiveStyleAttr );
 							
@@ -185,27 +185,27 @@
 				// Effects for another radiobuttons
 				
 				// SIDE				
-				$($($( "div[id='zone_side']" ).find( "div[class='hRadio']"))).click( function(event) {					
+				$( "div[id='zone_side']" ).find( "div[class='hRadio']").click( function(event) {					
 					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
 					$( this ).css( cssActiveStyle, cssActiveStyleAttr );				
 					$( this ).find( "input").prop('checked', true);
 				});
 				
 				// SpeedMode
-				$($($( "div[id='zone_speedMode']" ).find( "div[class='hRadio']"))).click( function(event) {					
+				$( "div[id='zone_speedMode']" ).find( "div[class='hRadio']").click( function(event) {					
 					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
 					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
 					$( this ).find( "input").prop('checked', true);
 				});
 				
 				// Behavior
-				$($($( "div[id='zone_behavior']" ).find( "div[class='hRadio']"))).click( function(event) {					
+				$( "div[id='zone_behavior']" ).find( "div[class='hRadio']").click( function(event) {					
 					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
 					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
 					$( this ).find( "input").prop('checked', true);
 				});
 				// CombatMode
-				$($($( "div[id='zone_combatMode']" ).find( "div[class='hRadio']"))).click( function(event) {					
+				$( "div[id='zone_combatMode']" ).find( "div[class='hRadio']").click( function(event) {					
 					$( $( this ).parent().find( "div" ) ).css( cssInactiveStyle, cssInactiveStyleAttr );
 					$( this ).css( cssActiveStyle, cssActiveStyleAttr );
 					$( this ).find( "input").prop('checked', true);
@@ -490,16 +490,16 @@
 			<hr>
 			<div class="titleDiv">ZONE PROPERTIES</div>
 			<hr>
-			<p id="zone_name"><input name="zoneNameInput" placeholder="zoneName"></p>
+			<p id="zone_name">NAME <input name="zoneNameInput" placeholder="zoneName"></p>
 			<div id="zone_side">Side
 				<div class="hRadio"><input type="radio" name="side" value="west">West</div>
 				<div class="hRadio"><input type="radio" name="side" value="east">East</div>
 				<div class="hRadio"><input type="radio" name="side" value="resistance">Indep</div>
 				<div class="hRadio"><input type="radio" name="side" value="civilian">Civ</div>
 			</div>			
-			<div id="zone_status">Is Active<input type="checkbox" name="zoneActive" placeholder="is Active"></div>
+			<div id="zone_status">Is Zone Active<input type="checkbox" name="zoneActive" placeholder="is Active"></div>
 			<hr>
-			<div id="zone_unit">Units<br>
+			<div id="zone_unit">Unit References<br>
 				<input id="groupName" type="text" placeholder="Name of the group (optional)">
 				<input id="groupAdd" type="button" value="Add Group">
 				<div id="zone_groups">					
