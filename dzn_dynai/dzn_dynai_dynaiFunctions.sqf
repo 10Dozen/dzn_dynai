@@ -348,12 +348,13 @@ dzn_fnc_dynai_moveZone = {
 	// Get current offsets of keypoints
 	_wps = _zone getVariable "keypoints";
 	_wpOffsets = [];
-	{
-		_dir = [_curPos, _x] call BIS_fnc_dirTo;
-		_dist = _curPos distance _x;
-		_wpOffsets = _wpOffsets  + [ [_dir, _dist] ];
-	} forEach _wps;
-	
+	if (typename _wps == "ARRAY") then {		
+		{
+			_dir = [_curPos, _x] call BIS_fnc_dirTo;
+			_dist = _curPos distance _x;
+			_wpOffsets = _wpOffsets  + [ [_dir, _dist] ];
+		} forEach _wps;
+	};
 	// player globalChat format ["dzn_fnc_dynai_moveZone Step 2 : %1", str(_offsets)];
 	// Move zone
 	_zone setPosASL _newPos;
@@ -380,16 +381,16 @@ dzn_fnc_dynai_moveZone = {
 		} forEach _locationBuildings;
 	} forEach _locations;
 	
-	{
-		_oldOffset = _wpOffsets select _forEachIndex;
-		_newOffsetPos = [_newPos, _oldOffset select 0, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
-		_wps set [_forEachIndex, _newOffsetPos];
-	} forEach _wps;
+	if (typename _wps == "ARRAY") then {
+		{
+			_oldOffset = _wpOffsets select _forEachIndex;
+			_newOffsetPos = [_newPos, _oldOffset select 0, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
+			_wps set [_forEachIndex, _newOffsetPos];
+		} forEach _wps;
+		_props set [4, _wps];
+	};
 	
-	
-	_props = _zone getVariable "properties";	
-	
-	_props set [4, _wps];
+	_props = _zone getVariable "properties";		
 	_props set [7, _zoneBuildings];
 	
 	_zone setVariable ["properties", _props, true];
