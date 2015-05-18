@@ -47,7 +47,7 @@
 					groupAddHtml = 
 					"<div class='group" + groupCounter + "'>"
 						+ "<br>" 
-						+ groupName + " " + groupAddRemoveGroupButton +"<br>"
+						+ "<div class='horDiv1' id='groupName'>" + groupName + "</div>" + " " + groupAddRemoveGroupButton +"<br>"
 						+ "<input type='number' placeholder='Count of groups'>"
 						+" <div class='squad'><br></div>"
 						+ groupAddUnitVehicle + groupAddUnit				
@@ -245,6 +245,8 @@
 						
 						$( "div[class^='group']" ).each( function( index, element) {
 							var group = "";
+							var groupName = $( element ).find( "div[id='groupName']" ).text();
+							console.log(groupName);
 							var count = 0;
 							if ( $( element ).find( "input[type='number']" ).val().length > 0 ) {
 								count = $( element ).find( "input[type='number']" ).val();
@@ -342,9 +344,9 @@
 							}							
 							//console.log(units);
 							
-							group = "[" + count + ",	/* Groups qunatity: */" 
-								+ "\n	[" + units.join() + "]	/*Units*/\n"
-								+ "	]\n	";
+							group = "\n	[/*" + groupName + "*/\n"
+							+ "	/* Groups quantity: */"+ count + ",\n" 
+							+ "	/*Units*/ [" + units.join() + "]]";
 							//console.log(group);
 							refTemplates.push(group);
 							
@@ -417,7 +419,8 @@
 						+ zoneActive + ",	/* Side, isActive */	"
 						+ zoneAreaAndWP 
 						+ ",\n	/* Groups: */\n	[" + zoneRefs
-						+ "],	\n	/* Behavior: Speed, Behavior, Combat mode, Formation */\n	[" + zoneSpeed + "," + zoneBehavior + "," + zoneMode + "," + zoneForm + "]\n]";
+						+ "\n	],\n	/* Behavior: Speed, Behavior, Combat mode, Formation */\n	["
+						+ zoneSpeed + "," + zoneBehavior + "," + zoneMode + "," + zoneForm + "]\n]";
 					
 					$( "textarea[name='comment']" ).html( output );
 				});
