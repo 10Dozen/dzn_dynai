@@ -8,11 +8,8 @@ dzn_dynai_preInitTimeout			=	3;
 dzn_dynai_afterInitTimeout			=	3;
 
 // Default simple skill of units
-dzn_dynai_complexSkill			=	false;
+dzn_dynai_complexSkill				=	false;
 dzn_dynai_skill = if (dzn_dynai_complexSkill) then {
-/* 	Simple Skill Level */
-	0.5
- else {
 	/*	
 	Or detailed skill (comment skills that shouldn't be changed) 
 	More info about skills https://community.bistudio.com/wiki/AI_Sub-skills
@@ -29,7 +26,12 @@ dzn_dynai_skill = if (dzn_dynai_complexSkill) then {
 		//	,["reloadSpeed", 0.5]
 		,["commanding", 0.5]
 	]
+} else {
+	/* 	Simple Skill Level */
+	0.5	
 };
+dzn_dynai_complexSkill = [ dzn_dynai_complexSkill, dzn_dynai_skill ];
+
 
 // Building list
 dzn_dynai_allowedHouses				= ["House"];
