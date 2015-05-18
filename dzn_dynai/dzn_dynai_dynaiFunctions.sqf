@@ -136,7 +136,6 @@ dzn_fnc_dynai_startZones = {
 };
 
 dzn_fnc_dynai_createZone = {
-	
 	/*
 		Create zone from parameters
 		INPUT: 		NULL
@@ -262,11 +261,11 @@ dzn_fnc_dynai_createZone = {
 					_vehPos = [(_groupPos select 0) + 6*_forEachIndex, (_groupPos select 1) + 6*_forEachIndex, 0];
 					
 					_unit = createVehicle [_classname, _vehPos, [], 0, "NONE"];
+					_unit setPos (_vehPos findEmptyPosition [1,25, _classname]); // Empty Position
+					
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
 					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];					
 				};
-
-				
 			} forEach _groupUnits;			
 			
 			
@@ -402,7 +401,7 @@ dzn_fnc_dynai_getZoneKeypoints = {
 		EXAMPLE: dzn_zone1 call dzn_fnc_dynai_moveZone
 		INPUT:
 			0: OBJECT	- SpawnAI Module of zone
-		OUTPUT: ARRAY of keypoints
+		OUTPUT: ARRAY of keypoints (pos3d)
 	*/
 	_this getVariable "keypoints";
 };
@@ -413,7 +412,7 @@ dzn_fnc_dynai_setZoneKeypoints = {
 		EXAMPLE: dzn_zone1 call dzn_fnc_dynai_moveZone
 		INPUT:
 			0: OBJECT	- SpawnAI Module of zone
-			1: ARRAY	- array of keypoints
+			1: ARRAY	- array of keypoints (pos3d)
 		OUTPUT: null
 	*/
 	
@@ -423,6 +422,7 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	_newKeypoints = _this select 1;
 	
 	if (_zone getVariable "isActive") exitWith { hintSilent format ["dzn_dynai: %1 is activated already", str(_zone)]; };
+
 	_properties = _zone getVariable "properties";
 	_zone setVariable ["properties", _properties set [4, _newKeypoints], true];
 };
