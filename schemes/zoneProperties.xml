@@ -36,6 +36,14 @@
 			</refUnit>
 			<refUnits id="n"><!-- ... --></refUnits>
 		</refGroup>
+		<customSkillLevel>
+			<skillType><!-- Simple or Complex --></skillType>
+			<complexSkill id="">
+				<!-- Value or Array of skill values -->
+			</complexSkill>
+		</customSkillLevel>
+		
+		
 	</refTemplate>
 	<refTemplate id="1">
 		<count><!-- getDir leader --></count>
