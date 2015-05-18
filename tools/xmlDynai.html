@@ -342,7 +342,9 @@
 							}							
 							//console.log(units);
 							
-							group = "[" + count + ",[" + units.join() + "]]";
+							group = "[" + count + ",	/* Groups qunatity: */" 
+								+ "\n	[" + units.join() + "]	/*Units*/\n"
+								+ "	]\n	";
 							//console.log(group);
 							refTemplates.push(group);
 							
@@ -409,9 +411,13 @@
 						$( "input[name='formation']" ).parent().css( "border", cssWrongBorder );
 					}
 					
-					output = "[" + zoneName + "," + zoneSide + "," + zoneActive + "," + zoneAreaAndWP
-						+ ",[" + zoneRefs
-						+ "],[" + zoneSpeed + "," + zoneBehavior + "," + zoneMode + "," + zoneForm + "]]";
+					output = "[\n	" 
+						+ zoneName + ",	/* Zone Name */\n	" 
+						+ zoneSide + "," 
+						+ zoneActive + ",	/* Side, isActive */	"
+						+ zoneAreaAndWP 
+						+ ",\n	/* Groups: */\n	[" + zoneRefs
+						+ "],	\n	/* Behavior: Speed, Behavior, Combat mode, Formation */\n	[" + zoneSpeed + "," + zoneBehavior + "," + zoneMode + "," + zoneForm + "]\n]";
 					
 					$( "textarea[name='comment']" ).html( output );
 				});
