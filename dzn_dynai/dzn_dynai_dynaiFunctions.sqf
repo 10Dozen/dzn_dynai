@@ -136,7 +136,6 @@ dzn_fnc_dynai_startZones = {
 };
 
 dzn_fnc_dynai_createZone = {
-	
 	/*
 		Create zone from parameters
 		INPUT: 		NULL
@@ -261,12 +260,17 @@ dzn_fnc_dynai_createZone = {
 					_vehPos = [];
 					_vehPos = [(_groupPos select 0) + 6*_forEachIndex, (_groupPos select 1) + 6*_forEachIndex, 0];
 					
-					_unit = createVehicle [_classname, _vehPos, [], 0, "NONE"];
+					_unit = createVehicle [_classname, [-200,-200,10], [], 0, "NONE"];
+					_unit allowDamage false;
+					_unit setVelocity [0,0,0];
+					_unit setPos (_vehPos findEmptyPosition [2,50, _classname]); // Empty Position
+					_unit allowDamage true;
+					
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
 					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];					
 				};
-
 				
+				sleep 0.2;
 			} forEach _groupUnits;			
 			
 			
@@ -308,66 +312,71 @@ dzn_fnc_dynai_activateZone = {
 			0: OBJECT	- SpawnAI Module of zone
 		OUTPUT: NULL
 	*/
-	
+	private["_properties"];
 	if !(isNil {_this getVariable "isActive"} && isNil {_this getVariable "initialized"}) then {	
 		_this setVariable ["isActive", true, true];	
+		_properties = _this getVariable "properties";
+		_properties set [2, true];	
+		_this setVariable ["properties", _properties, true];	
 	};
 };
 
 dzn_fnc_dynai_moveZone = {
 	/*
 		Move zone to given position.
-		EXAMPLE: [dzn_zone1, getPos player] call dzn_fnc_dynai_moveZone
+		EXAMPLE: [dzn_zone1, getPos player, directin] call dzn_fnc_dynai_moveZone
 		INPUT:
 			0: OBJECT		- SpawnAI Module of zone
 			1: POS3D/OBJECT	- New zone position or object
+			2: DIRECTION	- New direction
 		OUTPUT: NULL
 	*/	
-	private["_zone","_newPos","_curPos","_locations","_offsets","_dir","_dist","_oldOffset","_newOffsetPos","_props","_wps","_wpOffsets"];
+	private["_zone","_newPos","_newDir","_deltaDir","_curPos","_locations","_offsets","_dir","_dist","_oldOffset","_newOffsetPos","_props","_wps","_wpOffsets"];
 	
 	_zone = if (!isNil {_this select 0}) then {_this select 0};
 	if (isNil "_zone") exitWith {};
 	_newPos = if (typename (_this select 1) == "ARRAY") then { _this select 1 } else { getPosASL (_this select 1) };
-	
-	// player globalChat format ["dzn_fnc_dynai_moveZone: zone - %1 :: new pos - %2", str(_zone), str(_newPos)];
+	_newDir = if (isNil {_this select 2}) then { getDir _zone } else { _this select 2 };
+	_deltaDir = _newDir - (getDir _zone);	
 	
 	waitUntil { !isNil {_zone getVariable "initialized"} && { _zone getVariable "initialized" } };
 	
 	_curPos = getPosASL _zone;
 	_locations = _zone getVariable "locations";
-	// player globalChat format ["dzn_fnc_dynai_moveZone Step 1: curPos - %1 :: locs - %2", str(_curPos), str(_locations)];
+	
 	// Get current offsets of locations
 	_offsets = [];
 	{
 		_dir = [_curPos, (locationPosition _x)] call BIS_fnc_dirTo;
 		_dist = _curPos distance (locationPosition _x);
 		_offsets = _offsets  + [ [_dir, _dist] ];
-			// player globalChat format ["dzn_fnc_dynai_moveZone Step {} : dir -  %1 :: dist - %2", str(_dir), str(_dist)];
 	} forEach _locations;
 	
 	// Get current offsets of keypoints
 	_wps = _zone getVariable "keypoints";
 	_wpOffsets = [];
-	if (typename _wps == "ARRAY") then {		
+	if (typename _wps == "ARRAY") then {
 		{
 			_dir = [_curPos, _x] call BIS_fnc_dirTo;
 			_dist = _curPos distance _x;
 			_wpOffsets = _wpOffsets  + [ [_dir, _dist] ];
 		} forEach _wps;
 	};
-	// player globalChat format ["dzn_fnc_dynai_moveZone Step 2 : %1", str(_offsets)];
+	
 	// Move zone
 	_zone setPosASL _newPos;
+	_zone setDir _newDir;
 	_zoneBuildings = [];
 	
 	// Move locations
 	{
 		_oldOffset = _offsets select _forEachIndex;	// return [_dir, _dist] 
 		
-		_newOffsetPos = [_newPos, _oldOffset select 0, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
-		// player globalChat format ["dzn_fnc_dynai_moveZone Step {} : %1 :: %2", str(_oldOffset), str(_newOffsetPos)];
+		_newOffsetPos = [_newPos, (_oldOffset select 0) + _deltaDir, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
+		
 		_x setPosition _newOffsetPos;
-
+		_x setDirection (direction _x + _deltaDir);
+		
 		_locationBuildings = [
 			locationPosition _x, 
 			(size _x select 0) max (size _x select 1),
@@ -384,14 +393,49 @@ dzn_fnc_dynai_moveZone = {
 	if (typename _wps == "ARRAY") then {
 		{
 			_oldOffset = _wpOffsets select _forEachIndex;
-			_newOffsetPos = [_newPos, _oldOffset select 0, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
+			_newOffsetPos = [_newPos, (_oldOffset select 0) + _deltaDir, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
 			_wps set [_forEachIndex, _newOffsetPos];
 		} forEach _wps;
-		_props set [4, _wps];
 	};
 	
-	_props = _zone getVariable "properties";		
+	_props = _zone getVariable "properties";	
+	
+	_props set [4, _wps];
 	_props set [7, _zoneBuildings];
 	
 	_zone setVariable ["properties", _props, true];
 };
+
+dzn_fnc_dynai_getZoneKeypoints = {
+	/*
+		Get keypoints of the zone.
+		EXAMPLE: dzn_zone1 call dzn_fnc_dynai_moveZone
+		INPUT:
+			0: OBJECT	- SpawnAI Module of zone
+		OUTPUT: ARRAY of keypoints (pos3d)
+	*/
+	_this getVariable "properties" select 4;
+};
+
+dzn_fnc_dynai_setZoneKeypoints = {
+	/*
+		Get keypoints of the zone.
+		EXAMPLE: dzn_zone1 call dzn_fnc_dynai_moveZone
+		INPUT:
+			0: OBJECT	- SpawnAI Module of zone
+			1: ARRAY	- array of keypoints (pos3d)
+		OUTPUT: null
+	*/
+	private["_zone","_newKeypoints","_properties"];
+	
+	_zone = _this select 0;
+	_newKeypoints = _this select 1;
+	
+	if (_zone getVariable "isActive") exitWith { hintSilent format ["dzn_dynai: %1 is activated already", str(_zone)]; };
+
+	_properties = _zone getVariable "properties";
+	_properties set [4, _newKeypoints];
+	
+	_zone setVariable ["properties", _properties, true];
+};
+
