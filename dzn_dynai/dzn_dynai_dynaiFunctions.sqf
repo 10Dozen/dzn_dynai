@@ -144,7 +144,7 @@ dzn_fnc_dynai_createZone = {
 	
 	private [
 		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_zonePos","_count","_groupUnits",
-		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit","_zoneBuildings",
+		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit","_zoneBuildings","_groupSkill",
 		"_road", "_nearRoads","_vehPos"
 	];
 
@@ -178,6 +178,7 @@ dzn_fnc_dynai_createZone = {
 	{
 		_count = _x select 0;
 		_groupUnits = _x select 1;
+		_groupSkill = if (!isNil {_x select 2}) then { _x select 2 } else { dzn_dynai_complexSkill };
 		
 		// For count of templated groups
 		for "_i" from 0 to (_count - 1) do {
@@ -211,12 +212,12 @@ dzn_fnc_dynai_createZone = {
 					_unit = _grp createUnit [_classname , _groupPos, [], 0, "NONE"];
 					if (DEBUG) then { player sideChat format ["|||||| Unit created %1 (%2)", str(_unit), _classname]; };
 					
-					if (dzn_dynai_complexSkill) then {
+					if (_groupSkill select 0) then {
 						{
 							_unit setSkill _x;
-						} forEach dzn_dynai_skill;
+						} forEach (_groupSkill select 1);
 					} else {
-						_unit setSkill dzn_dynai_skill;
+						_unit setSkill (_groupSkill select 1);
 					};
 					
 					_grpLogic setVariable ["units", (_grpLogic getVariable "units") + [_unit]];
