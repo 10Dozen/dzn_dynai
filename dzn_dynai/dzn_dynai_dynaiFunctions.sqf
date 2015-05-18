@@ -411,7 +411,7 @@ dzn_fnc_dynai_getZoneKeypoints = {
 			0: OBJECT	- SpawnAI Module of zone
 		OUTPUT: ARRAY of keypoints (pos3d)
 	*/
-	_this getVariable "keypoints";
+	_this getVariable "properties" select 4;
 };
 
 dzn_fnc_dynai_setZoneKeypoints = {
