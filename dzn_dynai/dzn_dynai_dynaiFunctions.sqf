@@ -431,5 +431,7 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	if (_zone getVariable "isActive") exitWith { hintSilent format ["dzn_dynai: %1 is activated already", str(_zone)]; };
 
 	_properties = _zone getVariable "properties";
-	_zone setVariable ["properties", _properties set [4, _newKeypoints], true];
+	_properties set [4, _newKeypoints];
+	
+	_zone setVariable ["properties", _properties, true];
 };
