@@ -395,3 +395,34 @@ dzn_fnc_dynai_moveZone = {
 	
 	_zone setVariable ["properties", _props, true];
 };
+
+dzn_fnc_dynai_getZoneKeypoints = {
+	/*
+		Get keypoints of the zone.
+		EXAMPLE: dzn_zone1 call dzn_fnc_dynai_moveZone
+		INPUT:
+			0: OBJECT	- SpawnAI Module of zone
+		OUTPUT: ARRAY of keypoints
+	*/
+	_this getVariable "keypoints";
+};
+
+dzn_fnc_dynai_setZoneKeypoints = {
+	/*
+		Get keypoints of the zone.
+		EXAMPLE: dzn_zone1 call dzn_fnc_dynai_moveZone
+		INPUT:
+			0: OBJECT	- SpawnAI Module of zone
+			1: ARRAY	- array of keypoints
+		OUTPUT: null
+	*/
+	
+	private["_zone","_newKeypoints","_properties"];
+	
+	_zone = _this select 0;
+	_newKeypoints = _this select 1;
+	
+	if (_zone getVariable "isActive") exitWith { hintSilent format ["dzn_dynai: %1 is activated already", str(_zone)]; };
+	_properties = _zone getVariable "properties";
+	_zone setVariable ["properties", _properties set [4, _newKeypoints], true];
+};
