@@ -260,12 +260,18 @@ dzn_fnc_dynai_createZone = {
 					_vehPos = [];
 					_vehPos = [(_groupPos select 0) + 6*_forEachIndex, (_groupPos select 1) + 6*_forEachIndex, 0];
 					
-					_unit = createVehicle [_classname, _vehPos, [], 0, "NONE"];
-					_unit setPos (_vehPos findEmptyPosition [1,25, _classname]); // Empty Position
+					_unit = createVehicle [_classname, [-200,-200,10], [], 0, "NONE"];
+					_unit allowDamage false;
+					_unit setVelocity [0,0,0];
+					_unit setPos (_vehPos findEmptyPosition [2,50, _classname]); // Empty Position
+					
+					_unit allowDamage true;
 					
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
 					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];					
 				};
+				
+				sleep 0.2;
 			} forEach _groupUnits;			
 			
 			
