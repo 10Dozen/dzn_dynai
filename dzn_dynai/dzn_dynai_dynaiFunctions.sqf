@@ -240,9 +240,11 @@ dzn_fnc_dynai_createZone = {
 									if (isNil {_assigned select 1}) then {										
 										// Default houses
 										[_unit, _zoneBuildings] call dzn_fnc_assignInBuilding;
+										_unit execFSM "dzn_dynai\dzn_dynai_indoors_behavior.fsm";
 									} else {
 										// Specified houses
 										[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
+										_unit execFSM "dzn_dynai\dzn_dynai_indoors_behavior.fsm";
 									};								
 								};
 							};
