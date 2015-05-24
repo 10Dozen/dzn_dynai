@@ -36,6 +36,7 @@ It is available to set individual skill level for every group. To do it - add sk
 	  ["B_Soldier_F",[0,"driver"],""],
 	  ["B_Soldier_F",[0,"gunner"],""]
   ],</tt>
+  
   <tt>[false, 0.5] /* Simple skill: isComplex(BOOLEAN), skill level(NUMBER)  */</tt>
 <tt>]</tt>
 <h4>Complex skill</h4>
@@ -46,5 +47,6 @@ It is available to set individual skill level for every group. To do it - add sk
 	  ["B_Soldier_F",[0,"driver"],""],
 	  ["B_Soldier_F",[0,"gunner"],""]
   ],</tt>
+  
   <tt>[true, [["accuracy, 0.5], ["spotTime", 0.9]]] /* Complex Skill: isComplex(BOOLEAN), Skill array (NUMBER) */</tt>
 <tt>]</tt>
