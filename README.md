@@ -14,8 +14,37 @@ Dynamic AI with Blackjack and Whores
   - Set groups and group units, assign gear kits to units
   - Set Speed Mode, Behavior, Combat Mode and Formation of the groups
 Copy generated structured info inside dzn_dynai_zoneProperties array.
-6. If zone is not active by default and before it activated you can use some functions to control zones:
+
+## Control Zone
+If zone is not active by default and before it activated you can use some functions to control zones:
   - dzn_zone1 call dzn_fnc_dynai_activateZone - activates zone and start spawn groups. Parameters: spawn module;
   - [dzn_zone1, [200,200,0], 90] call dzn_fnc_dynai_moveZone - moves and rotates given zone. Parameters: spawn module, pos3d, direction;
   - dzn_zone1 call dzn_fnc_dynai_getZoneKeypoints - return all zone's keypoints (array of pos3ds);
   - [dzn_zone1, [ [200,200,0], [300,300,0], [400,400,0] ]] call dzn_fnc_dynai_setZoneKeypoints - set new keypoints for zone. Parameters: spawn module, array of pos3ds
+
+## Creating Zone Properties
+Use xmlDynai.html to set zone properties.
+
+### Group Custom Skill Level
+It is available to set individual skill level for every group. To do it - add skill array as 3rd argument of group array:
+
+<h4>Simple skill</h4>
+<tt>[
+  28,
+  [
+	  ["B_G_Offroad_01_armed_F","isVehicle",""],
+	  ["B_Soldier_F",[0,"driver"],""],
+	  ["B_Soldier_F",[0,"gunner"],""]
+  ],</tt>
+  <tt>[false, 0.5] /* Simple skill: isComplex(BOOLEAN), skill level(NUMBER)  */</tt>
+<tt>]</tt>
+<h4>Complex skill</h4>
+<tt>[
+  28,
+  [
+	  ["B_G_Offroad_01_armed_F","isVehicle",""],
+	  ["B_Soldier_F",[0,"driver"],""],
+	  ["B_Soldier_F",[0,"gunner"],""]
+  ],</tt>
+  <tt>[true, [["accuracy, 0.5], ["spotTime", 0.9]]] /* Complex Skill: isComplex(BOOLEAN), Skill array (NUMBER) */</tt>
+<tt>]</tt>
