@@ -1,4 +1,15 @@
 // **************************
+// SETTINGS
+// **************************
+
+// Option to assign magazines of primary weapons to vest with priority
+dzn_gear_primagsToVest = false;
+dzn_gear_maxMagsToVest = 3;
+
+
+
+
+// **************************
 // FUNCTIONS
 // **************************
 #include "dzn_gear_functions.sqf"
