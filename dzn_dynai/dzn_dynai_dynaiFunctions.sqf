@@ -145,7 +145,7 @@ dzn_fnc_dynai_createZone = {
 	private [
 		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_zonePos","_count","_groupUnits",
 		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit","_zoneBuildings","_groupSkill",
-		"_road", "_nearRoads","_vehPos"
+		"_road", "_nearRoads","_vehPos","_vehPosEmpty"
 	];
 
 	_name = _this select 0;
@@ -266,6 +266,11 @@ dzn_fnc_dynai_createZone = {
 					_unit = createVehicle [_classname, [-200,-200,10], [], 0, "NONE"];
 					_unit allowDamage false;
 					_unit setVelocity [0,0,0];
+					
+					_vehPosEmpty = _vehPos findEmptyPosition [2,75, _classname];
+					if !(_vehPosEmpty isEqualTo []) then { _vehPosEmpty = _vehPos findEmptyPosition [2,175, _classname]; };
+					_unit setPos _vehPosEmpty; // Empty Position
+					
 					_unit setPos (_vehPos findEmptyPosition [2,50, _classname]); // Empty Position
 					_unit allowDamage true;
 					
