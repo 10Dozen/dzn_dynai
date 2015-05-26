@@ -126,8 +126,6 @@ dzn_fnc_getRandomPointInZone = {
 		];		
 	};
 	
-	_randomPoint =  _randomPoint findEmptyPosition [0,40];
-	
 	_randomPoint
 };
 
