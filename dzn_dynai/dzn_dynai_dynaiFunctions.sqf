@@ -259,20 +259,19 @@ dzn_fnc_dynai_createZone = {
 					};
 					
 				} else {
-					// Is vehicle					
-					_vehPos = [];
+					// Is vehicle						
 					_vehPos = [(_groupPos select 0) + 6*_forEachIndex, (_groupPos select 1) + 6*_forEachIndex, 0];
-					
-					_unit = createVehicle [_classname, [-200,-200,10], [], 0, "NONE"];
+					while {
+						((position player) isflatempty [(sizeof _classname) / 5,0,300,(sizeof _classname),0]) select 0 isEqualTo []					
+					} do {
+						_vehPos = [(_groupPos select 0) + 6*_forEachIndex + 15 +  random(50), (_groupPos select 1) + 6*_forEachIndex + 15 + random(50), 0];
+					};
+					_unit = createVehicle [_classname, _vehPos, [], 0, "NONE"];
 					_unit allowDamage false;
-					_unit setVelocity [0,0,0];
 					
-					_vehPosEmpty = _vehPos findEmptyPosition [2,75, _classname];
-					if !(_vehPosEmpty isEqualTo []) then { _vehPosEmpty = _vehPos findEmptyPosition [2,175, _classname]; };
-					_unit setPos _vehPosEmpty; // Empty Position
-					
-					_unit setPos (_vehPos findEmptyPosition [2,50, _classname]); // Empty Position
-					_unit allowDamage true;
+					_unit setPos _vehPos;
+					_unit setVelocity [0,0,0];					
+					[] spawn { sleep 5; _this allowDamage true; };
 					
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
 					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];					
