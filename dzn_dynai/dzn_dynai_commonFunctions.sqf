@@ -206,11 +206,14 @@ dzn_fnc_createPathFromKeypoints = {
 	
 	
 	// player sideChat str( _iMax);
-	for "_i" from 0 to _iMax do {
+	for "_i" from 1 to _iMax do {
 		_wp = _grp addWaypoint [_keypoints call BIS_fnc_selectRandom, 100];
 	};
 	
-	_wp setWaypointType "CYCLE";	
+	_wp = _grp addWaypoint [getPosASL (units _grp select 0), 0];
+	_wp setWaypointType "CYCLE";
+	
+	deleteWaypoint [_grp, 0];
 };
 
 
@@ -230,13 +233,17 @@ dzn_fnc_createPathFromRandom = {
 	
 	_grp = _this select 0;
 	_iMax = 2 + round(random(4));
-	for "_i" from 0 to _iMax do {		
+	for "_i" from 1 to _iMax do {		
 		_wp = _grp addWaypoint [
 			[_this select 1, _this select 2, _this select 3] call dzn_fnc_getRandomPointInZone,
 			100
 		];
 	};
+	
+	_wp = _grp addWaypoint [getPosASL (units _grp select 0), 0];
 	_wp setWaypointType "CYCLE";
+	
+	deleteWaypoint [_grp, 0];
 };
 
 
