@@ -145,7 +145,7 @@ dzn_fnc_dynai_createZone = {
 	private [
 		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_zonePos","_count","_groupUnits",
 		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit","_zoneBuildings","_groupSkill",
-		"_road", "_nearRoads","_vehPos"
+		"_road", "_nearRoads","_vehPos","_vehPosEmpty"
 	];
 
 	_name = _this select 0;
@@ -240,12 +240,11 @@ dzn_fnc_dynai_createZone = {
 									if (isNil {_assigned select 1}) then {										
 										// Default houses
 										[_unit, _zoneBuildings] call dzn_fnc_assignInBuilding;
-										_unit execFSM "dzn_dynai\dzn_dynai_indoors_behavior.fsm";
 									} else {
 										// Specified houses
 										[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
-										_unit execFSM "dzn_dynai\dzn_dynai_indoors_behavior.fsm";
-									};								
+									};
+									[_unit, DEBUG] execFSM "dzn_dynai\dzn_dynai_indoors_behavior.fsm";									
 								};
 							};
 						} else {
@@ -259,15 +258,19 @@ dzn_fnc_dynai_createZone = {
 					};
 					
 				} else {
-					// Is vehicle					
-					_vehPos = [];
+					// Is vehicle						
 					_vehPos = [(_groupPos select 0) + 6*_forEachIndex, (_groupPos select 1) + 6*_forEachIndex, 0];
-					
-					_unit = createVehicle [_classname, [-200,-200,10], [], 0, "NONE"];
+					while {
+						((position player) isflatempty [(sizeof _classname) / 5,0,300,(sizeof _classname),0]) select 0 isEqualTo []					
+					} do {
+						_vehPos = [(_groupPos select 0) + 6*_forEachIndex + 15 +  random(50), (_groupPos select 1) + 6*_forEachIndex + 15 + random(50), 0];
+					};
+					_unit = createVehicle [_classname, _vehPos, [], 0, "NONE"];
 					_unit allowDamage false;
-					_unit setVelocity [0,0,0];
-					_unit setPos (_vehPos findEmptyPosition [2,50, _classname]); // Empty Position
-					_unit allowDamage true;
+					
+					_unit setPos _vehPos;
+					_unit setVelocity [0,0,0];					
+					[] spawn { sleep 5; _this allowDamage true; };
 					
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
 					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];					
