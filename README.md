@@ -53,6 +53,6 @@ It is available to set individual skill level for every group. To do it - add sk
 
 ### Vehicle Behavior
 Use different second value in vehicle array ( ["B_G_Offroad_01_armed_F","Vehicle",""] ) to get different behavior:
-<tt>Vehicle</tt><Vehicle Patrol</tt> - vehicle group will patrol throu keypoints or random points in cycle.
-<tt>Vehicle Advance</tt> - vehicle group will move throu keypoints or several random points and will hold on the last checkpoint.
-<tt>Vehicle Hold</tt> - vehicle group will hold therir position (static, AAA, defensive position)
+<br /><tt>Vehicle</tt><Vehicle Patrol</tt> - vehicle group will patrol throu keypoints or random points in cycle.
+<br /><tt>Vehicle Advance</tt> - vehicle group will move throu keypoints or several random points and will hold on the last checkpoint.
+<br /><tt>Vehicle Hold</tt> - vehicle group will hold therir position (static, AAA, defensive position)
