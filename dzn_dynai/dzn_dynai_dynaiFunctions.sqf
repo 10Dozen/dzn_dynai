@@ -270,10 +270,26 @@ dzn_fnc_dynai_createZone = {
 					
 					_unit setPos _vehPos;
 					_unit setVelocity [0,0,0];					
-					[] spawn { sleep 5; _this allowDamage true; };
+					_unit spawn { sleep 5; _this allowDamage true; };
 					
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
-					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];					
+					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];
+					
+					// Vehicle type
+					switch (true) do {						
+						case (["Vehicle Hold", _assigned, false] call BIS_fnc_inString): {
+							_grp setVariable ["wpSet", true];
+							(waypoints _grp select 0) setWaypointType "Sentry";
+						};		
+						case (["Vehicle Advance", _assigned, false] call BIS_fnc_inString): {
+							_grp spawn {
+								waitUntil {!isNil { _this getVariable "wpSet" }};															
+								(waypoints _this select ( count (waypoints _this) - 1 )) setWaypointType "Sentry";							
+							};
+						};	
+						case (["Vehicle Patrol", _assigned, false] call BIS_fnc_inString);
+						case (["Vehicle", _assigned, false] call BIS_fnc_inString): {};
+					};
 				};
 				
 				sleep 0.2;
@@ -296,10 +312,10 @@ dzn_fnc_dynai_createZone = {
 				if (DEBUG) then { player globalChat "Waypoint creation"; };
 				if (typename _wps == "ARRAY") then {
 					if (DEBUG) then { player globalChat "Waypoint creation: Keypoint"; };
-					[_grp, _wps] spawn dzn_fnc_createPathFromKeypoints;
+					[_grp, _wps] call dzn_fnc_createPathFromKeypoints;
 				} else {
 					if (DEBUG) then { player globalChat "Waypoint creation: Random"; };
-					[_grp, _area, _zonePos select 1, _zonePos select 2] spawn dzn_fnc_createPathFromRandom;
+					[_grp, _area, _zonePos select 1, _zonePos select 2] call dzn_fnc_createPathFromRandom;
 				};
 				_grp setVariable ["wpSet",true];
 			};
@@ -325,6 +341,11 @@ dzn_fnc_dynai_activateZone = {
 		_properties set [2, true];	
 		_this setVariable ["properties", _properties, true];	
 	};
+};
+
+dzn_fnc_dynai_isActive = {
+	if (isNil {_this getVariable "isActive"}) exitWith { false };	
+	(_this getVariable "isActive")
 };
 
 dzn_fnc_dynai_moveZone = {
