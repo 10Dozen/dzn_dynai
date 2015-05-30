@@ -3,25 +3,34 @@
 /*
 item0[] = {"Start",0,250,-50.000000,-1200.000000,50.000000,-1150.000000,0.000000,"Start"};
 item1[] = {"true",4,218,-50.000000,-1125.000000,50.000000,-1075.000000,0.000000,"true"};
-item2[] = {"Stop_and_Wait",2,4346,-50.000000,-1050.000000,50.000000,-1000.000000,0.000000,"Stop and Wait"};
+item2[] = {"Stop_and_Wait",2,250,-50.000000,-1050.000000,50.000000,-1000.000000,0.000000,"Stop and Wait"};
 item3[] = {"Wait_for_Enemies",4,218,-50.000000,-975.000000,50.000000,-925.000000,0.000000,"Wait for Enemies"};
-item4[] = {"Target_",2,250,-50.000000,-900.000000,50.000000,-850.000000,0.000000,"Target!"};
-item5[] = {"Near_Target",4,218,-50.000000,-700.000000,50.000000,-650.000000,0.000000,"Near Target"};
-item6[] = {"Long_Target",4,218,-225.000000,-975.000000,-125.000000,-925.000000,0.000000,"Long Target"};
-item7[] = {"Watch_and_Move",2,250,-50.000000,-625.000000,50.000000,-575.000000,0.000000,"Watch and Move"};
-item8[] = {"Timer",4,218,125.000000,-800.000000,225.000000,-750.000000,0.000000,"Timer"};
+item4[] = {"Target_",2,4346,-50.000000,-900.000000,50.000000,-850.000000,0.000000,"Target!"};
+item5[] = {"Near_Target",4,218,-50.000000,-825.000000,50.000000,-775.000000,0.000000,"Near Target"};
+item6[] = {"Long_Target",4,218,-175.000000,-975.000000,-75.000000,-925.000000,0.000000,"Long Target"};
+item7[] = {"Watch_and_Move",2,250,-50.000000,-750.000000,50.000000,-700.000000,0.000000,"Watch and Move"};
+item8[] = {"Timer",4,218,75.000000,-825.000000,175.000000,-775.000000,0.000000,"Timer"};
+item9[] = {"Wait_for_turn",4,218,125.000000,-1050.000000,225.000000,-1000.000000,0.000000,"Wait for turn"};
+item10[] = {"Turn_around",2,250,125.000000,-1125.000000,225.000000,-1075.000000,0.000000,"Turn around"};
+item11[] = {"not_alive",4,218,-250.000000,-1050.000000,-150.000000,-1000.000000,0.000000,"not alive"};
+item12[] = {"End",1,250,-250.000000,-650.000000,-150.000000,-600.000000,0.000000,"End"};
 link0[] = {0,1};
 link1[] = {1,2};
 link2[] = {2,3};
-link3[] = {3,4};
-link4[] = {4,5};
-link5[] = {4,6};
-link6[] = {5,7};
-link7[] = {6,2};
-link8[] = {7,8};
-link9[] = {8,4};
-globals[] = {25.000000,1,0,0,16777215,640,480,1,243,6316128,1,-266.882385,235.283249,-522.281128,-1247.355103,718,875,1};
-window[] = {0,-1,-1,-1,-1,786,25,1139,25,1,736};
+link3[] = {2,9};
+link4[] = {2,11};
+link5[] = {3,4};
+link6[] = {4,5};
+link7[] = {4,6};
+link8[] = {5,7};
+link9[] = {6,2};
+link10[] = {7,8};
+link11[] = {8,4};
+link12[] = {9,10};
+link13[] = {10,1};
+link14[] = {11,12};
+globals[] = {25.000000,1,0,0,16777215,640,480,1,247,6316128,1,-354.820251,340.745056,-634.305786,-1231.058716,718,616,1};
+window[] = {0,-1,-1,-1,-1,891,534,1648,130,1,736};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -32,9 +41,12 @@ class FSM
     class Start
     {
       name = "Start";
-      init = /*%FSM<STATEINIT""">*/"private[""_unit"",""_target"",""_dist""];" \n
+      init = /*%FSM<STATEINIT""">*/"private[""_unit"",""_target"",""_dist"",""_debug""];" \n
        "" \n
-       "_unit = _this;"/*%FSM</STATEINIT""">*/;
+       "_unit = _this select 0;" \n
+       "_debug = _this select 1;" \n
+       "" \n
+       "_longTimer = time + 10 + random(20);"/*%FSM</STATEINIT""">*/;
       precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
       class Links
       {
@@ -61,6 +73,26 @@ class FSM
       precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
       class Links
       {
+        /*%FSM<LINK "Wait_for_turn">*/
+        class Wait_for_turn
+        {
+          priority = 0.000000;
+          to="Turn_around";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time > _longTimer)"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+        /*%FSM<LINK "not_alive">*/
+        class not_alive
+        {
+          priority = 0.000000;
+          to="End";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"!alive _unit"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
         /*%FSM<LINK "Wait_for_Enemies">*/
         class Wait_for_Enemies
         {
@@ -82,7 +114,7 @@ class FSM
        "" \n
        "_dist = (getPosASL _unit) distance (getPosASL _target);" \n
        "" \n
-       "player sideChat ""ENEMY FOUND"";" \n
+       "if (_debug) then { player sideChat ""ENEMY FOUND""; };" \n
        "" \n
        "_timer = time + 3;"/*%FSM</STATEINIT""">*/;
       precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
@@ -115,7 +147,7 @@ class FSM
     class Watch_and_Move
     {
       name = "Watch_and_Move";
-      init = /*%FSM<STATEINIT""">*/"player sideChat  ""HEHE FOUND"";" \n
+      init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""HEHE FOUND""; };" \n
        "" \n
        "_unit doFire _target;" \n
        "" \n
@@ -138,10 +170,52 @@ class FSM
       };
     };
     /*%FSM</STATE>*/
+    /*%FSM<STATE "Turn_around">*/
+    class Turn_around
+    {
+      name = "Turn_around";
+      init = /*%FSM<STATEINIT""">*/"_unit doWatch ([" \n
+       "	getPos _unit, " \n
+       "	getDir _unit + 180, " \n
+       "	100" \n
+       "] call dzn_fnc_getPosOnGivenDir);" \n
+       "" \n
+       "_longTimer = time + 10 + random(20);" \n
+       "" \n
+       "_unit spawn { sleep 4; _this doWatch objNull; };"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "true">*/
+        class true
+        {
+          priority = 0.000000;
+          to="Stop_and_Wait";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"true" \n
+           ""/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "End">*/
+    class End
+    {
+      name = "End";
+      init = /*%FSM<STATEINIT""">*/""/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+      };
+    };
+    /*%FSM</STATE>*/
   };
   initState="Start";
   finalStates[] =
   {
+    "End",
   };
 };
 /*%FSM</COMPILE>*/
