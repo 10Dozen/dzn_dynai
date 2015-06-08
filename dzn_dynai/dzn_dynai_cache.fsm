@@ -1,14 +1,14 @@
-/*%FSM<COMPILE "D:\GMZ\BI Toolz\FSM Editor Personal Edition\scriptedFSM.cfg, servicePoint">*/
+/*%FSM<COMPILE "D:\GMZ\BI Toolz\FSM Editor Personal Edition\scriptedFSM.cfg, dzn_dynai_cache">*/
 /*%FSM<HEAD>*/
 /*
 item0[] = {"Start",0,250,-50.000000,-1175.000000,50.000000,-1125.000000,0.000000,"Start"};
 item1[] = {"true",4,218,-50.000000,-1075.000000,50.000000,-1025.000000,0.000000,"true"};
 item2[] = {"Check__for_Cachi",2,250,-50.000000,-1000.000000,50.000000,-950.000000,0.000000,"Check" \n " for Caching"};
 item3[] = {"Cache",4,218,-200.000000,-1000.000000,-100.000000,-950.000000,3.000000,"Cache"};
-item4[] = {"Uncache",4,4314,100.000000,-1000.000000,200.000000,-950.000000,2.000000,"Uncache"};
+item4[] = {"Uncache",4,218,100.000000,-1000.000000,200.000000,-950.000000,2.000000,"Uncache"};
 item5[] = {"timer",4,218,-50.000000,-925.000000,50.000000,-875.000000,0.000000,"timer"};
 item6[] = {"Caching_Squads",2,250,-200.000000,-925.000000,-100.000000,-875.000000,0.000000,"Caching Squads"};
-item7[] = {"Uncaching__Squad",2,250,100.000000,-925.000000,200.000000,-875.000000,0.000000,"Uncaching " \n "Squads"};
+item7[] = {"Uncaching__Squad",2,4346,100.000000,-925.000000,200.000000,-875.000000,0.000000,"Uncaching " \n "Squads"};
 link0[] = {0,1};
 link1[] = {1,2};
 link2[] = {2,3};
@@ -20,11 +20,11 @@ link7[] = {5,2};
 link8[] = {6,5};
 link9[] = {7,5};
 globals[] = {25.000000,1,0,0,16777215,640,480,1,253,6316128,1,-338.433655,357.131653,-594.512573,-1191.267700,717,580,1};
-window[] = {0,-1,-1,-1,-1,1020,536,1650,295,1,735};
+window[] = {0,-1,-1,-1,-1,825,100,1214,100,1,735};
 *//*%FSM</HEAD>*/
 class FSM
 {
-  fsmName = "servicePoint";
+  fsmName = "dzn_dynai_cache";
   class States
   {
     /*%FSM<STATE "Start">*/
@@ -33,7 +33,7 @@ class FSM
       name = "Start";
       init = /*%FSM<STATEINIT""">*/"private[""_cache"",""_timer"",""_debug""];" \n
        "" \n
-       "_timer = time + 12;"/*%FSM</STATEINIT""">*/;
+       "_timer = time + dzn_dynai_cacheCheckTimer;"/*%FSM</STATEINIT""">*/;
       precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
       class Links
       {
@@ -56,7 +56,7 @@ class FSM
       name = "Check__for_Cachi";
       init = /*%FSM<STATEINIT""">*/"_cache = call dzn_fnc_dynai_checkForCache;" \n
        "" \n
-       "_timer = time + 15;"/*%FSM</STATEINIT""">*/;
+       "_timer = time + dzn_dynai_cacheCheckTimer;"/*%FSM</STATEINIT""">*/;
       precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
       class Links
       {
@@ -101,7 +101,7 @@ class FSM
        "	_x spawn dzn_fnc_dynai_cacheSquad;" \n
        "} forEach (_cache select 0);" \n
        "" \n
-       "_timer = time + 12;"/*%FSM</STATEINIT""">*/;
+       "_timer = time + dzn_dynai_cacheCheckTimer;"/*%FSM</STATEINIT""">*/;
       precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
       class Links
       {
@@ -126,7 +126,7 @@ class FSM
        "	_x spawn dzn_fnc_dynai_uncacheSquad;" \n
        "} forEach (_cache select 1);" \n
        "" \n
-       "_timer = time + 12;"/*%FSM</STATEINIT""">*/;
+       "_timer = time + dzn_dynai_cacheCheckTimer;"/*%FSM</STATEINIT""">*/;
       precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
       class Links
       {
