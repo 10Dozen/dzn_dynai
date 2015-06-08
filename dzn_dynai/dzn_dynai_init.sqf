@@ -32,20 +32,31 @@ dzn_dynai_skill = if (dzn_dynai_complexSkill) then {
 };
 dzn_dynai_complexSkill = [ dzn_dynai_complexSkill, dzn_dynai_skill ];
 
-
 // Building list
 dzn_dynai_allowedHouses				= ["House"];
+
+// Caching
+dzn_dynai_enableCaching				= false;
+dzn_dynai_cachingTimeout			= 20; // seconds
+dzn_dynai_cacheDistance				= 800; // meters
+dzn_dynai_cacheCheckTimer			= 15; // seconds
+
+
+//	************** END OF DZN_DYNAI PARAMETERS ******************
+
+
+
 
 //	**************	SERVER OR HEADLESS	*****************
 
 // If a player - exits script
 if (hasInterface && !isServer) exitWith {};
 
-// Get HC unit (Mission parameter "HeadlessClient" should be defined, see F3 Framework)
-// if (("HeadlessClient" call BIS_fnc_GetParamValue) == 1) then {
-	// If Headless exists - server won't run script
-	// if (isServer) exitWith {};
-// };
+// If HC exist - exit script for Server
+if (!isNil "HC") then {
+	if (isServer) exitWith {};
+};
+
 
 //	**************	INITIALIZATION *********************
 
@@ -63,6 +74,10 @@ call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_dynaiFunctions.sqf";
 waitUntil { time > dzn_dynai_preInitTimeout };
 call dzn_fnc_dynai_initZones;
 
-waitUntil { time > dzn_dynai_afterInitTimeout };
+waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout) };
 call dzn_fnc_dynai_startZones;
 
+waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
+if !(dzn_dynai_enableCaching) exitWith {};
+call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_cacheFunctions.sqf";
+[] execFSM "dzn_dynai\dzn_dynai_cache.fsm";
