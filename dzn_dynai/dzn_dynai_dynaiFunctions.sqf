@@ -244,7 +244,8 @@ dzn_fnc_dynai_createZone = {
 										// Specified houses
 										[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
 									};
-									[_unit, DEBUG] execFSM "dzn_dynai\dzn_dynai_indoors_behavior.fsm";									
+									[_unit, DEBUG] execFSM "dzn_dynai\dzn_dynai_indoors_behavior.fsm";
+									_unit setVariable ["dynai_isIndoor", true, true];
 								};
 							};
 						} else {
