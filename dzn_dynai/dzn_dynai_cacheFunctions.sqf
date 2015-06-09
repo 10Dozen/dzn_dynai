@@ -9,7 +9,7 @@ dzn_fnc_dynai_getMemberRelatedPos = {
 	_leader = leader group _this;
 	if (_this == _leader) exitWith { [0,0,0] };
 	
-	(_leader worldToModelVisual (getPosAGL _this))
+	(_leader worldToModelVisual (getPosATL _this))
 };
 
 dzn_fnc_dynai_checkForCache = {
@@ -29,16 +29,16 @@ dzn_fnc_dynai_checkForCache = {
 				&& vehicle _x == _x 
 				&& !(_x in _cacheSquads) 
 				&& !(_x in _uncacheSquads)
-				&& isNil {_x getVariable "dyani_isIndoor"})
+				&& isNil {_x getVariable "dynai_isIndoor"})
 				||
-				(!isNil {_x getVariable "dyani_isIndoor"})
+				(!isNil {_x getVariable "dynai_isIndoor"})
 			}) then {
 			
 			_u = _x;
 			{
 				_dist = _u distance _x;
 				if (_dist <= dzn_dynai_cacheDistance) exitWith {					
-					_uncacheSquads pushBack _x;
+					_uncacheSquads pushBack _u;
 				};
 				
 				if ((_forEachIndex + 1) == count (call BIS_fnc_listPlayers) && {_dist > dzn_dynai_cacheDistance }) then {
@@ -58,18 +58,26 @@ dzn_fnc_dynai_cacheSquad = {
 	// OUTPUT: NULL
 	private ["_squad","_rPositions"];
 	
-	_squad = if (isNil { _this getVariable "dyani_isIndoor" }) then { (units group _this) - [_this] } else { _this };
-	_rPositions = [];
-	{
-		_x enableSimulation false;
-		_x hideObjectGlobal true;		
-		_rPositions pushBack (_x call dzn_fnc_dynai_getMemberRelatedPos);
-		
-		_x setPos [0,0,0];
-		sleep 1;
-	} forEach _squad;
-
-	_this setVariable ["cache_rPositions", _rPositions, true];
+	if !(isNil { _this getVariable "cache_rPositions" }) exitWith {};
+	
+	if (isNil { _this getVariable "dynai_isIndoor" }) then {		
+		_squad = (units group _this) - [_this];
+		_rPositions = [];		
+		{
+			_x enableSimulation false;
+			_x hideObjectGlobal true;			
+			_rPositions pushBack (_x call dzn_fnc_dynai_getMemberRelatedPos);	
+			
+			_x setPos [0,0,0];
+			sleep 1;
+		} forEach _squad;	
+	} else {
+		_this enableSimulation false;
+		_this hideObjectGlobal true;
+		_rPositions = [[0,0,0]];		
+	};
+	
+	_this setVariable ["cache_rPositions", _rPositions, true];	
 };
 
 dzn_fnc_dynai_uncacheSquad = {
@@ -79,7 +87,7 @@ dzn_fnc_dynai_uncacheSquad = {
 	
 	private ["_squad","_rPositions"];
 	
-	_squad =  if (isNil { _this getVariable "dyani_isIndoor" }) then { (units group _this) - [_this] } else { _this };
+	_squad =  if (isNil { _this getVariable "dynai_isIndoor" }) then { (units group _this) - [_this] } else { [_this] };
 	
 	if (isNil {_this getVariable "cache_rPositions"}) exitWith {};	
 	_rPositions = _this getVariable "cache_rPositions";
@@ -87,9 +95,10 @@ dzn_fnc_dynai_uncacheSquad = {
 	{
 		_x setPos (_this modelToWorldVisual (_rPositions select _forEachIndex));
 		
-		_x enableSimulation true;
-		_x hideObjectGlobal false;
 		sleep 1;
+		
+		_x enableSimulation true;
+		_x hideObjectGlobal false;		
 	} forEach _squad;
 	
 	_this setVariable ["cache_rPositions", nil, true];
