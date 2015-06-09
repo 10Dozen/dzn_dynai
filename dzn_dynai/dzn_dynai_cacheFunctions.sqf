@@ -26,12 +26,12 @@ dzn_fnc_dynai_checkForCache = {
 			_u = _x;
 			{
 				_dist = _u distance _x;
-				if (_dist >= dzn_dynai_cacheDistance) exitWith {					
-					_cacheLeaders pushBack _u;
+				if (_dist <= dzn_dynai_cacheDistance) exitWith {					
+					_uncacheLeaders pushBack _x;
 				};
 				
-				if ((_forEachIndex + 1) == count (call BIS_fnc_listPlayers) && {_dist < dzn_dynai_cacheDistance }) then {
-					_uncacheLeaders pushBack _x;
+				if ((_forEachIndex + 1) == count (call BIS_fnc_listPlayers) && {_dist > dzn_dynai_cacheDistance }) then {
+					_cacheLeaders pushBack _u;
 				};
 			} forEach (call BIS_fnc_listPlayers);	
 		};	
