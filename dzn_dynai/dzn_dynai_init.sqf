@@ -1,3 +1,6 @@
+// If a player - exits script
+if (hasInterface && !isServer) exitWith {};
+
 //	************** DZN_DYNAI PARAMETERS ******************
 
 // Condition of initialization
@@ -36,7 +39,7 @@ dzn_dynai_complexSkill = [ dzn_dynai_complexSkill, dzn_dynai_skill ];
 dzn_dynai_allowedHouses				= ["House"];
 
 // Caching Settings
-dzn_dynai_enableCaching				= false;
+dzn_dynai_enableCaching				= true;
 dzn_dynai_cachingTimeout			= 20; // seconds
 dzn_dynai_cacheCheckTimer			= 15; // seconds
 
@@ -47,25 +50,13 @@ dzn_dynai_cacheDistanceVehLongrange		= 4000;
 
 dzn_dynai_cacheLongrangeClasses			= [];	// List of classes for Longrange weapon classes (AntiAirArtillery, SAM)
 
-
-
 //	************** END OF DZN_DYNAI PARAMETERS ******************
 
 
-
-
-//	**************	SERVER OR HEADLESS	*****************
-
-// If a player - exits script
-if (hasInterface && !isServer) exitWith {};
-
-// If HC exist - exit script for Server
-if (!isNil "HC") then {
-	if (isServer) exitWith {};
-};
-
-
-//	**************	INITIALIZATION *********************
+//
+//
+//	**************	INITIALIZATION 	*************************
+//	
 
 waitUntil { dzn_dynai_CONDITION_BEFORE_INIT };
 
@@ -76,6 +67,12 @@ waitUntil { !isNil {dzn_gear_kitsInitialized} };
 call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_customZones.sqf";
 call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_commonFunctions.sqf";
 call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_dynaiFunctions.sqf";
+
+//	**************	SERVER OR HEADLESS	*****************
+
+if (!isNil "HC") then {
+	if (isServer) exitWith {};
+};
 
 // ************** Start of DZN_DYNAI ********************
 waitUntil { time > dzn_dynai_preInitTimeout };
@@ -88,4 +85,6 @@ call dzn_fnc_dynai_startZones;
 if !(dzn_dynai_enableCaching) exitWith {};
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
 call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_cacheFunctions.sqf";
-[] execFSM "dzn_dynai\dzn_dynai_cache.fsm";
+[true] execFSM "dzn_dynai\dzn_dynai_cache.fsm";
+
+player sideChat "Caching RUN!";
