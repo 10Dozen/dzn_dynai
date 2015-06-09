@@ -16,29 +16,40 @@ dzn_fnc_dynai_checkForCache = {
 	// Return list of units which must be cached and list of units which must be uncached
 	// INPUT: null
 	// OUTPUT: [ @ArrayToCache, @ArrayToUncache ]
-	private["_cacheLeaders","_uncacheLeaders","_u","_dist"];
+	private["_cacheSquads","_uncacheSquads","_u","_dist"];
 	
-	_cacheLeaders = [];
-	_uncacheLeaders = [];
+	_cacheSquads = [];
+	_uncacheSquads = [];
 	
+	// Pick not players, pick leaders not in vehicles and not duplicates OR pick all indoor units
 	{
-		if (!(isPlayer _x) && { leader group _x == _x && vehicle _x == _x && !(_x in _cacheLeaders) && !(_x in _uncacheLeaders)}) then {	
+		if (!(isPlayer _x) 
+			&& { 
+				(leader group _x == _x 
+				&& vehicle _x == _x 
+				&& !(_x in _cacheSquads) 
+				&& !(_x in _uncacheSquads)
+				&& isNil {_x getVariable "dyani_isIndoor"})
+				||
+				(!isNil {_x getVariable "dyani_isIndoor"})
+			}) then {
+			
 			_u = _x;
 			{
 				_dist = _u distance _x;
 				if (_dist <= dzn_dynai_cacheDistance) exitWith {					
-					_uncacheLeaders pushBack _x;
+					_uncacheSquads pushBack _x;
 				};
 				
 				if ((_forEachIndex + 1) == count (call BIS_fnc_listPlayers) && {_dist > dzn_dynai_cacheDistance }) then {
-					_cacheLeaders pushBack _u;
+					_cacheSquads pushBack _u;
 				};
 			} forEach (call BIS_fnc_listPlayers);	
 		};	
 	} forEach (entities "CAManBase");
 
 
-	[ _cacheLeaders, _uncacheLeaders ]
+	[ _cacheSquads, _uncacheSquads ]
 };
 
 dzn_fnc_dynai_cacheSquad = {
@@ -47,7 +58,7 @@ dzn_fnc_dynai_cacheSquad = {
 	// OUTPUT: NULL
 	private ["_squad","_rPositions"];
 	
-	_squad = (units group _this) - [_this];
+	_squad = if (isNil { _this getVariable "dyani_isIndoor" }) then { (units group _this) - [_this] } else { _this };
 	_rPositions = [];
 	{
 		_x enableSimulation false;
@@ -68,9 +79,9 @@ dzn_fnc_dynai_uncacheSquad = {
 	
 	private ["_squad","_rPositions"];
 	
-	_squad = (units group _this) - [_this];
+	_squad =  if (isNil { _this getVariable "dyani_isIndoor" }) then { (units group _this) - [_this] } else { _this };
 	
-	if !(isNil {_this getVariable "cache_rPositions"}) exitWith {};	
+	if (isNil {_this getVariable "cache_rPositions"}) exitWith {};	
 	_rPositions = _this getVariable "cache_rPositions";
 	
 	{
