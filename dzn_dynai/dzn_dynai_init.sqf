@@ -35,10 +35,17 @@ dzn_dynai_complexSkill = [ dzn_dynai_complexSkill, dzn_dynai_skill ];
 // Building list
 dzn_dynai_allowedHouses				= ["House"];
 
-// Caching
+// Caching Settings
 dzn_dynai_enableCaching				= false;
 dzn_dynai_cachingTimeout			= 20; // seconds
+
 dzn_dynai_cacheDistance				= 800; // meters
+dzn_dynai_cacheDistanceVehLight			= 1200;
+dzn_dynai_cacheDistanceVehHeavy			= 2700;
+dzn_dynai_cacheDistanceVehLongrange		= 4000;
+
+dzn_dynai_cacheLongrangeClasses			= [];	// List of classes for Longrange weapon classes (AntiAirArtillery, SAM)
+
 dzn_dynai_cacheCheckTimer			= 15; // seconds
 
 
@@ -77,6 +84,7 @@ call dzn_fnc_dynai_initZones;
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout) };
 call dzn_fnc_dynai_startZones;
 
+// ************** Start of DZN_DYNAI Caching ********************
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
 if !(dzn_dynai_enableCaching) exitWith {};
 call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_cacheFunctions.sqf";
