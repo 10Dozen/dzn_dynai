@@ -1,3 +1,6 @@
+// If a player - exits script
+if (hasInterface && !isServer) exitWith {};
+
 //	************** DZN_DYNAI PARAMETERS ******************
 
 // Condition of initialization
@@ -32,22 +35,28 @@ dzn_dynai_skill = if (dzn_dynai_complexSkill) then {
 };
 dzn_dynai_complexSkill = [ dzn_dynai_complexSkill, dzn_dynai_skill ];
 
-
 // Building list
 dzn_dynai_allowedHouses				= ["House"];
 
-//	**************	SERVER OR HEADLESS	*****************
+// Caching Settings
+dzn_dynai_enableCaching				= true;
+dzn_dynai_cachingTimeout			= 20; // seconds
+dzn_dynai_cacheCheckTimer			= 15; // seconds
 
-// If a player - exits script
-if (hasInterface && !isServer) exitWith {};
+dzn_dynai_cacheDistance				= 800; // meters
+dzn_dynai_cacheDistanceVehLight			= 1200;
+dzn_dynai_cacheDistanceVehHeavy			= 2700;
+dzn_dynai_cacheDistanceVehLongrange		= 4000;
 
-// Get HC unit (Mission parameter "HeadlessClient" should be defined, see F3 Framework)
-// if (("HeadlessClient" call BIS_fnc_GetParamValue) == 1) then {
-	// If Headless exists - server won't run script
-	// if (isServer) exitWith {};
-// };
+dzn_dynai_cacheLongrangeClasses			= [];	// List of classes for Longrange weapon classes (AntiAirArtillery, SAM)
 
-//	**************	INITIALIZATION *********************
+//	************** END OF DZN_DYNAI PARAMETERS ******************
+
+
+//
+//
+//	**************	INITIALIZATION 	*************************
+//	
 
 waitUntil { dzn_dynai_CONDITION_BEFORE_INIT };
 
@@ -59,10 +68,21 @@ call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_customZones.sqf";
 call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_commonFunctions.sqf";
 call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_dynaiFunctions.sqf";
 
+//	**************	SERVER OR HEADLESS	*****************
+
+if (!isNil "HC") then {
+	if (isServer) exitWith {};
+};
+
 // ************** Start of DZN_DYNAI ********************
 waitUntil { time > dzn_dynai_preInitTimeout };
 call dzn_fnc_dynai_initZones;
 
-waitUntil { time > dzn_dynai_afterInitTimeout };
+waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout) };
 call dzn_fnc_dynai_startZones;
 
+// ************** Start of DZN_DYNAI Caching ********************
+if !(dzn_dynai_enableCaching) exitWith {};
+waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
+call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_cacheFunctions.sqf";
+[true] execFSM "dzn_dynai\dzn_dynai_cache.fsm";

@@ -1,0 +1,182 @@
+/*%FSM<COMPILE "D:\GMZ\BI Toolz\FSM Editor Personal Edition\scriptedFSM.cfg, dzn_dynai_cache">*/
+/*%FSM<HEAD>*/
+/*
+item0[] = {"Start",0,4346,-50.000000,-1175.000000,50.000000,-1125.000000,0.000000,"Start"};
+item1[] = {"true",4,218,-50.000000,-1075.000000,50.000000,-1025.000000,0.000000,"true"};
+item2[] = {"Check__for_Cachi",2,250,-50.000000,-1000.000000,50.000000,-950.000000,0.000000,"Check" \n " for Caching"};
+item3[] = {"Cache_",4,218,-50.000000,-925.000000,50.000000,-875.000000,3.000000,"Cache?"};
+item4[] = {"Uncache_",4,218,-50.000000,-775.000000,50.000000,-725.000000,1.000000,"Uncache?"};
+item5[] = {"timer",4,218,100.000000,-1000.000000,200.000000,-950.000000,0.000000,"timer"};
+item6[] = {"Caching_Squads",2,250,-50.000000,-850.000000,50.000000,-800.000000,0.000000,"Caching Squads"};
+item7[] = {"Uncaching__Squad",2,250,-50.000000,-700.000000,50.000000,-650.000000,0.000000,"Uncaching " \n "Squads"};
+item8[] = {"",7,210,-116.500000,-979.000000,-108.500000,-971.000000,0.000000,""};
+item9[] = {"",7,210,-116.500000,-754.000000,-108.500000,-746.000000,0.000000,""};
+item10[] = {"",7,210,146.000000,-679.000000,154.000000,-671.000000,0.000000,""};
+item11[] = {"",7,210,146.000000,-829.000000,154.000000,-821.000000,0.000000,""};
+link0[] = {0,1};
+link1[] = {1,2};
+link2[] = {2,3};
+link3[] = {2,4};
+link4[] = {2,5};
+link5[] = {2,8};
+link6[] = {3,6};
+link7[] = {4,7};
+link8[] = {5,2};
+link9[] = {6,4};
+link10[] = {6,11};
+link11[] = {7,10};
+link12[] = {8,9};
+link13[] = {9,4};
+link14[] = {10,11};
+link15[] = {11,5};
+globals[] = {25.000000,1,0,0,16777215,640,480,1,257,6316128,1,-482.129700,294.483063,-631.820068,-1260.042358,717,580,1};
+window[] = {0,-1,-1,-1,-1,750,25,1139,25,1,735};
+*//*%FSM</HEAD>*/
+class FSM
+{
+  fsmName = "dzn_dynai_cache";
+  class States
+  {
+    /*%FSM<STATE "Start">*/
+    class Start
+    {
+      name = "Start";
+      init = /*%FSM<STATEINIT""">*/"private[""_cache"",""_timer"",""_debug""];" \n
+       "" \n
+       "_debug = _this select 0;" \n
+       "_timer = time + dzn_dynai_cacheCheckTimer;" \n
+       "" \n
+       "if (_debug) then { player sideChat ""CACHE Init""; }"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "true">*/
+        class true
+        {
+          priority = 0.000000;
+          to="Check__for_Cachi";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"time > _timer"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Check__for_Cachi">*/
+    class Check__for_Cachi
+    {
+      name = "Check__for_Cachi";
+      init = /*%FSM<STATEINIT""">*/"_cache = call dzn_fnc_dynai_checkForCache;" \n
+       "" \n
+       "_timer = time + dzn_dynai_cacheCheckTimer / 2;" \n
+       "" \n
+       "if (_debug) then {player sideChat ""CACHE: Check for Cache""; };"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Cache_">*/
+        class Cache_
+        {
+          priority = 3.000000;
+          to="Caching_Squads";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"time > _timer && { !( (_cache select 0) isEqualTo[] ) }"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+        /*%FSM<LINK "Uncache_">*/
+        class Uncache_
+        {
+          priority = 1.000000;
+          to="Uncaching__Squad";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"time > _timer && { !( (_cache select 1) isEqualTo[] ) }"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+        /*%FSM<LINK "timer">*/
+        class timer
+        {
+          priority = 0.000000;
+          to="Check__for_Cachi";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"time > _timer"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Caching_Squads">*/
+    class Caching_Squads
+    {
+      name = "Caching_Squads";
+      init = /*%FSM<STATEINIT""">*/"{" \n
+       "	_x spawn dzn_fnc_dynai_cacheSquad;" \n
+       "} forEach (_cache select 0);" \n
+       "" \n
+       "_timer = time + 3;" \n
+       "" \n
+       "" \n
+       "if (_debug) then { player sideChat ""CACHE: Cache""; };"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Uncache_">*/
+        class Uncache_
+        {
+          priority = 1.000000;
+          to="Uncaching__Squad";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"time > _timer && { !( (_cache select 1) isEqualTo[] ) }"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+        /*%FSM<LINK "timer">*/
+        class timer
+        {
+          priority = 0.000000;
+          to="Check__for_Cachi";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"time > _timer"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Uncaching__Squad">*/
+    class Uncaching__Squad
+    {
+      name = "Uncaching__Squad";
+      init = /*%FSM<STATEINIT""">*/"{" \n
+       "	_x spawn dzn_fnc_dynai_uncacheSquad;" \n
+       "} forEach (_cache select 1);" \n
+       "" \n
+       "_timer = time + dzn_dynai_cacheCheckTimer / 2;" \n
+       "" \n
+       "if (_debug) then { player sideChat ""CACHE: Uncache""; };"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "timer">*/
+        class timer
+        {
+          priority = 0.000000;
+          to="Check__for_Cachi";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"time > _timer"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+  };
+  initState="Start";
+  finalStates[] =
+  {
+  };
+};
+/*%FSM</COMPILE>*/
