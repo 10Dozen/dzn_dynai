@@ -38,6 +38,7 @@ dzn_dynai_allowedHouses				= ["House"];
 // Caching Settings
 dzn_dynai_enableCaching				= false;
 dzn_dynai_cachingTimeout			= 20; // seconds
+dzn_dynai_cacheCheckTimer			= 15; // seconds
 
 dzn_dynai_cacheDistance				= 800; // meters
 dzn_dynai_cacheDistanceVehLight			= 1200;
@@ -46,7 +47,6 @@ dzn_dynai_cacheDistanceVehLongrange		= 4000;
 
 dzn_dynai_cacheLongrangeClasses			= [];	// List of classes for Longrange weapon classes (AntiAirArtillery, SAM)
 
-dzn_dynai_cacheCheckTimer			= 15; // seconds
 
 
 //	************** END OF DZN_DYNAI PARAMETERS ******************
