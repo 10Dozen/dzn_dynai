@@ -313,6 +313,14 @@ dzn_fnc_dynai_createZone = {
 };
 
 
+
+
+
+
+// ================================================
+//           DZN DYNAI -- Zone Controls
+// ================================================
+
 dzn_fnc_dynai_activateZone = {
 	/*
 		Set zone active.
@@ -443,6 +451,14 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	_zone setVariable ["properties", _properties, true];
 };
 
+
+
+
+
+// ================================================
+//           DZN DYNAI -- New zone creation
+// ================================================
+
 dzn_fnc_dynai_addNewZone = {
 	// @ZonePropertyInput spawn dzn_fnc_dynai_addNewZone
 	/*
@@ -452,7 +468,7 @@ dzn_fnc_dynai_addNewZone = {
 		0	@Name, 
 		1	@Side, 
 		2	@IsActive, 
-		3	@ArrayOfLocations, 
+		3	@ArrayOfLocations or Triggers or [Center, X, Y, DIR, IsSquare], 
 		4	@ArrayOfPos3d or "randomize"
 		5	@References,
 		6	@Behavior
@@ -462,8 +478,27 @@ dzn_fnc_dynai_addNewZone = {
 	*/
 	private ["_zP","_zoneObject"];
 	_zP = _this;
-	_zP pushBack ((_zP select 3) call dzn_fnc_dynai_getLocationBuildings);
 	
+	_locAttribute = _zP select 3;
+	_loc = [];
+	// Check what is come as 3rd argument - Locations, Triggers or Arrays of attributes
+	switch (typename (_locAttribute select 0)) do {
+		case "ARRAY": {
+			{
+				_l = createLocation ["Name", _x select 0, _x select 1, _x select 2];
+				_l setDirection ( _x select 3);
+				_l setRectangular ( _x select 4);
+				_loc pushBack _l;
+			} forEach _locAttribute;
+		};
+		case "OBJECT": {
+			{
+				_loc pushBack ([_x, true] call dzn_fnc_convertTriggerToLocation);
+			} forEach _locAttribute;
+		};
+		case "LOCATION": { /* Do nothing */ };
+	};
+	_zP pushBack ((_zP select 3) call dzn_fnc_dynai_getLocationBuildings);
 	
 	_zoneObject = createVehicle "ModuleSpawnAIPoint_F";
 	_zoneObject setVehicleVarName (_zP select 0); 
