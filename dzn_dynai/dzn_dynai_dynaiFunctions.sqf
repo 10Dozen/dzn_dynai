@@ -463,8 +463,6 @@ dzn_fnc_dynai_addNewZone = {
 	// @ZonePropertyInput spawn dzn_fnc_dynai_addNewZone
 	/*
 		@ZonePropertyInput::
-		
-		[
 		0	@Name, 
 		1	@Side, 
 		2	@IsActive, 
@@ -472,11 +470,8 @@ dzn_fnc_dynai_addNewZone = {
 		4	@ArrayOfPos3d or "randomize"
 		5	@References,
 		6	@Behavior
-		] call dzn_fnc_dynai_addNewZone;
-	
-	
 	*/
-	private ["_zP","_zoneObject"];
+	private ["_zP","_zoneObject","_l","_loc","_locAttribute"];
 	_zP = _this;
 	
 	_locAttribute = _zP select 3;
