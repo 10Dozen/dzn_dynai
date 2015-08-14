@@ -467,3 +467,11 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	_zone setVariable ["properties", _properties, true];
 };
 
+dzn_fnc_dynai_addNewZone = {
+	// [@ZoneProperty, @ActivateOnAdd?] spawn dzn_fnc_dynai_addNewZone
+	
+	_zoneProperties = _this select 0;
+	_activate = _this select 1;
+	
+
+};
