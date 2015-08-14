@@ -467,11 +467,38 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	_zone setVariable ["properties", _properties, true];
 };
 
-dzn_fnc_dynai_addNewZone = {
-	// [@ZoneProperty, @ActivateOnAdd?] spawn dzn_fnc_dynai_addNewZone
-	
-	_zoneProperties = _this select 0;
-	_activate = _this select 1;
-	
 
+
+
+dzn_fnc_dynai_addNewZone = {
+	// @ZonePropertyInput spawn dzn_fnc_dynai_addNewZone
+	/*
+		@ZonePropertyInput::
+		
+		[
+		0	@Name, 
+		1	@Side, 
+		2	@IsActive, 
+		3	@ArrayOfLocations, 
+		4	@ArrayOfPos3d or "randomize"
+		5	@References,
+		6	@Behavior
+		] call dzn_fnc_dynai_addNewZone;
+	
+	
+	*/
+	private ["_zP","_zoneObject"];
+	_zP = _this;
+	dzn_dynai_zoneProperties pushBack _zP;
+	
+	_zoneObject = createVehicle "ModuleSpawnAIPoint_F";
+	_zoneObject setVehicleVarName (_zP select 0); 
+	call compile format [ "%1 = _zoneObject;", (_zP select 0)];
+	_zoneObject setVariable ["locations", _zP select 3];
+	_zoneObject setVariable ["keypoints", _zP select 4];
+	_zoneObject setVariable ["properties", _zP];
+	_zoneObject setVariable ["isActive", _zP select 2];
+	_zoneObject setVariable ["initialized", true];
+	
+	_zP call dzn_fnc_dynai_createZone;
 };
