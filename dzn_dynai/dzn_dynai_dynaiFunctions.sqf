@@ -10,7 +10,7 @@ dzn_fnc_dynai_initZones = {
 		OUTPUT: 	NULL
 	*/
 	
-	private ["_modules", "_zone", "_properties","_syncObj", "_locations", "_synced", "_wps", "_keypoints","_locationBuildings","_locPos"];
+	private ["_modules", "_zone", "_properties","_syncObj", "_locations"," "_synced", "_wps", "_keypoints","_locationBuildings","_locBuildings","_locPos"];
 	
 	_modules = entities "ModuleSpawnAIPoint_F";
 	
@@ -36,25 +36,11 @@ dzn_fnc_dynai_initZones = {
 				_synced = synchronizedObjects _x;
 				{
 					if (_x isKindOf "EmptyDetector") then {
-						_loc = createLocation ["Name", getPosASL _x, triggerArea _x select 0, triggerArea _x select 1];
-						_loc setDirection (triggerArea _x select 2);
-						_loc setRectangular (triggerArea _x select 3);
-						
+						_loc = [_x, true] call dzn_fnc_convertTriggerToLocation;
 						_locations = _locations + [_loc];
 						
-						_locationBuildings = [
-							getPosASL _x, 
-							(triggerArea _x select 0) max (triggerArea _x select 1),
-							dzn_dynai_allowedHouses
-						] call dzn_fnc_getHousesNear;
-						
-						{
-							if (!(_x in _zoneBuildings) && ([getPosASL _x, [_loc]] call dzn_fnc_isInLocation)) then {
-								_zoneBuildings = _zoneBuildings + [_x];	
-							};
-						} forEach _locationBuildings;
-						
-						deleteVehicle _x;	
+						_locBuildings = [_loc] call dzn_fnc_dynai_getLocationBuildings;
+						{ _zoneBuildings pushBack _x; } forEach _locBuildings;
 					};
 				} forEach _synced;
 				
@@ -359,7 +345,7 @@ dzn_fnc_dynai_moveZone = {
 			2: DIRECTION	- New direction
 		OUTPUT: NULL
 	*/	
-	private["_zone","_newPos","_newDir","_deltaDir","_curPos","_locations","_offsets","_dir","_dist","_oldOffset","_newOffsetPos","_props","_wps","_wpOffsets"];
+	private["_zone","_newPos","_newDir","_deltaDir","_curPos","_locations","_offsets","_dir","_dist","_oldOffset","_newOffsetPos","_props","_wps","_wpOffsets","_locBuildings"];
 	
 	_zone = if (!isNil {_this select 0}) then {_this select 0};
 	if (isNil "_zone") exitWith {};
@@ -399,23 +385,13 @@ dzn_fnc_dynai_moveZone = {
 	// Move locations
 	{
 		_oldOffset = _offsets select _forEachIndex;	// return [_dir, _dist] 
-		
 		_newOffsetPos = [_newPos, (_oldOffset select 0) + _deltaDir, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
 		
 		_x setPosition _newOffsetPos;
 		_x setDirection (direction _x + _deltaDir);
 		
-		_locationBuildings = [
-			locationPosition _x, 
-			(size _x select 0) max (size _x select 1),
-			dzn_dynai_allowedHouses
-		] call dzn_fnc_getHousesNear;
-
-		{
-			if (!(_x in _zoneBuildings) && ([getPosASL _x, _locations] call dzn_fnc_isInLocation)) then {
-				_zoneBuildings = _zoneBuildings + [_x];	
-			};
-		} forEach _locationBuildings;
+		_locBuildings = [_x] call dzn_fnc_dynai_getLocationBuildings;
+		{ _zoneBuildings pushBack _x; } forEach _locBuildings;
 	} forEach _locations;
 	
 	if (typename _wps == "ARRAY") then {
@@ -467,9 +443,6 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	_zone setVariable ["properties", _properties, true];
 };
 
-
-
-
 dzn_fnc_dynai_addNewZone = {
 	// @ZonePropertyInput spawn dzn_fnc_dynai_addNewZone
 	/*
@@ -489,16 +462,44 @@ dzn_fnc_dynai_addNewZone = {
 	*/
 	private ["_zP","_zoneObject"];
 	_zP = _this;
-	dzn_dynai_zoneProperties pushBack _zP;
+	_zP pushBack ((_zP select 3) call dzn_fnc_dynai_getLocationBuildings);
+	
 	
 	_zoneObject = createVehicle "ModuleSpawnAIPoint_F";
 	_zoneObject setVehicleVarName (_zP select 0); 
 	call compile format [ "%1 = _zoneObject;", (_zP select 0)];
+	
 	_zoneObject setVariable ["locations", _zP select 3];
 	_zoneObject setVariable ["keypoints", _zP select 4];
-	_zoneObject setVariable ["properties", _zP];
 	_zoneObject setVariable ["isActive", _zP select 2];
+	
+	_zoneObject setVariable ["properties", _zP];
 	_zoneObject setVariable ["initialized", true];
 	
+	//dzn_dynai_zoneProperties pushBack _zP;
+	
 	_zP call dzn_fnc_dynai_createZone;
+};
+
+dzn_fnc_dynai_getLocationBuildings = {
+	// @ZoneBuildings = @ArrayOfLocations call dzn_fnc_dynai_getLocationBuildings;
+	private ["_zoneBuildings", "_loc", "_locationBuildings"];
+	
+	_zoneBuildings = [];
+	{
+		_loc = _x;
+		_locationBuildings = [
+			locationPosition _loc,
+			(size _loc select 0) max (size _loc select 1),
+			dzn_dynai_allowedHouses
+		] call dzn_fnc_getHousesNear;
+	
+		{
+			if (!(_x in _zoneBuildings) && ([getPosASL _x, [_loc]] call dzn_fnc_isInLocation)) then {
+				_zoneBuildings = _zoneBuildings + [_x];	
+			};
+		} forEach _locationBuildings;
+	} forEach _this;
+	
+	_zoneBuildings
 };
