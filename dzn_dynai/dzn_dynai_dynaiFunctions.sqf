@@ -124,14 +124,14 @@ dzn_fnc_dynai_startZones = {
 dzn_fnc_dynai_createZone = {
 	/*
 		Create zone from parameters
-		INPUT: 		NULL
+		INPUT: 		Zone propreties
 		OUTPUT: 	NULL
 	*/
 	
 	private [
-		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_zonePos","_count","_groupUnits",
+		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_count","_groupUnits",
 		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit","_zoneBuildings","_groupSkill",
-		"_road", "_nearRoads","_vehPos","_vehPosEmpty"
+		"_vehPos","_vehPosEmpty"
 	];
 
 	_name = _this select 0;
