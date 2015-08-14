@@ -10,7 +10,7 @@ dzn_fnc_dynai_initZones = {
 		OUTPUT: 	NULL
 	*/
 	
-	private ["_modules", "_zone", "_properties","_syncObj", "_locations"," "_synced", "_wps", "_keypoints","_locationBuildings","_locBuildings","_locPos"];
+	private ["_modules", "_zone", "_properties","_syncObj", "_locations","_synced", "_wps", "_keypoints","_locationBuildings","_locBuildings","_locPos"];
 	
 	_modules = entities "ModuleSpawnAIPoint_F";
 	
