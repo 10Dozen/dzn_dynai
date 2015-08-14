@@ -337,9 +337,10 @@ dzn_fnc_assignInBuilding = {
 
 	// If filter passed - get filtered list
 	if (!isNil {_this select 2}) then {
+	
 		_filteredBuildings = [];
 		{
-			if (typeOf _x in _filter) then {_filteredBuildings = _filteredBuildings + [_x];};
+			if (typeOf _x in (_this select 2)) then {_filteredBuildings = _filteredBuildings + [_x];};
 		} forEach _zoneBuildings;
 		
 		_zoneBuildings = _filteredBuildings;
