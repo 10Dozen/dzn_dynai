@@ -495,7 +495,9 @@ dzn_fnc_dynai_addNewZone = {
 	_zP set [3, _loc];
 	_zP pushBack ((_zP select 3) call dzn_fnc_dynai_getLocationBuildings);
 	
-	_zoneObject = "ModuleSpawnAIPoint_F" createVehicle (locationPosition (_zP select 3 select 0));
+	_grp = createGroup (call compile (_zP select 1));
+	_zoneObject = _grp createUnit ["ModuleSpawnAIPoint_F", (locationPosition (_zP select 3 select 0)), [], 0, "NONE"];
+	
 	_zoneObject setVehicleVarName (_zP select 0); 
 	call compile format [ "%1 = _zoneObject;", (_zP select 0)];
 	
