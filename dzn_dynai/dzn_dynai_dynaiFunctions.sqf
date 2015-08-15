@@ -469,33 +469,33 @@ dzn_fnc_dynai_addNewZone = {
 		3	@ArrayOfLocations or Triggers or [Center, X, Y, DIR, IsSquare], 
 		4	@ArrayOfPos3d or "randomize"
 		5	@References,
-		6	@Behavior
+		6	@Behavior		
 	*/
-	private ["_zP","_zoneObject","_l","_loc","_locAttribute"];
+	private ["_zP","_zoneObject","_l","_loc"];
 	_zP = _this;
 	
-	_locAttribute = _zP select 3;
 	_loc = [];
 	// Check what is come as 3rd argument - Locations, Triggers or Arrays of attributes
-	switch (typename (_locAttribute select 0)) do {
+	switch (typename ((_zP select 3) select 0)) do {
 		case "ARRAY": {
 			{
 				_l = createLocation ["Name", _x select 0, _x select 1, _x select 2];
 				_l setDirection ( _x select 3);
 				_l setRectangular ( _x select 4);
 				_loc pushBack _l;
-			} forEach _locAttribute;
+			} forEach (_zP select 3);
 		};
 		case "OBJECT": {
 			{
 				_loc pushBack ([_x, true] call dzn_fnc_convertTriggerToLocation);
-			} forEach _locAttribute;
+			} forEach (_zP select 3);
 		};
 		case "LOCATION": { /* Do nothing */ };
 	};
+	_zP set [3, _loc];
 	_zP pushBack ((_zP select 3) call dzn_fnc_dynai_getLocationBuildings);
 	
-	_zoneObject = createVehicle "ModuleSpawnAIPoint_F";
+	_zoneObject = "ModuleSpawnAIPoint_F" createVehicle (locationPosition (_zP select 3 select 0));
 	_zoneObject setVehicleVarName (_zP select 0); 
 	call compile format [ "%1 = _zoneObject;", (_zP select 0)];
 	
