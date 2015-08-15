@@ -490,7 +490,7 @@ dzn_fnc_dynai_addNewZone = {
 				_loc pushBack ([_x, true] call dzn_fnc_convertTriggerToLocation);
 			} forEach (_zP select 3);
 		};
-		case "LOCATION": { /* Do nothing */ };
+		case "LOCATION": { _loc = _zP select 3; };
 	};
 	_zP set [3, _loc];
 	_zP pushBack ((_zP select 3) call dzn_fnc_dynai_getLocationBuildings);
