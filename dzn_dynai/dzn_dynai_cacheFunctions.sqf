@@ -85,7 +85,7 @@ dzn_fnc_dynai_uncacheSquad = {
 	// INPUT: @Leader spawn dzn_fnc_dynai_uncacheSquad
 	// OUTPUT: NULL
 	
-	private ["_squad","_rPositions"];
+	private ["_squad","_rPositions","_pos"];
 	
 	_squad =  if (isNil { _this getVariable "dynai_isIndoor" }) then { (units group _this) - [_this] } else { [_this] };
 	
@@ -93,7 +93,8 @@ dzn_fnc_dynai_uncacheSquad = {
 	_rPositions = _this getVariable "cache_rPositions";
 	
 	{
-		_x setPos (_this modelToWorldVisual (_rPositions select _forEachIndex));
+		_pos = (_this modelToWorldVisual (_rPositions select _forEachIndex));
+		_x setPos [_pos select 0, _pos select 1, 0];
 		
 		sleep 1;
 		
