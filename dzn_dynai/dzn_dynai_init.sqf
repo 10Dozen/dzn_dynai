@@ -64,9 +64,9 @@ waitUntil { dzn_dynai_CONDITION_BEFORE_INIT };
 waitUntil { !isNil {dzn_gear_kitsInitialized} };
 
 // Initialization of dzn_dynai
-call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_customZones.sqf";
-call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_commonFunctions.sqf";
-call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_dynaiFunctions.sqf";
+call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_customZones.sqf";
+call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_commonFunctions.sqf";
+call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
 
 //	**************	SERVER OR HEADLESS	*****************
 
@@ -84,5 +84,5 @@ call dzn_fnc_dynai_startZones;
 // ************** Start of DZN_DYNAI Caching ********************
 if !(dzn_dynai_enableCaching) exitWith {};
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
-call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_cacheFunctions.sqf";
-[true] execFSM "dzn_dynai\dzn_dynai_cache.fsm";
+call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf";
+[true] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
