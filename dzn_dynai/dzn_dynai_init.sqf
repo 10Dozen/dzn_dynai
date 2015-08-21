@@ -39,7 +39,7 @@ dzn_dynai_complexSkill = [ dzn_dynai_complexSkill, dzn_dynai_skill ];
 dzn_dynai_allowedHouses				= ["House"];
 
 // Behavior settings
-dzn_dynai_allowVehicleHoldBehavior		= false;
+dzn_dynai_allowVehicleHoldBehavior		= true;
 
 // Caching Settings
 dzn_dynai_enableCaching				= true;
