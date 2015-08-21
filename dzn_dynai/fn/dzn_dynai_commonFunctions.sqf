@@ -380,3 +380,17 @@ dzn_fnc_assignInBuilding = {
 	};
 	// player sideChat "Searched";
 };
+
+dzn_fnc_checkIsCrewAlive = {
+	// @IsNoAlive = @Vehicle call dzn_fnc_checkIsCrewAlive
+	private["_result"];
+	
+	_result = true;
+	{
+		if (_x == gunner _this || _x == commander _this) then {
+			if (alive _x) exitWith { _result = false; };
+		};
+	} forEach (crew _this);
+
+	_result
+};
