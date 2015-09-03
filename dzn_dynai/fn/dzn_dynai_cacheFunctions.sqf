@@ -64,12 +64,15 @@ dzn_fnc_dynai_cacheSquad = {
 		_squad = (units group _this) - [_this];
 		_rPositions = [];		
 		{
-			_x enableSimulation false;
-			_x hideObjectGlobal true;			
-			_rPositions pushBack (_x call dzn_fnc_dynai_getMemberRelatedPos);	
+			if !(isPlayer _x) then {
+				_x enableSimulation false;
+				_x hideObjectGlobal true;			
+				_rPositions pushBack (_x call dzn_fnc_dynai_getMemberRelatedPos);	
+				
+				_x setPos [0,0,0];
 			
-			_x setPos [0,0,0];
-			sleep 1;
+				sleep 1;
+			};
 		} forEach _squad;	
 	} else {
 		_this enableSimulation false;

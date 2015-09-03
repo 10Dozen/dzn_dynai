@@ -91,4 +91,4 @@ call dzn_fnc_dynai_startZones;
 if !(dzn_dynai_enableCaching) exitWith {};
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf";
-[true] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
+[false] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
