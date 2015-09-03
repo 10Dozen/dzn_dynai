@@ -268,7 +268,7 @@ dzn_fnc_dynai_createZone = {
 							_grp setVariable ["wpSet", true];
 							(waypoints _grp select 0) setWaypointType "Sentry";
 							if (dzn_dynai_allowVehicleHoldBehavior) then { 
-								[_unit, true] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+								[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
 							};
 						};		
 						case (["Vehicle Advance", _assigned, false] call BIS_fnc_inString): {
