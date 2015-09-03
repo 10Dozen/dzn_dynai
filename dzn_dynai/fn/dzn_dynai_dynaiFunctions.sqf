@@ -286,9 +286,13 @@ dzn_fnc_dynai_createZone = {
 			} forEach _groupUnits;			
 			
 			
-			// Synhronize units with groupLogic
-			_grpLogic synchronizeObjectsAdd (units _grp);
+			// Synhronize units with groupLogic			
 			[_grpLogic] joinSilent grpNull;			// Unassign GameLogic from group
+			_grpLogic synchronizeObjectsAdd (units _grp);
+			[_grpLogic] spawn {
+				waitUntil { sleep 30; {alive _x} count (synchronizedObjects (_this select 0)) < 1 };
+				deleteVehicle (_this select 0);
+			};
 			
 			// Set group behavior
 			if !(_behavior select 0 == "") then { _grp setSpeedMode (_behavior select 0); };
