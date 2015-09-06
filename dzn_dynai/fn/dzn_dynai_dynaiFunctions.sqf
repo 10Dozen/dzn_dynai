@@ -171,7 +171,7 @@ dzn_fnc_dynai_createZone = {
 			if (DEBUG) then {  player sideChat format ["|| Spawning group %1", str(_i)]; };
 			
 			// Creates group
-			_groupPos = [_area, _zonePos select 1, _zonePos select 2] call dzn_fnc_getRandomPointInZone; // return Pos3D
+			_groupPos = _area call dzn_fnc_getRandomPointInZone; // return Pos3D
 			_grp = createGroup call compile _side;
 			_grp setVariable ["wpSet",false];
 			
@@ -309,7 +309,7 @@ dzn_fnc_dynai_createZone = {
 					[_grp, _wps] call dzn_fnc_createPathFromKeypoints;
 				} else {
 					if (DEBUG) then { player globalChat "Waypoint creation: Random"; };
-					[_grp, _area, _zonePos select 1, _zonePos select 2] call dzn_fnc_createPathFromRandom;
+					[_grp, _area] call dzn_fnc_createPathFromRandom;
 				};
 				_grp setVariable ["wpSet",true];
 			};

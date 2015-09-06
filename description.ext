@@ -1,0 +1,2 @@
+#include "dzn_commonFunctions\dzn_commonFunctions.hpp"
+enableDebugConsole = 2;

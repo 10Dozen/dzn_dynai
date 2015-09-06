@@ -71,7 +71,6 @@ waitUntil { !isNil {dzn_gear_kitsInitialized} };
 
 // Initialization of dzn_dynai
 call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_customZones.sqf";
-call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_commonFunctions.sqf";
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
 
 //	**************	SERVER OR HEADLESS	*****************
