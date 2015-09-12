@@ -4,9 +4,13 @@
 // Settings
 // To disable unused fucntions - comment next values
 // *************************************
-#define	COMMON_FUNCTIONS		true
-#define	AREA_FUNCTIONS		true
 
+// Common functions are very common and usefull for any missions
+#define	COMMON_FUNCTIONS		true
+// Area functions provide support of creating locations from triggers, getting points and building inside given areas. It is required for DZN_DYNAI
+#define	AREA_FUNCTIONS		true
+// Base functions are useful to recreate military bases/outposts and compositions using scripts
+#define 	BASE_FUNCTIONS		true
 
 class CfgFunctions
 {
@@ -44,6 +48,15 @@ class CfgFunctions
 			class getHousesNear {};	
 			class getHousePositions {};			
 			class assignInBuilding {};			
+		};
+		#endif
+		
+		#ifdef BASE_FUNCTIONS
+		class baseFunction
+		{
+			file = "dzn_commonFunctions\functions";
+			
+			class deployVehiclesAtBasepoint {};
 		};
 		#endif
 	};

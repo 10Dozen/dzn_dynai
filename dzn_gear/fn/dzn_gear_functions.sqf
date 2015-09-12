@@ -320,7 +320,7 @@ dzn_fnc_gear_assignCargoGear = {
 dzn_fnc_gear_assignKit = {
 	/*
 		Resolve given kit and call function to assign existing kit to unit.	
-		EXAMPLE:	[ unit, gearSetName, isBox ] spawn dzn_gearSetup;
+		EXAMPLE:	[ unit, gearSetName, isBox ] spawn dzn_fnc_gear_assignKit;
 		INPUT:
 			0: OBJECT		- Unit for which gear will be set
 			1: ARRAY or STRING	- List of Kits for assignment
@@ -470,4 +470,7 @@ dzn_fnc_gear_initialize = {
 			callAssignGearMP(_x, (_x getVariable "dzn_gear_box"), true)	
 		};
 	} forEach _vehicles;
+	
+	dzn_gear_initialized = true;
+	publicVariable "dzn_gear_initialized";
 };

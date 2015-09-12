@@ -14,18 +14,31 @@
 		4: BOOLEAN			- Is unit an object or unit (will create WP for unit)
 	OUTPUT: NULL
 */
-params ["_unit","_buildings",["_positiveFilter", ["House"]],["_negativeFilter", []],["_needWP", false]];
+params ["_unit","_buildings",["_positiveFilter", nil],["_negativeFilter", nil],["_needWP", false]];
 
-private ["_buildings","_filteredBuildings","_found","_house","_housePosId","_objectId","_wp","_max","_needWP"];
+private ["_b","_buildings","_filteredBuildings","_found","_house","_housePosId","_objectId","_wp","_max","_needWP"];
 
-_filteredBuildings = [];
-{
-	if ((typeOf _x) in _positiveFilter && !((typeOf _x) in _negativeFilter)) then {
-		_filteredBuildings = _filteredBuildings + [_x];
-	};
-} forEach _buildings;
 
-_buildings = _filteredBuildings;
+if !(isNil {_positiveFilter} && isNil {_negativeFilter}) then {
+	_filteredBuildings = [];
+	{
+		_b = objNull;
+		
+		if (!isNil {_positiveFilter} && {typeOf _x in _positiveFilter}) then {
+			_b = _x;
+		};
+		
+		if (!isNil {_negativeFilter} && {typeOf _x in _negativeFilter}) then {
+			_b = objNull;
+		};
+		
+		if !(isNull _b) then {
+			_filteredBuildings pushBack _b;
+		};		
+	} forEach _buildings;
+	_buildings = _filteredBuildings;
+};
+
 if (_buildings isEqualTo []) exitWith {};
 
 _found = false;

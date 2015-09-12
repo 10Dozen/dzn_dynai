@@ -7,6 +7,7 @@
 
 dzn_gear_defaultBackpack = "B_Carryall_khk";
 dzn_gear_editModeEnabled = _this select 0;
+dzn_gear_initialized = false;
 
 // **************************
 // FUNCTIONS
