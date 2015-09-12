@@ -67,11 +67,13 @@ dzn_dynai_cacheLongrangeClasses			= [];	// List of classes for Longrange weapon 
 waitUntil { dzn_dynai_CONDITION_BEFORE_INIT };
 
 // Initialization of dzn_gear
-waitUntil { !isNil {dzn_gear_kitsInitialized} };
+waitUntil { !isNil "dzn_gear_initialized" && { dzn_gear_initialized } };
 
 // Initialization of dzn_dynai
-call compile preProcessFileLineNumbers "dzn_dynai\dzn_dynai_customZones.sqf";
-call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_commonFunctions.sqf";
+dzn_dynai_zoneProperties = [
+	#include "dzn_dynai_customZones.sqf"
+];
+
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
 
 //	**************	SERVER OR HEADLESS	*****************
