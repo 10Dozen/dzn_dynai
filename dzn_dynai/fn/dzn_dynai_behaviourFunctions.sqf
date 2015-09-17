@@ -19,7 +19,16 @@ dzn_fnc_dynai_checkSquadEnemyDetected = {
 	_r
 };
 
-dzn_fnc_dynai_checkSquadCriticalLoses = {
+dzn_fnc_dynai_getSquadKnownEnemies = {
+	// Return list of targets of leader of squad
+	private["_leader"];
+	_leader = leader (group ((synchronizedObjects _this) select 0));
+	
+	(_leader call BIS_fnc_enemyTargets)
+};
 
+dzn_fnc_dynai_checkSquadCriticalLoses = {
+	// Check if squad get more then 50% losses
+	// Squad should contain number of units to check
 
 };
