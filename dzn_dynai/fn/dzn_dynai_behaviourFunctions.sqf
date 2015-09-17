@@ -72,11 +72,22 @@ dzn_fnc_dynai_checkSquadCriticalLosses = {
 	_r
 };
 
-dzn_fnc_dynai_requestSquadReinforcement = {
+dzn_fnc_dynai_requestReinforcement = {
 	// @SquadLogic call dzn_fnc_dynai_requestSquadReinforcement
-	_this setVariable ["requestingReinforcement", true];
+	_this setVariable ["requestingReinfocement", true];
+	_this setVariable ["requestingReinfocementPosition", [0,0,0]];
 	_this setVariable ["provideReinforcement", false];
 };
+
+dzn_fnc_dynai_provideReinforcement = {
+	// @SquadLogic call dzn_fnc_dynai_provideReinforcement
+	_this setVariable ["provideReinforcement", true];
+	
+	
+	// Give new way
+};
+
+
 
 
 
