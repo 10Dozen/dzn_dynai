@@ -7,11 +7,15 @@ dzn_fnc_dynai_waitToDeleteSquadLogic = {
 	deleteVehicle (_this);
 };
 
+dzn_fnc_dynai_getSquadLeader = {
+	leader (group ((synchronizedObjects _this) select 0));
+};
+
 dzn_fnc_dynai_checkSquadEnemyDetected = {
 	// Return TRUE if leader of squad knows about enemies
 	private["_r","_leader"];
 	_r = false;
-	_leader = leader (group ((synchronizedObjects _this) select 0));
+	_leader = _this call dzn_fnc_dynai_getSquadLeader;
 	if (_leader call BIS_fnc_enemyDetected) then {
 		_r = true;
 	};
@@ -22,13 +26,22 @@ dzn_fnc_dynai_checkSquadEnemyDetected = {
 dzn_fnc_dynai_getSquadKnownEnemies = {
 	// Return list of targets of leader of squad
 	private["_leader"];
-	_leader = leader (group ((synchronizedObjects _this) select 0));
+	_leader = _this call dzn_fnc_dynai_getSquadLeader;
 	
 	(_leader call BIS_fnc_enemyTargets)
 };
 
-dzn_fnc_dynai_checkSquadCriticalLoses = {
+dzn_fnc_dynai_checkSquadCriticalLosses = {
 	// Check if squad get more then 50% losses
 	// Squad  contain number of units to check - _grpLogic getVariable "units" (list of units)
+	
+	private["_r","_leader"];
+	_r = false;
+	_leader = _this call dzn_fnc_dynai_getSquadLeader;
+	
+	if (count (units group (_leader)) < round (count (_this getVariable "units") / 2)) then {
+		_r = true;
+	};
 
+	_r
 };
