@@ -76,7 +76,12 @@ dzn_fnc_dynai_requestReinforcement = {
 	// @SquadLogic call dzn_fnc_dynai_requestSquadReinforcement
 	_this setVariable ["requestingReinfocement", true];
 	_this setVariable ["requestingReinfocementPosition", [0,0,0]];
-	_this setVariable ["provideReinforcement", false];
+	_this setVariable ["providingReinforcement", false];
+};
+
+dzn_fnc_dynai_isRequestingReinforcement = {
+	// @SquadLogic call dzn_fnc_dynai_isRequestingReinforcement
+	_this getVariable ["requestingReinfocement", false];
 };
 
 dzn_fnc_dynai_provideReinforcement = {
@@ -84,22 +89,19 @@ dzn_fnc_dynai_provideReinforcement = {
 	params ["_squad","_pos"];
 	private ["_leader","_wp"];
 	
-	_squad setVariable ["provideReinforcement", true];
+	_squad setVariable ["providingReinforcement", true];
 	
 	_leader = _squad call dzn_fnc_dynai_getSquadLeader;
 	
 	// Give new way
 	deleteWaypoint [group _leader, all];
-	sleep 2;
 	_wp = (group _leader) addWaypoint [_pos, 200];
 	_wp setWaypointType "SAD";
 	_wp setWaypointCombatMode "RED";
 	_wp setWaypointBehaviour "AWARE";
-	
 };
 
-
-
-
-
-
+dzn_fnc_dynai_isProvidingReinforcement = {
+	// @SquadLogic call dzn_fnc_dynai_isProvidingReinforcement
+	_this getVariable ["providingReinforcement", false];
+};
