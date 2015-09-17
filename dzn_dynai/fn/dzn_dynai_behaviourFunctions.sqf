@@ -29,6 +29,6 @@ dzn_fnc_dynai_getSquadKnownEnemies = {
 
 dzn_fnc_dynai_checkSquadCriticalLoses = {
 	// Check if squad get more then 50% losses
-	// Squad should contain number of units to check
+	// Squad  contain number of units to check - _grpLogic getVariable "units" (list of units)
 
 };
