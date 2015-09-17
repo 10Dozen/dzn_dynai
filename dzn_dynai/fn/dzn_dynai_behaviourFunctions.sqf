@@ -81,7 +81,7 @@ dzn_fnc_dynai_requestReinforcement = {
 
 dzn_fnc_dynai_isRequestingReinforcement = {
 	// @SquadLogic call dzn_fnc_dynai_isRequestingReinforcement
-	_this getVariable ["requestingReinfocement", false];
+	_this getVariable ["requestingReinfocement", false]
 };
 
 dzn_fnc_dynai_provideReinforcement = {
@@ -103,5 +103,5 @@ dzn_fnc_dynai_provideReinforcement = {
 
 dzn_fnc_dynai_isProvidingReinforcement = {
 	// @SquadLogic call dzn_fnc_dynai_isProvidingReinforcement
-	_this getVariable ["providingReinforcement", false];
+	_this getVariable ["providingReinforcement", false]
 };
