@@ -29,9 +29,9 @@ dzn_fnc_dynai_checkForCache = {
 				&& vehicle _x == _x 
 				&& !(_x in _cacheSquads) 
 				&& !(_x in _uncacheSquads)
-				&& isNil {_x getVariable "dynai_isIndoor"})
+				&& isNil {_x getVariable "dzn_dynai_isIndoor"})
 				||
-				(!isNil {_x getVariable "dynai_isIndoor"})
+				(!isNil {_x getVariable "dzn_dynai_isIndoor"})
 			}) then {
 			
 			_u = _x;
@@ -60,7 +60,7 @@ dzn_fnc_dynai_cacheSquad = {
 	
 	if !(isNil { _this getVariable "cache_rPositions" }) exitWith {};
 	
-	if (isNil { _this getVariable "dynai_isIndoor" }) then {		
+	if (isNil { _this getVariable "dzn_dynai_isIndoor" }) then {		
 		_squad = (units group _this) - [_this];
 		_rPositions = [];		
 		{
@@ -90,7 +90,7 @@ dzn_fnc_dynai_uncacheSquad = {
 	
 	private ["_squad","_rPositions","_pos"];
 	
-	_squad =  if (isNil { _this getVariable "dynai_isIndoor" }) then { (units group _this) - [_this] } else { [_this] };
+	_squad =  if (isNil { _this getVariable "dzn_dynai_isIndoor" }) then { (units group _this) - [_this] } else { [_this] };
 	
 	if (isNil {_this getVariable "cache_rPositions"}) exitWith {};	
 	_rPositions = _this getVariable "cache_rPositions";

@@ -5,42 +5,8 @@
 // ******************
 // Functions
 // ******************
-
-dzn_fnc_gear_editMode_showKeybinding = {
-	hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
-		<br /><br /><t size='1.45' color='#3793F0' underline='true'>Keybinding:</t>
-		<br /><br /><t %1>[H]</t><t %2> - Show keybinding</t>
-		<br />
-		<br /><t %1>[SPACE]</t><t %2> - Open Arsenal</t>  
-		<br /><t %1>[CTRL + SPACE]</t><t %2> - Copy gear of player or cursorTarget and add it to action list</t>
-		<br /><t %1>[SHIFT + SPACE]</t><t %2> - Copy gear of player or cursorTarget without adding new action</t>
-		<br />
-		<br /><t %1>[{1...6}]</t><t %2> - Show item list and copy</t>
-		<br /><t %1>[SHIFT + {1...6}]</t><t %2> - Set current item list and copy list</t>
-		<br /><t %1>[CTRL + {1...6}]</t><t %2> - Add item to list and copy</t>		
-		<br /><t %1>[ALT + {1...6}]</t><t %2> - Clear item list</t>
-		<br /><t align='left' size='0.8'>where
-		<br />1 -- Primary weapon and magazine 
-		<br />2 -- Uniform
-		<br />3 -- Headgear
-		<br />4 -- Glasses
-		<br />5 -- Vest
-		<br />6 -- Backpack
-		"
-		, "align='left' color='#3793F0' size='0.9'"
-		, "align='right' size='0.8'"
-	];
-};
-
 #define SET_KEYDOWN	dzn_gear_editMode_keyIsDown = true
-#define SET_HANDLED	_handled = true
-#define GET_EQUIP_CALL(MODE) \
-	if (_alt) then { [MODE,"ALT"] call dzn_fnc_gear_editMode_getEquipItems;};	\
-	if (_ctrl) then { [MODE,"CTRL"] call dzn_fnc_gear_editMode_getEquipItems;};	\
-	if (_shift) then { [MODE,"SHIFT"] call dzn_fnc_gear_editMode_getEquipItems;};	\
-	if !(_ctrl || _alt || _shift) then { [MODE,"NONE"] call dzn_fnc_gear_editMode_getEquipItems;}
 
-	
 dzn_fnc_gear_editMode_onKeyPress = {
 	if (!alive player || dzn_gear_editMode_keyIsDown) exitWith {};	
 	private["_key","_shift","_crtl","_alt","_handled"];	
@@ -49,7 +15,7 @@ dzn_fnc_gear_editMode_onKeyPress = {
 	_ctrl = _this select 3; 
 	_alt = _this select 4;
 	_handled = false;
-	
+	#define SET_HANDLED	_handled = true
 	
 	switch _key do {
 		// H button
@@ -60,13 +26,13 @@ dzn_fnc_gear_editMode_onKeyPress = {
 		};
 		// Space
 		case 57: {
-			SET_KEYDOWN;			
+			SET_KEYDOWN;
+			if (_alt) then {			[] spawn {sleep 0.3; ["Open", true] call BIS_fnc_arsenal;}; };
 			if (_ctrl) then {		true call dzn_fnc_gear_editMode_createKit; };
 			if (_shift) then {		false call dzn_fnc_gear_editMode_createKit; };
-			if !(_ctrl || _alt || _shift) then { [] spawn {sleep 0.3; ["Open", true] call BIS_fnc_arsenal;}; };
 			SET_HANDLED;
 		};
-		// 1 button - Primary weapon
+		// 1 button
 		case 2: {
 			SET_KEYDOWN;
 			if (_alt) then {			"ALT" call dzn_fnc_gear_editMode_getCurrentPrimaryWeapon;};		
@@ -74,108 +40,11 @@ dzn_fnc_gear_editMode_onKeyPress = {
 			if (_shift) then {		"SHIFT" call dzn_fnc_gear_editMode_getCurrentPrimaryWeapon;};
 			if !(_ctrl || _alt || _shift) then {	"NONE" call dzn_fnc_gear_editMode_getCurrentPrimaryWeapon;};
 			SET_HANDLED;
-		};
-		// 2 button - Uniform
-		case 3: {
-			SET_KEYDOWN;
-			GET_EQUIP_CALL("UNIFORM");
-			SET_HANDLED;
-		};
-		// 3 button - Headgear
-		case 4: {
-			SET_KEYDOWN;
-			GET_EQUIP_CALL("HEADGEAR");
-			SET_HANDLED;
-		};
-		// 4 -- Goggles
-		case 5: {
-			SET_KEYDOWN;
-			GET_EQUIP_CALL("GOGGLES");
-			SET_HANDLED;
-		};
-		// 5 -- Vest
-		case 6: {
-			SET_KEYDOWN;
-			GET_EQUIP_CALL("VEST");
-			SET_HANDLED;
-		};
-		// 6 -- Backpack
-		case 7: {
-			SET_KEYDOWN;
-			GET_EQUIP_CALL("BACKPACK");
-			SET_HANDLED;
 		};		
 	};
 	
 	[] spawn { sleep 1; dzn_gear_editMode_keyIsDown = false; };
 	_handled
-};
-
-dzn_fnc_gear_editMode_getEquipItems = {
-	// [@ItemType,@Option] call dzn_fnc_gear_editMode_getEquipItems	
-	// 0	@ItemType :		"UNIFORM","HEADGEAR","GOGGLES","VEST","BACKPACK"
-	// 1	@Option :		"NONE", "ALT", "CTRL", "SHIFT"
-	private["_mode","_getEquipType","_ownerUnit","_owner","_item"];
-	
-	#define TEXT_FROM_UPPER(X)	toUpper(X select [0,1])  + toLower(X select [1])
-	
-	_getEquipType = {
-		// @List = @Mode call _getEquipType
-		private["_r"];
-		_r = call compile format [
-			"if (count dzn_gear_editMode_%1List > 1) then {
-				dzn_gear_editMode_%1List;
-			} else {
-				dzn_gear_editMode_%1List select 0;		
-			}"
-			, toLower(_this)
-		];
-		
-		_r
-	};
-	
-	_mode = _this select 0;
-	_ownerUnit = if (isNull cursorTarget) then { player } else { driver cursorTarget }; 
-	_owner = if (isNull cursorTarget) then { "Player" } else { "Unit" };
-	_item = call compile format ["%1 _ownerUnit", toLower(_mode)];
-	
-	switch (_this select 1) do {
-		case "SHIFT": {
-			// Set
-			hint parseText format ["<t color='#6090EE' size='1.1'>%3 of %1 is COPIED</t><br />%2", _owner, _item, TEXT_FROM_UPPER(_mode)];
-			copyToClipboard str(_mode call _getEquipType);		
-		};
-		case "CTRL": {
-			// Add
-			hint parseText format ["<t color='#6090EE' size='1.1'>%3 of %1 is ADDED to list</t><br />%2", _owner, _item, TEXT_FROM_UPPER(_mode)];
-			call compile format [
-				"if !(_item in dzn_gear_editMode_%1List) then {
-					dzn_gear_editMode_%1List pushBack _item;				
-				};"
-				, toLower(_mode)			
-			];
-			copyToClipboard str(_mode call _getEquipType);
-		};
-		case "ALT": {
-			// Clear
-			hint parseText format ["<t color='#6090EE' size='1.1'>%1 is CLEARED</t>", TEXT_FROM_UPPER(_mode)];
-			call compile format [
-				"dzn_gear_editMode_%1List = [];"
-				, toLower(_mode)
-			];
-		};		
-		default {
-			// Show	
-			hint parseText format [
-				"<t color='#6090EE' size='1.1'>%2 list:</t><br /><t size='0.6' color='#FFD000'>Item</t><br />%1" 
-				, [(_mode call _getEquipType), true] call dzn_fnc_gear_editMode_showAsStructuredList
-				, TEXT_FROM_UPPER(_mode)
-			];
-			copyToClipboard str(_mode call _getEquipType);
-		};
-	};
-	
-	false	
 };
 
 dzn_fnc_gear_editMode_getCurrentPrimaryWeapon = {
@@ -191,7 +60,7 @@ dzn_fnc_gear_editMode_getCurrentPrimaryWeapon = {
 		};
 	};
 	
-	_ownerUnit = if (isNull cursorTarget) then { player } else { driver cursorTarget }; 
+	_ownerUnit = if (isNull cursorTarget) then { player } else { cursorTarget }; 
 	_owner = if (isNull cursorTarget) then { "Player" } else { "Unit" };
 	_weapon = primaryWeapon _ownerUnit;
 	_magazine = (primaryWeaponMagazine _ownerUnit) select 0;	
@@ -231,6 +100,30 @@ dzn_fnc_gear_editMode_getCurrentPrimaryWeapon = {
 	
 	false
 };
+
+
+dzn_fnc_gear_editMode_showKeybinding = {
+	hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
+		<br /><br /><t size='1.45' color='#3793F0' underline='true'>Keybinding:</t>
+		<br /><br /><t %1>[H]</t><t %2> - Show keybinding</t>
+		<br />
+		<br /><t %1>[ALT + SPACE]</t><t %2> - Open Arsenal</t>  
+		<br /><t %1>[CTRL + SPACE]</t><t %2> - Copy gear of player or cursorTarget and add it to action list</t>
+		<br /><t %1>[SHIFT + SPACE]</t><t %2> - Copy gear of player or cursorTarget without adding new action</t>
+		<br />
+		<br /><t %1>[1..3]</t><t %2> - Show Primary, Launcher or Handgun weapon to list and copy</t>
+		<br /><t %1>[SHIFT + 1..3]</t><t %2> - Set and copy Primary, Launcher or Handgun weapon</t>
+		<br /><t %1>[CTRL + 1..3]</t><t %2> - Add Primary, Launcher or Handgun weapon to list and copy</t>		
+		<br /><t %1>[ALT + 1..3]</t><t %2> - Clear Primary, Launcher or Handgun weapon list</t>
+		"
+		, "align='left' color='#3793F0' size='0.9'"
+		, "align='right' size='0.8'"
+	];
+};
+
+
+
+
 
 
 dzn_fnc_gear_editMode_createKit = {
@@ -468,7 +361,6 @@ dzn_fnc_gear_editMode_getVehicleName = {
 	getText(configFile >>  "CfgVehicles" >> _this >> "displayName")
 };
 
-
 // ******************
 // Init of EDIT MODE
 // ******************
@@ -477,15 +369,9 @@ waitUntil { !(isNull (findDisplay 46)) };
 (findDisplay 46) displayAddEventHandler ["KeyDown", "_handled = _this call dzn_fnc_gear_editMode_onKeyPress"];
 
 dzn_gear_editMode_keyIsDown = false;
-#define SET_GEAR_IF_EMPTY(ACT)	if (ACT player == "") then { [] } else { [ACT player] };
-dzn_gear_editMode_primaryWeaponList = SET_GEAR_IF_EMPTY(primaryWeapon);
-dzn_gear_editMode_primaryWeaponMagList = primaryWeaponMagazine player;
 
-dzn_gear_editMode_uniformList = SET_GEAR_IF_EMPTY(uniform);
-dzn_gear_editMode_headgearList = SET_GEAR_IF_EMPTY(headgear);
-dzn_gear_editMode_gogglesList = SET_GEAR_IF_EMPTY(goggles);
-dzn_gear_editMode_vestList = SET_GEAR_IF_EMPTY(vest);
-dzn_gear_editMode_backpackList = SET_GEAR_IF_EMPTY(backpack);
+dzn_gear_editMode_primaryWeaponList = [primaryWeapon player];
+dzn_gear_editMode_primaryWeaponMagList = primaryWeaponMagazine player;
 
 dzn_gear_editMode_arsenalOpened = false;
 dzn_gear_editMode_arsenalTimerPause = 2;

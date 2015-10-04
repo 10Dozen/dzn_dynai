@@ -1,5 +1,6 @@
 // If a player - exits script
 if (hasInterface && !isServer) exitWith {};
+dzn_dynai_initialized = false;
 
 //	************** DZN_DYNAI PARAMETERS ******************
 
@@ -47,15 +48,13 @@ dzn_dynai_cachingTimeout			= 20; // seconds
 dzn_dynai_cacheCheckTimer			= 15; // seconds
 
 dzn_dynai_cacheDistance				= 800; // meters
-dzn_dynai_cacheDistanceVehLight			= 1200;
-dzn_dynai_cacheDistanceVehHeavy			= 2700;
-dzn_dynai_cacheDistanceVehLongrange		= 4000;
+// dzn_dynai_cacheDistanceVehLight			= 1200;
+// dzn_dynai_cacheDistanceVehHeavy			= 2700;
+// dzn_dynai_cacheDistanceVehLongrange		= 4000;
 
-dzn_dynai_cacheLongrangeClasses			= [];	// List of classes for Longrange weapon classes (AntiAirArtillery, SAM)
+// dzn_dynai_cacheLongrangeClasses			= [];	// List of classes for Longrange weapon classes (AntiAirArtillery, SAM)
 
 //	************** END OF DZN_DYNAI PARAMETERS ******************
-
-
 
 
 
@@ -90,7 +89,11 @@ waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout) };
 call dzn_fnc_dynai_startZones;
 
 // ************** Start of DZN_DYNAI Caching ********************
-if !(dzn_dynai_enableCaching) exitWith {};
+if !(dzn_dynai_enableCaching) exitWith {dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";};
+
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf";
 [false] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
+
+dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";
+

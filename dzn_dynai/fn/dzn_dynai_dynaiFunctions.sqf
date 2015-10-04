@@ -9,15 +9,17 @@ dzn_fnc_dynai_initZones = {
 		INPUT: 		NULL
 		OUTPUT: 	NULL
 	*/
+	if (isNil "dzn_dynai_core") exitWith { ["dzn_dynai :: There is no 'dzn_dynai_core' placed on the map!"] call BIS_fnc_error; };
+	if ((synchronizedObjects dzn_dynai_core) isEqualTo []) exitWith { ["dzn_dynai :: There is no DynAI zones synchronized with 'dzn_dynai_core' object!"] call BIS_fnc_error; };
 	
 	private ["_modules", "_zone", "_properties","_syncObj", "_locations","_synced", "_wps", "_keypoints","_locationBuildings","_locBuildings","_locPos"];
 	
-	_modules = entities "ModuleSpawnAIPoint_F";
+	_modules = synchronizedObjects dzn_dynai_core;
 	
 	{
 		_zone = _x;
 		
-		_zone setVariable ["initialized", false];
+		_zone setVariable ["dzn_dynai_initialized", false];
 		_zoneBuildings = [];
 		_properties = [];
 		{
@@ -25,97 +27,99 @@ dzn_fnc_dynai_initZones = {
 				_properties = _x;
 			};
 		} forEach dzn_dynai_zoneProperties;
-		
+		if (_properties isEqualTo []) exitWith { ["dzn_dynai :: There is no properties for DynAI zone '%1'", str(_x)] call BIS_fnc_error; };
+
 		_locations = [];
 		_keypoints = "randomize";
+		
+		// Get triggers and convert them into locations
 		_syncObj = synchronizedObjects _x;
 		{
-			// Get triggers and convert them into locations
-			if ( ["dzn_dynai_area", str(_x), false] call BIS_fnc_inString ) then {
-				
-				_synced = synchronizedObjects _x;
-				{
-					if (_x isKindOf "EmptyDetector") then {
-						_loc = [_x, true] call dzn_fnc_convertTriggerToLocation;
-						_locations = _locations + [_loc];
-						
-						_locBuildings = [_loc] call dzn_fnc_dynai_getLocationBuildings;
-						{ _zoneBuildings pushBack _x; } forEach _locBuildings;
-					};
-				} forEach _synced;
-				
-				deleteVehicle _x;
-				
-				#define GET_AVERAGE(PAR1,PAR2)		((PAR1) + (PAR2))/2
-				_locPos = [];
-				{
-					_locPos = if (_locPos isEqualTo []) then {
-						locationPosition _x
-					} else {
-						[
-							GET_AVERAGE(_locPos select 0, (locationPosition _x) select 0), 
-							GET_AVERAGE(_locPos select 1, (locationPosition _x) select 1), 
-							GET_AVERAGE(_locPos select 2, (locationPosition _x) select 2)
-						]
-					};
-				} forEach _locations;
-				
-				_zone setPosASL _locPos;		
-				
-				_properties set [3, _locations];
-				_properties = _properties + [_zoneBuildings];
-			};
+			if (_x isKindOf "EmptyDetector") then {
+				_loc = [_x, true] call dzn_fnc_convertTriggerToLocation;
+				_locations pushBack _loc;
 			
-			// Get waypoints and convert them into keypoints (coordinates)
-			if ( ["dzn_dynai_wp", str(_x), false] call BIS_fnc_inString ) then {
-				_wps = waypoints _x;
-				// player sideChat format [ "WPS: %1", _wps];
-				
-				if (count _wps > 1) then {
-					_keypoints = [];
-					_wps = _wps - [_wps select 0];
-					{
-						_keypoints = _keypoints + [ waypointPosition _x ];					
-					} forEach _wps;
-				};
-				
-				deleteVehicle _x;
-			};			
-		} forEach _syncObj;	
+				_locBuildings = [_loc] call dzn_fnc_dynai_getLocationBuildings;
+				{ _zoneBuildings pushBack _x; } forEach _locBuildings;
+			};		
+		} forEach _syncObj;
+		
+		if (_locations isEqualTo []) exitWith { ["dzn_dynai :: There is no triggers synchronized with DynAI zone '%1'", str(_x)] call BIS_fnc_error; };
+		
+		// Get area average position and size
+		#define GET_AVERAGE(PAR1,PAR2)		((PAR1) + (PAR2))/2
+		_locPos = [];
+		{
+			_locPos = if (_locPos isEqualTo []) then {
+				locationPosition _x
+			} else {
+				[
+					GET_AVERAGE(_locPos select 0, (locationPosition _x) select 0), 
+					GET_AVERAGE(_locPos select 1, (locationPosition _x) select 1), 
+					GET_AVERAGE(_locPos select 2, (locationPosition _x) select 2)
+				]
+			};
+		} forEach _locations;
+
+		_wps = waypoints _x;
+		if (count _wps > 1) then {
+			_keypoints = [];
+			_wps = _wps - [_wps select 0];
+			{
+				_keypoints = _keypoints + [ waypointPosition _x ];					
+			} forEach _wps;
+		};
+		
 		sleep 1;
 		
-		_properties set [4, _keypoints];	
-		if (_locations isEqualTo []) exitWith { hint "There is no linked 'dzn_dynai_area' object. Can't initialize zone."; };
-		_zone setVariable ["locations", _locations];
-		_zone setVariable ["keypoints", _keypoints];
+		_zone setPosASL _locPos;
 		
-		_zone setVariable ["properties", _properties];
-		_zone setVariable ["isActive", _properties select 2];
+		_properties set [3, _locations];
+		_properties set [4, _keypoints];
+		_properties = _properties + [_zoneBuildings];
 		
-		_zone setVariable ["initialized", true];
+		_zone setVariable ["dzn_dynai_area", _locations];		//locations
+		_zone setVariable ["dzn_dynai_keypoints", _keypoints];		//keypoints
+		_zone setVariable ["dzn_dynai_isActive", _properties select 2]; //isActive
+		_zone setVariable ["dzn_dynai_properties", _properties];	//properties
+		_zone setVariable ["dzn_dynai_initialized", true];	//initialized
 	} forEach _modules;
 };
 
-dzn_fnc_dynai_startZones = {
-	
+dzn_fnc_dynai_getProperty = {
+	private["_r","_z"];
+	_z = _this select 0;
+	_r = switch toLower(_this select 1) do {		
+		case "area": { _z getVariable ["dzn_dynai_area", nil] };
+		case "kp";case "points";case "keypoints": { _z getVariable ["dzn_dynai_keypoints", nil] };
+		case "isactive": { _z getVariable ["dzn_dynai_isActive", nil] };
+		case "prop";case "properties": { _z getVariable ["dzn_dynai_properties", nil] };
+		case "init";case "initialized": { _z getVariable ["dzn_dynai_initialized", nil] };
+		default { nil };
+	};
+
+	_r
+};
+#define GET_PROP(X,Y)	[X, Y] call dzn_fnc_dynai_getProperty
+
+dzn_fnc_dynai_startZones = {	
 	/*
 		Start all zones
-		INPUT: 		NULL
+		INPUT: 	NULL
 		OUTPUT: 	NULL
-	*/
+	*/	
+	private ["_modules"];
 	
-	private ["_modules", "_zone", "_properties","_syncObj", "_locations", "_synced", "_wps", "_keypoints"];
+	_modules = synchronizedObjects dzn_dynai_core;
 	
-	_modules = entities "ModuleSpawnAIPoint_F";
-	
-	{
-		if (DEBUG) then { player sideChat format ["Creating zone: %1", str(_x)]; };
+	{		
 		_x spawn {
 			// Wait for zone activation (_this getVariable "isActive")
-			waitUntil {!isNil {_this getVariable "initialized"} && {_this getVariable "initialized"}};
-			waitUntil {!isNil {_this getVariable "isActive"} && {_this getVariable "isActive"}};
+			waitUntil {!isNil {GET_PROP(_this, "init")} && {GET_PROP(_this, "init")}};
+			waitUntil {!isNil {GET_PROP(_this,"isActive")} && {GET_PROP(_this,"isActive")}};
+			if (DEBUG) then { player sideChat format ["dzn_dynai :: Creating zone '%1'", str(_this)]; };			
 			
-			(_this getVariable "properties") call dzn_fnc_dynai_createZone;
+			(GET_PROP(_this,"properties")) call dzn_fnc_dynai_createZone;
 		};
 		sleep 0.5;	
 	} forEach _modules;	
@@ -144,7 +148,10 @@ dzn_fnc_dynai_createZone = {
 	
 	_zoneUsedBuildings = [];
 	
-	if (DEBUG) then { player sideChat format ["(%1) Zone is activated", _name]; };
+	if (DEBUG) then { 
+		player sideChat format ["dzn_dynai :: %1 :: Zone is activated", _name];
+		diag_log format ["dzn_dynai :: %1 :: Zone is activated", _name]; 
+	};
 	
 	// Creating center of side if not exists
 	call compile format ["
@@ -156,10 +163,10 @@ dzn_fnc_dynai_createZone = {
 		_side
 	];
 	
-	if (DEBUG) then { player sideChat format ["(%1) Calculating zone position", _name]; };
+	if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: Calculating zone position", _name]; };
 	_zonePos = _area call dzn_fnc_getZonePosition; //[CentralPos, xMin, yMin, xMax, yMax]
 	
-	if (DEBUG) then { player sideChat "Spawning groups"; };
+	if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: Spawning groups", _name]; };
 	// For each groups templates
 	{
 		_count = _x select 0;
@@ -168,23 +175,21 @@ dzn_fnc_dynai_createZone = {
 		
 		// For count of templated groups
 		for "_i" from 0 to (_count - 1) do {
-			if (DEBUG) then {  player sideChat format ["|| Spawning group %1", str(_i)]; };
+			if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: | Spawning group %2", _name, str(_i)]; };
 			
 			// Creates group
 			_groupPos = _area call dzn_fnc_getRandomPointInZone; // return Pos3D
-			_grp = createGroup call compile _side;
-			_grp setVariable ["wpSet",false];
-			
-			// _nearRoads = _groupPos nearRoads 100;
+			_grp = createGroup (call compile _side);
+			_grp setVariable ["dzn_dynai_wpSet",false];
 			
 			// Creates GameLogic for group control
-			_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];			
-			_grpLogic setVariable ["units", []];
-			_grpLogic setVariable ["vehicles", []];
+			//_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];			
+			_grp setVariable ["dzn_dynai_units", []];
+			_grp setVariable ["dzn_dynai_vehicles", []];
 			
 			// For each unit in group
 			{
-				if (DEBUG) then {  player sideChat format ["|||| Spawning group %1 - Unit: %2 (%3)", str(_i), str(_forEachIndex), _x select 0]; };
+				if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: | Spawning group %2 -- Unit: %3 (%4)", _name, str(_i), str(_forEachIndex), _x select 0]; };
 				
 				_classname = _x select 0;
 				_assigned = _x select 1;
@@ -196,18 +201,18 @@ dzn_fnc_dynai_createZone = {
 					// Not assigned, Assigned in vehicle, Assigned to house			
 			
 					_unit = _grp createUnit [_classname , _groupPos, [], 0, "NONE"];
-					if (DEBUG) then { player sideChat format ["|||||| Unit created %1 (%2)", str(_unit), _classname]; };
+					_grp setVariable ["dzn_dynai_units", (_grp getVariable "dzn_dynai_units") + [_unit]];
+					_grp setVariable ["dzn_dynai_vehicles", (_grp getVariable "dzn_dynai_vehicles") + [""]];
 					
+					if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: || Unit created %2 (%3)", _name, str(_unit), _classname]; };
+					
+					// Skill
 					if (_groupSkill select 0) then {
-						{
-							_unit setSkill _x;
-						} forEach (_groupSkill select 1);
+						{ _unit setSkill _x; } forEach (_groupSkill select 1);
 					} else {
 						_unit setSkill (_groupSkill select 1);
-					};
+					};					
 					
-					_grpLogic setVariable ["units", (_grpLogic getVariable "units") + [_unit]];
-					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [""]];	
 					// Gear
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear] spawn dzn_fnc_gear_assignKit; };
 					
@@ -231,24 +236,23 @@ dzn_fnc_dynai_createZone = {
 										[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
 									};
 									[_unit, DEBUG] execFSM "dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm";
-									_unit setVariable ["dynai_isIndoor", true, true];
+									_unit setVariable ["dzn_dynai_isIndoor", true, true]; //dynai_isIndoor
 								};
 							};
 						} else {
 							// Assignement in vehicle
 							[
 								_unit, 
-								(_grpLogic getVariable "vehicles") select (_assigned select 0),	// ID of created unit/vehicle
-								_assigned select 1												// string of assigned role - e.g. driver, gunner
+								(_grp getVariable "dzn_dynai_vehicles") select (_assigned select 0),	// ID of created unit/vehicle
+								_assigned select 1	// string of assigned role - e.g. driver, gunner
 							] call dzn_fnc_assignInVehicle; 
 						};
-					};
-					
+					};					
 				} else {
 					// Is vehicle						
 					_vehPos = [(_groupPos select 0) + 6*_forEachIndex, (_groupPos select 1) + 6*_forEachIndex, 0];
 					while {
-						(_vehPos isflatempty [(sizeof _classname) / 5,0,300,(sizeof _classname),0]) select 0 isEqualTo []					
+						(_vehPos isFlatEmpty [(sizeof _classname) / 5,0,300,(sizeof _classname),0]) select 0 isEqualTo []					
 					} do {
 						_vehPos = [(_groupPos select 0) + 6*_forEachIndex + 15 +  random(50), (_groupPos select 1) + 6*_forEachIndex + 15 + random(50), 0];
 					};
@@ -260,12 +264,12 @@ dzn_fnc_dynai_createZone = {
 					_unit spawn { sleep 5; _this allowDamage true; };
 					
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
-					_grpLogic setVariable ["vehicles", (_grpLogic getVariable "vehicles") + [_unit]];
+					_grp setVariable ["dzn_dynai_vehicles", (_grp getVariable "dzn_dynai_vehicles") + [_unit]];
 					
 					// Vehicle type
 					switch (true) do {						
 						case (["Vehicle Hold", _assigned, false] call BIS_fnc_inString): {
-							_grp setVariable ["wpSet", true];
+							_grp setVariable ["dzn_dynai_wpSet", true];
 							(waypoints _grp select 0) setWaypointType "Sentry";
 							if (dzn_dynai_allowVehicleHoldBehavior) then { 
 								[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
@@ -273,7 +277,7 @@ dzn_fnc_dynai_createZone = {
 						};		
 						case (["Vehicle Advance", _assigned, false] call BIS_fnc_inString): {
 							_grp spawn {
-								waitUntil {!isNil { _this getVariable "wpSet" }};															
+								waitUntil {!isNil { _this getVariable "dzn_dynai_wpSet" }};															
 								(waypoints _this select ( count (waypoints _this) - 1 )) setWaypointType "Sentry";							
 							};
 						};	
@@ -285,7 +289,7 @@ dzn_fnc_dynai_createZone = {
 				sleep 0.2;
 			} forEach _groupUnits;			
 			
-			
+			/*
 			// Synhronize units with groupLogic			
 			[_grpLogic] joinSilent grpNull;			// Unassign GameLogic from group
 			_grpLogic synchronizeObjectsAdd (units _grp);
@@ -293,6 +297,7 @@ dzn_fnc_dynai_createZone = {
 				waitUntil { sleep 30; {alive _x} count (synchronizedObjects (_this select 0)) < 1 };
 				deleteVehicle (_this select 0);
 			};
+			*/
 			
 			// Set group behavior
 			if !(_behavior select 0 == "") then { _grp setSpeedMode (_behavior select 0); };
@@ -301,27 +306,21 @@ dzn_fnc_dynai_createZone = {
 			if !(_behavior select 3 == "") then { _grp setFormation (_behavior select 3); };
 			
 			// Assign waypoints
-			if (DEBUG) then {  player globalChat "Before Waypoint creation"; };
-			if !(_grp getVariable "wpSet") then {
-				if (DEBUG) then { player globalChat "Waypoint creation"; };
+			if !(_grp getVariable "dzn_dynai_wpSet") then {				
 				if (typename _wps == "ARRAY") then {
-					if (DEBUG) then { player globalChat "Waypoint creation: Keypoint"; };
+					if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: || Spawning group %2 -- Waypoint creation: Keypoint", _name, str(_i)]; };
 					[_grp, _wps] call dzn_fnc_createPathFromKeypoints;
 				} else {
-					if (DEBUG) then { player globalChat "Waypoint creation: Random"; };
+					if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: || Spawning group %2 -- Waypoint creation: Random", _name, str(_i)]; };
 					[_grp, _area] call dzn_fnc_createPathFromRandom;
 				};
-				_grp setVariable ["wpSet",true];
+				_grp setVariable ["dzn_dynai_wpSet",true];
 			};
 		};
 	} forEach _refUnits;
 	
-	if (DEBUG) then { player sideChat format ["(%1) Zone Created", _name]; };
+	if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: Zone Created", _name]; };
 };
-
-
-
-
 
 
 // ================================================
@@ -337,21 +336,22 @@ dzn_fnc_dynai_activateZone = {
 		OUTPUT: NULL
 	*/
 	private["_properties"];
-	if !(isNil {_this getVariable "isActive"} && isNil {_this getVariable "initialized"}) then {	
-		_this setVariable ["isActive", true, true];	
-		_properties = _this getVariable "properties";
+	if !(isNil {GET_PROP(_this,"isActive")} && isNil {GET_PROP(_this, "init")}) then {	
+		_this setVariable ["dzn_dynai_isActive", true, true];	
+		_properties = _this getVariable "dzn_dynai_properties";
 		_properties set [2, true];	
-		_this setVariable ["properties", _properties, true];	
+		_this setVariable ["dzn_dynai_properties", _properties, true];	
 	};
 };
 
 dzn_fnc_dynai_isActive = {
-	if (isNil {_this getVariable "isActive"}) exitWith { false };	
-	(_this getVariable "isActive")
+	if (isNil {GET_PROP(_this,"isActive")}) exitWith { false };	
+	GET_PROP(_this,"isActive")
 };
 
 dzn_fnc_dynai_moveZone = {
 	/*
+		[@Zone, @Pos3d, @Direction] call dzn_fnc_dynai_moveZone
 		Move zone to given position.
 		EXAMPLE: [dzn_zone1, getPos player, directin] call dzn_fnc_dynai_moveZone
 		INPUT:
@@ -368,10 +368,10 @@ dzn_fnc_dynai_moveZone = {
 	_newDir = if (isNil {_this select 2}) then { getDir _zone } else { _this select 2 };
 	_deltaDir = _newDir - (getDir _zone);	
 	
-	waitUntil { !isNil {_zone getVariable "initialized"} && { _zone getVariable "initialized" } };
+	waitUntil { !isNil {GET_PROP(_zone,"init")} && {GET_PROP(_zone,"init")} };
 	
 	_curPos = getPosASL _zone;
-	_locations = _zone getVariable "locations";
+	_locations = GET_PROP(_zone,"area");
 	
 	// Get current offsets of locations
 	_offsets = [];
@@ -382,7 +382,7 @@ dzn_fnc_dynai_moveZone = {
 	} forEach _locations;
 	
 	// Get current offsets of keypoints
-	_wps = _zone getVariable "keypoints";
+	_wps = GET_PROP(_zone,"keypoints");
 	_wpOffsets = [];
 	if (typename _wps == "ARRAY") then {
 		{
@@ -417,12 +417,12 @@ dzn_fnc_dynai_moveZone = {
 		} forEach _wps;
 	};
 	
-	_props = _zone getVariable "properties";	
+	_props = GET_PROP(_zone,"properties");	
 	
 	_props set [4, _wps];
 	_props set [7, _zoneBuildings];
 	
-	_zone setVariable ["properties", _props, true];
+	_zone setVariable ["dzn_dynai_properties", _props, true];
 };
 
 dzn_fnc_dynai_getZoneKeypoints = {
@@ -433,7 +433,7 @@ dzn_fnc_dynai_getZoneKeypoints = {
 			0: OBJECT	- SpawnAI Module of zone
 		OUTPUT: ARRAY of keypoints (pos3d)
 	*/
-	_this getVariable "properties" select 4;
+	(GET_PROP(_this,"properties")) select 4;
 };
 
 dzn_fnc_dynai_setZoneKeypoints = {
@@ -450,12 +450,12 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	_zone = _this select 0;
 	_newKeypoints = _this select 1;
 	
-	if (_zone getVariable "isActive") exitWith { hintSilent format ["dzn_dynai: %1 is activated already", str(_zone)]; };
+	if (GET_PROP(_zone,"isActive")) exitWith { hintSilent format ["dzn_dynai: %1 is activated already", str(_zone)]; };
 
-	_properties = _zone getVariable "properties";
+	_properties = GET_PROP(_zone,"properties");
 	_properties set [4, _newKeypoints];
 	
-	_zone setVariable ["properties", _properties, true];
+	_zone setVariable ["dzn_dynai_properties", _properties, true];
 };
 
 
@@ -503,17 +503,17 @@ dzn_fnc_dynai_addNewZone = {
 	_zP pushBack ((_zP select 3) call dzn_fnc_dynai_getLocationBuildings);
 	
 	_grp = createGroup (call compile (_zP select 1));
-	_zoneObject = _grp createUnit ["ModuleSpawnAIPoint_F", (locationPosition (_zP select 3 select 0)), [], 0, "NONE"];
+	_zoneObject = _grp createUnit ["Logic", (locationPosition (_zP select 3 select 0)), [], 0, "NONE"];
 	
 	_zoneObject setVehicleVarName (_zP select 0); 
 	call compile format [ "%1 = _zoneObject;", (_zP select 0)];
 	
-	_zoneObject setVariable ["locations", _zP select 3];
-	_zoneObject setVariable ["keypoints", _zP select 4];
-	_zoneObject setVariable ["isActive", _zP select 2];
+	_zoneObject setVariable ["dzn_dynai_area", _zP select 3];
+	_zoneObject setVariable ["dzn_dynai_keypoints", _zP select 4];
+	_zoneObject setVariable ["dzn_dynai_isActive", _zP select 2];
 	
-	_zoneObject setVariable ["properties", _zP];
-	_zoneObject setVariable ["initialized", true];
+	_zoneObject setVariable ["dzn_dynai_properties", _zP];
+	_zoneObject setVariable ["dzn_dynai_initialized", true];
 	
 	//dzn_dynai_zoneProperties pushBack _zP;
 	
