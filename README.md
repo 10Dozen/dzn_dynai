@@ -1,6 +1,11 @@
 # dzn_dynai
 
 Dynamic AI with Blackjack and Whores
+
+#### Dependencies
+- dzn_commonFunctions (https://github.com/10Dozen/dzn_commonFunctions)
+- dzn_gear (https://github.com/10Dozen/dzn_gear)
+
 ## How To
 
 1. Place spawn module (Modules -> Misc -> SpawnAI: Spawnpoint, or ModuleSpawnAIPoint_F entity) and name (e.g. "dzn_zone1").
