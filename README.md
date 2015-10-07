@@ -1,4 +1,5 @@
 # dzn_dynai
+##### Version: 0.2
 
 Dynamic AI with Blackjack and Whores
 ## How To
