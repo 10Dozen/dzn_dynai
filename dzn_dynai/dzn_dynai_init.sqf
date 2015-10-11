@@ -41,6 +41,9 @@ dzn_dynai_allowedHouses				= ["House"];
 
 // Behavior settings
 dzn_dynai_allowVehicleHoldBehavior		= true;
+dzn_dynai_allowGroupResponse			= true;
+dzn_dynai_responseDistance			= 800; // meters
+dzn_dynai_responseCheckTimer			= 30; // seconds
 
 // Caching Settings
 dzn_dynai_enableCaching				= true;
@@ -53,6 +56,7 @@ dzn_dynai_cacheDistance				= 800; // meters
 // dzn_dynai_cacheDistanceVehLongrange		= 4000;
 
 // dzn_dynai_cacheLongrangeClasses			= [];	// List of classes for Longrange weapon classes (AntiAirArtillery, SAM)
+
 
 //	************** END OF DZN_DYNAI PARAMETERS ******************
 
@@ -69,11 +73,16 @@ waitUntil { dzn_dynai_CONDITION_BEFORE_INIT };
 waitUntil { !isNil "dzn_gear_initialized" && { dzn_gear_initialized } };
 
 // Initialization of dzn_dynai
+dzn_dynai_activatedZones = [];
 dzn_dynai_zoneProperties = [
 	#include "dzn_dynai_customZones.sqf"
 ];
 
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
+if (dzn_dynai_allowGroupResponse) then {
+	dzn_dynai_activeGroups = [];
+	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf"; 
+};
 
 //	**************	SERVER OR HEADLESS	*****************
 
@@ -88,6 +97,8 @@ call dzn_fnc_dynai_initZones;
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout) };
 call dzn_fnc_dynai_startZones;
 
+if (dzn_dynai_allowGroupResponse) then { [] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm"; };
+
 // ************** Start of DZN_DYNAI Caching ********************
 if !(dzn_dynai_enableCaching) exitWith {dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";};
 
@@ -96,4 +107,3 @@ call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sq
 [false] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
 
 dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";
-

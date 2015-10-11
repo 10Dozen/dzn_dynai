@@ -1,8 +1,6 @@
 // #define DEBUG			true
 #define DEBUG		false
 
-
-
 dzn_fnc_dynai_initZones = {
 	/*
 		Initialize zones and start their's create sequence
@@ -82,11 +80,13 @@ dzn_fnc_dynai_initZones = {
 		_zone setVariable ["dzn_dynai_keypoints", _keypoints];		//keypoints
 		_zone setVariable ["dzn_dynai_isActive", _properties select 2]; //isActive
 		_zone setVariable ["dzn_dynai_properties", _properties];	//properties
+		_zone setVariable ["dzn_dynai_groups", []];
 		_zone setVariable ["dzn_dynai_initialized", true];	//initialized
 	} forEach _modules;
 };
 
 dzn_fnc_dynai_getProperty = {
+	// @Zone call dzn_fnc_dynai_getProperty
 	private["_r","_z"];
 	_z = _this select 0;
 	_r = switch toLower(_this select 1) do {		
@@ -95,6 +95,7 @@ dzn_fnc_dynai_getProperty = {
 		case "isactive": { _z getVariable ["dzn_dynai_isActive", nil] };
 		case "prop";case "properties": { _z getVariable ["dzn_dynai_properties", nil] };
 		case "init";case "initialized": { _z getVariable ["dzn_dynai_initialized", nil] };
+		case "groups": { _z getVariable ["dzn_dynai_groups", []]; };
 		default { nil };
 	};
 
@@ -133,9 +134,12 @@ dzn_fnc_dynai_createZone = {
 	*/
 	
 	private [
-		"_side","_name","_area","_wps","_refUnits","_behavior", "_zonePos","_count","_groupUnits",
-		"_grp","_groupPos","_grpLogic","_classname","_assigned","_gear","_unit","_zoneBuildings","_groupSkill",
-		"_vehPos","_vehPosEmpty"
+		"_side","_name","_area","_wps"
+		,"_refUnits","_behavior", "_zonePos","_count","_groupUnits","_groupSkill"
+		,"_groups","_grp","_groupPos","_grpLogic"
+		,"_classname","_assigned","_gear","_unit"
+		,"_vehPos","_vehPosEmpty"
+		,"_zoneBuildings"		
 	];
 
 	_name = _this select 0;
@@ -147,6 +151,7 @@ dzn_fnc_dynai_createZone = {
 	_zoneBuildings = _this select 7;
 	
 	_zoneUsedBuildings = [];
+	_groups = [];
 	
 	if (DEBUG) then { 
 		player sideChat format ["dzn_dynai :: %1 :: Zone is activated", _name];
@@ -180,6 +185,7 @@ dzn_fnc_dynai_createZone = {
 			// Creates group
 			_groupPos = _area call dzn_fnc_getRandomPointInZone; // return Pos3D
 			_grp = createGroup (call compile _side);
+			_groups pushBack _grp;
 			_grp setVariable ["dzn_dynai_wpSet",false];
 			
 			// Creates GameLogic for group control
@@ -316,10 +322,74 @@ dzn_fnc_dynai_createZone = {
 				};
 				_grp setVariable ["dzn_dynai_wpSet",true];
 			};
+			
+			if (dzn_dynai_allowGroupResponse) then { _grp call dzn_fnc_dynai_initResponseGroup; };
 		};
 	} forEach _refUnits;
 	
+	
+	
+	(call compile _name) setVariable ["dzn_dynai_groups", _groups];	
+	dzn_dynai_activatedZones pushBack (call compile _name);	
 	if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: Zone Created", _name]; };
+};
+
+// ================================================
+//           DZN DYNAI -- New zone creation
+// ================================================
+
+dzn_fnc_dynai_addNewZone = {
+	// @ZonePropertyInput spawn dzn_fnc_dynai_addNewZone
+	/*
+		@ZonePropertyInput::
+		0	@Name, 
+		1	@Side, 
+		2	@IsActive, 
+		3	@ArrayOfLocations or Triggers or [Center, X, Y, DIR, IsSquare], 
+		4	@ArrayOfPos3d or "randomize"
+		5	@References,
+		6	@Behavior		
+	*/
+	private ["_zP","_zoneObject","_l","_loc"];
+	_zP = _this;
+	
+	_loc = [];
+	// Check what is come as 3rd argument - Locations, Triggers or Arrays of attributes
+	switch (typename ((_zP select 3) select 0)) do {
+		case "ARRAY": {
+			{
+				_l = createLocation ["Name", _x select 0, _x select 1, _x select 2];
+				_l setDirection ( _x select 3);
+				_l setRectangular ( _x select 4);
+				_loc pushBack _l;
+			} forEach (_zP select 3);
+		};
+		case "OBJECT": {
+			{
+				_loc pushBack ([_x, true] call dzn_fnc_convertTriggerToLocation);
+			} forEach (_zP select 3);
+		};
+		case "LOCATION": { _loc = _zP select 3; };
+	};
+	_zP set [3, _loc];
+	_zP pushBack ((_zP select 3) call dzn_fnc_dynai_getLocationBuildings);
+	
+	_grp = createGroup (call compile (_zP select 1));
+	_zoneObject = _grp createUnit ["Logic", (locationPosition (_zP select 3 select 0)), [], 0, "NONE"];
+	
+	_zoneObject setVehicleVarName (_zP select 0); 
+	call compile format [ "%1 = _zoneObject;", (_zP select 0)];
+	
+	_zoneObject setVariable ["dzn_dynai_area", _zP select 3];
+	_zoneObject setVariable ["dzn_dynai_keypoints", _zP select 4];
+	_zoneObject setVariable ["dzn_dynai_isActive", _zP select 2];
+	
+	_zoneObject setVariable ["dzn_dynai_properties", _zP];
+	_zoneObject setVariable ["dzn_dynai_initialized", true];
+	
+	//dzn_dynai_zoneProperties pushBack _zP;
+	
+	_zP call dzn_fnc_dynai_createZone;
 };
 
 
@@ -458,68 +528,9 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	_zone setVariable ["dzn_dynai_properties", _properties, true];
 };
 
-
-
-
-
 // ================================================
-//           DZN DYNAI -- New zone creation
+//           DZN DYNAI -- Other Functions
 // ================================================
-
-dzn_fnc_dynai_addNewZone = {
-	// @ZonePropertyInput spawn dzn_fnc_dynai_addNewZone
-	/*
-		@ZonePropertyInput::
-		0	@Name, 
-		1	@Side, 
-		2	@IsActive, 
-		3	@ArrayOfLocations or Triggers or [Center, X, Y, DIR, IsSquare], 
-		4	@ArrayOfPos3d or "randomize"
-		5	@References,
-		6	@Behavior		
-	*/
-	private ["_zP","_zoneObject","_l","_loc"];
-	_zP = _this;
-	
-	_loc = [];
-	// Check what is come as 3rd argument - Locations, Triggers or Arrays of attributes
-	switch (typename ((_zP select 3) select 0)) do {
-		case "ARRAY": {
-			{
-				_l = createLocation ["Name", _x select 0, _x select 1, _x select 2];
-				_l setDirection ( _x select 3);
-				_l setRectangular ( _x select 4);
-				_loc pushBack _l;
-			} forEach (_zP select 3);
-		};
-		case "OBJECT": {
-			{
-				_loc pushBack ([_x, true] call dzn_fnc_convertTriggerToLocation);
-			} forEach (_zP select 3);
-		};
-		case "LOCATION": { _loc = _zP select 3; };
-	};
-	_zP set [3, _loc];
-	_zP pushBack ((_zP select 3) call dzn_fnc_dynai_getLocationBuildings);
-	
-	_grp = createGroup (call compile (_zP select 1));
-	_zoneObject = _grp createUnit ["Logic", (locationPosition (_zP select 3 select 0)), [], 0, "NONE"];
-	
-	_zoneObject setVehicleVarName (_zP select 0); 
-	call compile format [ "%1 = _zoneObject;", (_zP select 0)];
-	
-	_zoneObject setVariable ["dzn_dynai_area", _zP select 3];
-	_zoneObject setVariable ["dzn_dynai_keypoints", _zP select 4];
-	_zoneObject setVariable ["dzn_dynai_isActive", _zP select 2];
-	
-	_zoneObject setVariable ["dzn_dynai_properties", _zP];
-	_zoneObject setVariable ["dzn_dynai_initialized", true];
-	
-	//dzn_dynai_zoneProperties pushBack _zP;
-	
-	_zP call dzn_fnc_dynai_createZone;
-};
-
 dzn_fnc_dynai_getLocationBuildings = {
 	// @ZoneBuildings = @ArrayOfLocations call dzn_fnc_dynai_getLocationBuildings;
 	private ["_zoneBuildings", "_loc", "_locationBuildings"];
