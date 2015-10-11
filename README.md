@@ -13,7 +13,7 @@ Dynamic AI with Blackjack and Whores
   - Set zone's side
   - Mark is zone is active at the start
   - Set groups and group units, assign gear kits to units
-  - Set Speed Mode, Behavior, Combat Mode and Formation of the groups
+  - Set Speed Mode, Behavior, Combat Mode and Formation of the groups (*note:* do not use Careless mode!)
 Copy generated structured info inside dzn_dynai_zoneProperties array.
 
 ## Control Zone
