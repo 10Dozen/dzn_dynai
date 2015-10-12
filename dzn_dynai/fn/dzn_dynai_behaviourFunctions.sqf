@@ -1,10 +1,10 @@
-#define	DEBUG		true
-//#define	DEBUG		false
+// #define	DEBUG		true
+#define	DEBUG		false
 
 dzn_fnc_dynai_unassignReinforcement = {
 	// [@Provider, @Requester] spawn dzn_fnc_dynai_unassignReinforcement
 	params["_provider","_requester"];
-	private["_pos","_timer"];
+	private["_pos","_timer","_wpPoints","_area"];
 	
 	_pos = _requester getVariable "dzn_dynai_requestingReinfocementPosition";
 	
@@ -15,6 +15,20 @@ dzn_fnc_dynai_unassignReinforcement = {
 	
 	_provider call dzn_fnc_dynai_initResponseGroup;
 	_requester call dzn_fnc_dynai_initResponseGroup;
+	
+	{
+		_x call dzn_fnc_dynai_initResponseGroup;
+		
+		_wpPoints = [_x getVariable "dzn_dynai_homeZone", "keypoints"] call dzn_fnc_dynai_getProperty;
+		_area = [_x getVariable "dzn_dynai_homeZone", "area"] call dzn_fnc_dynai_getProperty;
+		
+		if (typename _wpPoints == "ARRAY") then {			
+			[_x, _wpPoints] call dzn_fnc_createPathFromKeypoints;
+		} else {			
+			[_x, _area] call dzn_fnc_createPathFromRandom;
+		};
+	} forEach [_provider, _requester];
+	
 };
 
 dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
@@ -27,12 +41,18 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 		_tgt = _x select 1;
 		if (_tgt isKindOf "CAManBase" && {_tgt distance (leader _this) < 400}) then {
 			_targetList pushBack _x;
-			if (count _targetList > 4) exitWith { _isCritical = true };
+			if ( (count _targetList > 4) || (count _targetList > floor(count units _this * 1.5)) ) exitWith { 
+				_isCritical = true;
+				_this setVariable ["dzn_dynai_requestingReinfocementPosition", getPosASL _tgt];
+			};
 		} else {
 			if ( 
 				!((crew _tgt) isEqualTo []) 
 				&& { _tgt call dzn_fnc_dynai_isVehicleDanger && _tgt distance (leader _this) < 900	} 
-			) exitWith { _isCritical = true };
+			) exitWith { 
+				_isCritical = true;
+				_this setVariable ["dzn_dynai_requestingReinfocementPosition", getPosASL _tgt];
+			};
 		};
 	} forEach _targets;
 
@@ -129,12 +149,11 @@ dzn_fnc_dynai_checkSquadCriticalLosses = {
 dzn_fnc_dynai_requestReinforcement = {
 	// @SquadGrp call dzn_fnc_dynai_requestSquadReinforcement
 	_this setVariable ["dzn_dynai_isRequestingReinfocement", true];
-	_this setVariable [
-		"dzn_dynai_requestingReinfocementPosition"
-		, getPosASL (leader _this)
-	];
-	// _this setVariable ["dzn_dynai_reinforcementProvider", grpNull];
-	// _this setVariable ["dzn_dynai_isProvidingReinforcement", false];
+	
+	// If no pos assigned yet - means that no targets known, so position is position of squad
+	if ((_this getVariable "dzn_dynai_requestingReinfocementPosition") isEqualTo [0,0,0]) then {
+		_this setVariable ["dzn_dynai_requestingReinfocementPosition", getPosASL (leader _this)];
+	};	
 	
 	if (DEBUG) then {
 		player sideChat format [
@@ -253,6 +272,7 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 		,"_isRequester"
 		,"_isProvider"
 		,"_pos"
+		,"_side"
 		,"_nearestGroups"
 	];
 	
@@ -282,10 +302,11 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 	{
 		if (_readyToProvide isEqualTo []) exitWith {};
 	
-		_pos = _x getVariable "dzn_dynai_requestingReinfocementPosition";		
+		_pos = _x getVariable "dzn_dynai_requestingReinfocementPosition";
+		_side = side _x;
 		_nearestGroups = [
 			_readyToProvide, 
-			{ (leader _x) distance2d _pos < dzn_dynai_responseDistance }
+			{ (leader _x) distance2d _pos < dzn_dynai_responseDistance && (side _x ==  _side)}
 		] call BIS_fnc_conditionalSelect;
 		
 		if !(_nearestGroups isEqualTo []) then {
