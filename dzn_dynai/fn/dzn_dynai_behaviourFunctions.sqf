@@ -46,30 +46,60 @@ dzn_fnc_dynai_checkSquadEnemyDetected = {
 	_r
 };
 
+
+dzn_fnc_dynai_checkSquadKnownEnemiesCritical2 = {
+	// @Boolean = @SquadGrp call dzn_fnc_dynai_checkSquadKnownEnemiesCritical
+	
+	_targets = (leader _this) targetsQuery [objNull, sideEnemy, "", [], 0];
+	_targetList = [];
+	{
+	
+	} forEach _targets;
+
+	// As gunner
+	/* 
+	[
+		1,
+		B Alpha 1-1:1 (10Dozen) (BIS_fnc_objectVar_obj1),
+		CIV,
+		"B_G_Offroad_01_armed_F",
+		[6080.66,5647.97],-4.65]
+	]
+
+	// unit and car
+	[
+		[
+			1,
+			46514100# 163963: offroad_01_hmg_f.p3d,
+			CIV,
+			"B_G_Offroad_01_armed_F",
+			[6080.66,5647.97],-1.378]
+		// ,[
+			1,
+			BIS_fnc_objectVar_obj1,
+			WEST,
+			"B_Soldier_F",
+			[6071.09,5642.01],-0.981
+		]
+	// ]
+
+	// Driver
+	// [
+		1,
+		B Alpha 1-1:1 (10Dozen) (BIS_fnc_objectVar_obj1),
+		WEST,
+		"B_G_Offroad_01_armed_F",
+		[6080.66,5647.97],
+		-1
+	]
+	
+	*/
+};
+
 dzn_fnc_dynai_getSquadKnownEnemies = {
 	// @SquadGrp call dzn_fnc_dynai_getSquadKnownEnemies
 	// Return list of targets of leader of squad
 	private["_leader"];
-	
-	// use a targetsQuery [objNull, sideEnemy, "", [], 0] insted
-	// _targets = (leader _this) targetsQuery [objNull, sideEnemy, "", [], 0];
-	// _targetList = [];
-	
-	
-	// As gunner
-	// [[1,B Alpha 1-1:1 (10Dozen) (BIS_fnc_objectVar_obj1),CIV,"B_G_Offroad_01_armed_F",[6080.66,5647.97],-4.65]]
-
-	// unit and car
-	// [
-		// [1,46514100# 163963: offroad_01_hmg_f.p3d,CIV,"B_G_Offroad_01_armed_F",[6080.66,5647.97],-1.378]
-		// ,[1,BIS_fnc_objectVar_obj1,WEST,"B_Soldier_F",[6071.09,5642.01],-0.981]
-	// ]
-
-	// Driver
-	// [[1,B Alpha 1-1:1 (10Dozen) (BIS_fnc_objectVar_obj1),WEST,"B_G_Offroad_01_armed_F",[6080.66,5647.97],-1]]
-	// {
-	
-	// } forEach _targets;
 	
 	(leader _this) call BIS_fnc_enemyTargets	
 };
