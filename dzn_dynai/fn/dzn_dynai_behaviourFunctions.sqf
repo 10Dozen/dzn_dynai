@@ -1,6 +1,22 @@
 #define	DEBUG		true
 //#define	DEBUG		false
 
+dzn_fnc_dynai_unassignReinforcement = {
+	// [@Provider, @Requester] spawn dzn_fnc_dynai_unassignReinforcement
+	params["_provider","_requester"];
+	private["_pos","_timer"];
+	
+	_pos = _requester getVariable "dzn_dynai_requestingReinfocementPosition";
+	
+	waitUntil { (leader _provider) distance2d _pos < 300 };
+	_timer = time + 60*5; // 5 minutes
+	
+	waitUntil { time > _timer };
+	
+	_provider call dzn_fnc_dynai_initResponseGroup;
+	_requester call dzn_fnc_dynai_initResponseGroup;
+};
+
 dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 	// @Boolean = @SquadGrp call dzn_fnc_dynai_checkSquadKnownEnemiesCritical
 	
@@ -159,6 +175,8 @@ dzn_fnc_dynai_provideReinforcement = {
 	_wp setWaypointType "SAD";
 	_wp setWaypointCombatMode "RED";
 	_wp setWaypointBehaviour "AWARE";
+	
+	[_squad, _requester] spawn dzn_fnc_dynai_unassignReinforcement;
 	
 	if (DEBUG) then {
 		player sideChat format [
