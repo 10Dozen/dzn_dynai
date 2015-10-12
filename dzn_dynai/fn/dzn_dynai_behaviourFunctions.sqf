@@ -1,6 +1,64 @@
 #define	DEBUG		true
 //#define	DEBUG		false
 
+dzn_fnc_dynai_checkSquadKnownEnemiesCritical2 = {
+	// @Boolean = @SquadGrp call dzn_fnc_dynai_checkSquadKnownEnemiesCritical
+	
+	_targets = (leader _this) targetsQuery [objNull, sideEnemy, "", [], 0];
+	_targetList = [];
+	_isCritical = false;
+	{
+		_tgt = _x select 1;
+		if (_tgt isKindOf "CAManBase") then {
+			_targetList pushBack _x;
+			if (count _targetList > 4) exitWith { _isCritical = true };
+		} else {
+			if (_tgt call dzn_fnc_dynai_isVehicleDanger) exitWith { _isCritical = true };
+		};
+	} forEach _targets;
+
+	_isCritical
+	
+	// As gunner
+	/* 
+	[
+		1,
+		B Alpha 1-1:1 (10Dozen) (BIS_fnc_objectVar_obj1),
+		CIV,
+		"B_G_Offroad_01_armed_F",
+		[6080.66,5647.97],-4.65]
+	]
+
+	// unit and car
+	[
+		[
+			1,
+			46514100# 163963: offroad_01_hmg_f.p3d,
+			CIV,
+			"B_G_Offroad_01_armed_F",
+			[6080.66,5647.97],-1.378]
+		// ,[
+			1,
+			BIS_fnc_objectVar_obj1,
+			WEST,
+			"B_Soldier_F",
+			[6071.09,5642.01],-0.981
+		]
+	// ]
+
+	// Driver
+	// [
+		1,
+		B Alpha 1-1:1 (10Dozen) (BIS_fnc_objectVar_obj1),
+		WEST,
+		"B_G_Offroad_01_armed_F",
+		[6080.66,5647.97],
+		-1
+	]
+	
+	*/
+};
+
 dzn_fnc_dynai_initResponseGroup = {
 	// @SquadGrp call dzn_fnc_dynai_initGroupForResponse
 	{
@@ -47,54 +105,7 @@ dzn_fnc_dynai_checkSquadEnemyDetected = {
 };
 
 
-dzn_fnc_dynai_checkSquadKnownEnemiesCritical2 = {
-	// @Boolean = @SquadGrp call dzn_fnc_dynai_checkSquadKnownEnemiesCritical
-	
-	_targets = (leader _this) targetsQuery [objNull, sideEnemy, "", [], 0];
-	_targetList = [];
-	{
-	
-	} forEach _targets;
 
-	// As gunner
-	/* 
-	[
-		1,
-		B Alpha 1-1:1 (10Dozen) (BIS_fnc_objectVar_obj1),
-		CIV,
-		"B_G_Offroad_01_armed_F",
-		[6080.66,5647.97],-4.65]
-	]
-
-	// unit and car
-	[
-		[
-			1,
-			46514100# 163963: offroad_01_hmg_f.p3d,
-			CIV,
-			"B_G_Offroad_01_armed_F",
-			[6080.66,5647.97],-1.378]
-		// ,[
-			1,
-			BIS_fnc_objectVar_obj1,
-			WEST,
-			"B_Soldier_F",
-			[6071.09,5642.01],-0.981
-		]
-	// ]
-
-	// Driver
-	// [
-		1,
-		B Alpha 1-1:1 (10Dozen) (BIS_fnc_objectVar_obj1),
-		WEST,
-		"B_G_Offroad_01_armed_F",
-		[6080.66,5647.97],
-		-1
-	]
-	
-	*/
-};
 
 dzn_fnc_dynai_getSquadKnownEnemies = {
 	// @SquadGrp call dzn_fnc_dynai_getSquadKnownEnemies
