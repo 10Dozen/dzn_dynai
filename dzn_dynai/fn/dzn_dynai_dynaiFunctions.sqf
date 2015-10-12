@@ -186,6 +186,7 @@ dzn_fnc_dynai_createZone = {
 			_groupPos = _area call dzn_fnc_getRandomPointInZone; // return Pos3D
 			_grp = createGroup (call compile _side);
 			_groups pushBack _grp;
+			_grp setVariable ["dzn_dynai_homeZone", call compile _name];
 			_grp setVariable ["dzn_dynai_wpSet",false];
 			
 			// Creates GameLogic for group control
