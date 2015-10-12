@@ -17,7 +17,7 @@ Dynamic AI with Blackjack and Whores
   - Set zone's side
   - Mark is zone is active at the start
   - Set groups and group units, assign gear kits to units
-  - Set Speed Mode, Behavior, Combat Mode and Formation of the groups
+  - Set Speed Mode, Behavior, Combat Mode and Formation of the groups (**note:** do not use Careless mode!)
 Copy generated structured info inside dzn_dynai_zoneProperties array.
 
 ## Control Zone
@@ -61,3 +61,6 @@ Use different second value in vehicle array ( ["B_G_Offroad_01_armed_F","Vehicle
 <br /><tt>Vehicle</tt>, <tt>Vehicle Patrol</tt> - vehicle group will patrol throu keypoints or random points in cycle.
 <br /><tt>Vehicle Advance</tt> - vehicle group will move throu keypoints or several random points and will hold on the last checkpoint.
 <br /><tt>Vehicle Hold</tt> - vehicle group will hold therir position (static, AAA, defensive position)
+
+### Groups Reaction
+If <tt>dzn_dynai_allowGroupResponse</tt> variable is <tt>true</tt> - group reactions will be used. That means, that group which met many hostiles or suffer great loses will call for help. Then nearby allied group will move to caller position to provide support.
