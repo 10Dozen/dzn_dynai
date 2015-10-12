@@ -1,7 +1,23 @@
 #define	DEBUG		true
 //#define	DEBUG		false
 
-dzn_fnc_dynai_checkSquadKnownEnemiesCritical2 = {
+dzn_fnc_dynai_unassignReinforcement = {
+	// [@Provider, @Requester] spawn dzn_fnc_dynai_unassignReinforcement
+	params["_provider","_requester"];
+	private["_pos","_timer"];
+	
+	_pos = _requester getVariable "dzn_dynai_requestingReinfocementPosition";
+	
+	waitUntil { (leader _provider) distance2d _pos < 300 };
+	_timer = time + 60*5; // 5 minutes
+	
+	waitUntil { time > _timer };
+	
+	_provider call dzn_fnc_dynai_initResponseGroup;
+	_requester call dzn_fnc_dynai_initResponseGroup;
+};
+
+dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 	// @Boolean = @SquadGrp call dzn_fnc_dynai_checkSquadKnownEnemiesCritical
 	
 	_targets = (leader _this) targetsQuery [objNull, sideEnemy, "", [], 0];
@@ -9,11 +25,14 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical2 = {
 	_isCritical = false;
 	{
 		_tgt = _x select 1;
-		if (_tgt isKindOf "CAManBase") then {
+		if (_tgt isKindOf "CAManBase" && {_tgt distance (leader _this) < 400}) then {
 			_targetList pushBack _x;
 			if (count _targetList > 4) exitWith { _isCritical = true };
 		} else {
-			if (_tgt call dzn_fnc_dynai_isVehicleDanger) exitWith { _isCritical = true };
+			if ( 
+				!((crew _tgt) isEqualTo []) 
+				&& { _tgt call dzn_fnc_dynai_isVehicleDanger && _tgt distance (leader _this) < 900	} 
+			) exitWith { _isCritical = true };
 		};
 	} forEach _targets;
 
@@ -76,56 +95,19 @@ dzn_fnc_dynai_isVehicleDanger = {
 	// @Bool = @Vehicle call dzn_fnc_dynai_isVehicleDanger
 	private["_type","_weaps","_fWeaps"];
 	
+	if (_this isKindOf "CAManBase") exitWith { false };
 	_type = getText(configFile >> "cfgVehicles" >> typeOf _this >> "vehicleClass");
 	_weaps = (getArray(configFile >> "cfgVehicles" >> typeOf _this >> "weapons"))
 		+ (getArray(configFile >> "cfgVehicles" >> typeOf _this >> "Turrets" >> "MainTurret" >> "weapons"));
-	
+
 	_fWeaps = [];
 	{
 		if !(["horn", _x, false] call BIS_fnc_inString) then {
 			_fWeaps pushBack _x;
 		}
-	} forEach _weaps;
+	} forEach _weaps;	
 	
-	if (_type in  ["Armored"] || !(_this isKindOf "CAManBase" && _fWeaps isEqualTo [])) then { true } else { false };
-};
-
-// ??????
-dzn_fnc_dynai_checkSquadEnemyDetected = {
-	// @SquadGrp call dzn_fnc_dynai_checkSquadEnemyDetected
-	// Return TRUE if leader of squad knows about enemies
-	private["_r","_leader"];
-	_r = false;
-	_leader = leader _this; //_this call dzn_fnc_dynai_getSquadLeader;
-	if (_leader call BIS_fnc_enemyDetected) then {
-		_r = true;
-	};
-	
-	_r
-};
-
-
-
-
-dzn_fnc_dynai_getSquadKnownEnemies = {
-	// @SquadGrp call dzn_fnc_dynai_getSquadKnownEnemies
-	// Return list of targets of leader of squad
-	private["_leader"];
-	
-	(leader _this) call BIS_fnc_enemyTargets	
-};
-
-dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
-	// @SquadGrp call dzn_fnc_dynai_checkSquadKnownEnemiesCritical
-	// Return TRUE is there are more than 4 enemy units known or there are combat vehicles
-
-	private["_targets"];
-	_targets = _this call dzn_fnc_dynai_getSquadKnownEnemies;
-	
-	if (count _targets > 4) exitWith { true };
-	if ({ _x call dzn_fnc_dynai_isVehicleDanger} count _targets > 0 ) exitWith { true }; 
-	
-	false
+	if (_type in  ["Armored"] || !(_fWeaps isEqualTo [])) then { true } else { false };
 };
 
 dzn_fnc_dynai_checkSquadCriticalLosses = {
@@ -135,7 +117,7 @@ dzn_fnc_dynai_checkSquadCriticalLosses = {
 	
 	private["_r","_leader"];
 	_r = false;
-	_leader = leader _this; //_this call dzn_fnc_dynai_getSquadLeader;
+	_leader = leader _this;
 	
 	if (count (units group (_leader)) < round (count (_this getVariable "dzn_dynai_units") / 2)) then {
 		_r = true;
@@ -149,14 +131,10 @@ dzn_fnc_dynai_requestReinforcement = {
 	_this setVariable ["dzn_dynai_isRequestingReinfocement", true];
 	_this setVariable [
 		"dzn_dynai_requestingReinfocementPosition"
-		, if !((_this call dzn_fnc_dynai_getSquadKnownEnemies) isEqualTo []) then {
-			getPosASL ((_this call dzn_fnc_dynai_getSquadKnownEnemies) select 0)
-		} else {
-			getPosASL (leader _this)
-		}
+		, getPosASL (leader _this)
 	];
-	_this setVariable ["dzn_dynai_reinforcementProvider", grpNull];
-	_this setVariable ["dzn_dynai_isProvidingReinforcement", false];
+	// _this setVariable ["dzn_dynai_reinforcementProvider", grpNull];
+	// _this setVariable ["dzn_dynai_isProvidingReinforcement", false];
 	
 	if (DEBUG) then {
 		player sideChat format [
@@ -193,7 +171,9 @@ dzn_fnc_dynai_provideReinforcement = {
 	// _requester setVariable ["dzn_dynai_isRequestingReinfocement", false];
 	
 	// Give new way
-	deleteWaypoint [_squad, all];
+	while {(count (waypoints _squad)) > 0} do {
+		deleteWaypoint ((waypoints _squad) select 0);
+	};	
 	_wp = _squad addWaypoint [
 		_requester getVariable "dzn_dynai_requestingReinfocementPosition"
 		, 200
@@ -201,6 +181,9 @@ dzn_fnc_dynai_provideReinforcement = {
 	_wp setWaypointType "SAD";
 	_wp setWaypointCombatMode "RED";
 	_wp setWaypointBehaviour "AWARE";
+	_wp setWaypointSpeed "FULL";
+	
+	[_squad, _requester] spawn dzn_fnc_dynai_unassignReinforcement;
 	
 	if (DEBUG) then {
 		player sideChat format [
@@ -220,6 +203,8 @@ dzn_fnc_dynai_isProvidingReinforcement = {
 
 dzn_fnc_dynai_updateActiveGroups = {
 	private["_grps","_activeGroups"];
+	
+	dzn_dynai_activeGroups = [];
 	
 	{
 		_activeGroups = [];
