@@ -85,11 +85,12 @@ dzn_fnc_dynai_initZones = {
 	} forEach _modules;
 };
 
-dzn_fnc_dynai_getProperty = {
-	// @Zone call dzn_fnc_dynai_getProperty
+dzn_fnc_dynai_getZoneVars = {
+	// @Variable =  [@Zone, @Key] call dzn_fnc_dynai_getZoneVars
 	private["_r","_z"];
 	_z = _this select 0;
-	_r = switch toLower(_this select 1) do {		
+	_r = switch toLower(_this select 1) do {
+		case "list": {'"area","keypoints" or "kp" or "points","isActive","properties" or "prop","init" or "initialized","groups"'};
 		case "area": { _z getVariable ["dzn_dynai_area", nil] };
 		case "kp";case "points";case "keypoints": { _z getVariable ["dzn_dynai_keypoints", nil] };
 		case "isactive": { _z getVariable ["dzn_dynai_isActive", nil] };
@@ -101,7 +102,19 @@ dzn_fnc_dynai_getProperty = {
 
 	_r
 };
-#define GET_PROP(X,Y)	[X, Y] call dzn_fnc_dynai_getProperty
+dzn_fnc_dynai_getGroupVars = {
+	// @Variable =  [@Group, @Key] call dzn_fnc_dynai_getZoneVars
+	private["_r","_g"];
+	_g = _this select 0;
+	_r = switch toLower(_this select 1) do {
+		case "list": { '' };
+		default { nil };
+	};
+	
+	_r
+};
+
+#define GET_PROP(X,Y)	[X, Y] call dzn_fnc_dynai_getZoneVars
 
 dzn_fnc_dynai_startZones = {	
 	/*
