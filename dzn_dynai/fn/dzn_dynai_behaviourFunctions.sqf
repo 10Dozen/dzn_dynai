@@ -19,8 +19,8 @@ dzn_fnc_dynai_unassignReinforcement = {
 	{
 		_x call dzn_fnc_dynai_initResponseGroup;
 		
-		_wpPoints = [_x getVariable "dzn_dynai_homeZone", "keypoints"] call dzn_fnc_dynai_getProperty;
-		_area = [_x getVariable "dzn_dynai_homeZone", "area"] call dzn_fnc_dynai_getProperty;
+		_wpPoints = [_x getVariable "dzn_dynai_homeZone", "keypoints"] call dzn_fnc_dynai_getZoneVars;
+		_area = [_x getVariable "dzn_dynai_homeZone", "area"] call dzn_fnc_dynai_getZoneVars;
 		
 		if (typename _wpPoints == "ARRAY") then {			
 			[_x, _wpPoints] call dzn_fnc_createPathFromKeypoints;
@@ -228,7 +228,7 @@ dzn_fnc_dynai_updateActiveGroups = {
 	{
 		_activeGroups = [];
 		
-		_grps = [_x, "groups"] call dzn_fnc_dynai_getProperty;
+		_grps = [_x, "groups"] call dzn_fnc_dynai_getZoneVars;
 		{
 			if ( !(isNull _x) && { !((units _x) isEqualTo []) } ) then {
 				_activeGroups pushBack _x;
