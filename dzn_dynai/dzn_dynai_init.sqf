@@ -6,6 +6,7 @@ dzn_dynai_initialized = false;
 
 // Condition of initialization
 #define	dzn_dynai_CONDITION_BEFORE_INIT	true
+dzn_dynai_dirSuffix = "";
 
 // Delay before and after zones initializations
 dzn_dynai_preInitTimeout			=	3;
@@ -78,10 +79,10 @@ dzn_dynai_zoneProperties = [
 	#include "dzn_dynai_customZones.sqf"
 ];
 
-call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
+call compile preProcessFileLineNumbers (format ["%1dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf", dzn_dynai_dirSuffix]);
 if (dzn_dynai_allowGroupResponse) then {
 	dzn_dynai_activeGroups = [];
-	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf"; 
+	call compile preProcessFileLineNumbers (format ["%1dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf", dzn_dynai_dirSuffix]);
 };
 
 //	**************	SERVER OR HEADLESS	*****************
@@ -97,13 +98,13 @@ call dzn_fnc_dynai_initZones;
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout) };
 call dzn_fnc_dynai_startZones;
 
-if (dzn_dynai_allowGroupResponse) then { [] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm"; };
+if (dzn_dynai_allowGroupResponse) then { [] execFSM (format ["%1dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm", dzn_dynai_dirSuffix]); };
 
 // ************** Start of DZN_DYNAI Caching ********************
 if !(dzn_dynai_enableCaching) exitWith {dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";};
 
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
-call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf";
-[false] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
+call compile preProcessFileLineNumbers (format ["%1dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf", dzn_dynai_dirSuffix]);
+[false] execFSM (format ["%1dzn_dynai\FSMs\dzn_dynai_cache.fsm", dzn_dynai_dirSuffix]);
 
 dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";
