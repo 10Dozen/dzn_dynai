@@ -85,12 +85,12 @@ dzn_fnc_dynai_initZones = {
 	} forEach _modules;
 };
 
-dzn_fnc_dynai_getZoneVars = {
-	// @Variable =  [@Zone, @Key] call dzn_fnc_dynai_getZoneVars
+dzn_fnc_dynai_getZoneVar = {
+	// @Zone call dzn_fnc_dynai_getZoneVar
 	private["_r","_z"];
 	_z = _this select 0;
-	_r = switch toLower(_this select 1) do {
-		case "list": {'"area","keypoints" or "kp" or "points","isActive","properties" or "prop","init" or "initialized","groups"'};
+	_r = switch toLower(_this select 1) do {	
+		case "list": { ["area", ["keypoints","kp","points"], "isActive", ["properties","prop"], ["init","initialized"], "groups"]};
 		case "area": { _z getVariable ["dzn_dynai_area", nil] };
 		case "kp";case "points";case "keypoints": { _z getVariable ["dzn_dynai_keypoints", nil] };
 		case "isactive": { _z getVariable ["dzn_dynai_isActive", nil] };
@@ -102,19 +102,24 @@ dzn_fnc_dynai_getZoneVars = {
 
 	_r
 };
-dzn_fnc_dynai_getGroupVars = {
+
+dzn_fnc_dynai_getGroupVar = {
 	// @Variable =  [@Group, @Key] call dzn_fnc_dynai_getZoneVars
 	private["_r","_g"];
 	_g = _this select 0;
 	_r = switch toLower(_this select 1) do {
-		case "list": { '' };
+		case "list": { ["home", "units", "vehicles", "wpSet"] };
+		case "wpSet": { _g getVariable "dzn_dynai_wpSet" };
+		case "home": { _g getVariable "dzn_dynai_homeZone" };
+		case "units": { _g getVariable "dzn_dynai_units" };
+		case "vehicles": { _g getVariable "dzn_dynai_vehicles" };
 		default { nil };
 	};
 	
 	_r
 };
 
-#define GET_PROP(X,Y)	[X, Y] call dzn_fnc_dynai_getZoneVars
+#define GET_PROP(X,Y)	[X, Y] call dzn_fnc_dynai_getZoneVar
 
 dzn_fnc_dynai_startZones = {	
 	/*
@@ -201,12 +206,12 @@ dzn_fnc_dynai_createZone = {
 			_groups pushBack _grp;
 			_grp setVariable ["dzn_dynai_homeZone", call compile _name];
 			_grp setVariable ["dzn_dynai_wpSet",false];
-			
+		 
 			// Creates GameLogic for group control
 			//_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];			
 			_grp setVariable ["dzn_dynai_units", []];
 			_grp setVariable ["dzn_dynai_vehicles", []];
-			
+	
 			// For each unit in group
 			{
 				if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: | Spawning group %2 -- Unit: %3 (%4)", _name, str(_i), str(_forEachIndex), _x select 0]; };
@@ -285,13 +290,13 @@ dzn_fnc_dynai_createZone = {
 					
 					if !(typename _gear == "STRING" && {_gear == ""} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };
 					_grp setVariable ["dzn_dynai_vehicles", (_grp getVariable "dzn_dynai_vehicles") + [_unit]];
-					
+			
 					// Vehicle type
 					switch (true) do {						
 						case (["Vehicle Hold", _assigned, false] call BIS_fnc_inString): {
 							_grp setVariable ["dzn_dynai_wpSet", true];
 							(waypoints _grp select 0) setWaypointType "Sentry";
-							if (dzn_dynai_allowVehicleHoldBehavior) then { 
+							if (dzn_dynai_allowVehicleHoldBehavior) then { 								
 								[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
 							};
 						};		
