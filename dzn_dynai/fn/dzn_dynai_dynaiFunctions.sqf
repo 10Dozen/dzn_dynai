@@ -260,7 +260,7 @@ dzn_fnc_dynai_createZone = {
 										// Specified houses
 										[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
 									};
-									[_unit, DEBUG] execFSM "dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm";
+									[_unit, DEBUG] execFSM (format ["%1dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm", dzn_dynai_dirSuffix]);
 									_unit setVariable ["dzn_dynai_isIndoor", true, true]; //dynai_isIndoor
 								};
 							};
@@ -297,7 +297,7 @@ dzn_fnc_dynai_createZone = {
 							_grp setVariable ["dzn_dynai_wpSet", true];
 							(waypoints _grp select 0) setWaypointType "Sentry";
 							if (dzn_dynai_allowVehicleHoldBehavior) then { 								
-								[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+								[_unit, false] execFSM (format ["%1dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm", dzn_dynai_dirSuffix]);
 							};
 						};		
 						case (["Vehicle Advance", _assigned, false] call BIS_fnc_inString): {
