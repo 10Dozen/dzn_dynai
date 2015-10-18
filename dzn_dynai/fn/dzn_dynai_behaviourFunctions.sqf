@@ -1,6 +1,18 @@
 // #define	DEBUG		true
 #define	DEBUG		false
 
+dzn_fnc_dynai_isIndoorGroup = {
+	// @Boolean = @Grp call dzn_fnc_dynai_isIndoorGroup
+	private ["_r"];
+	
+	_r = false;
+	{
+		if (_x getVariable "dzn_dynai_isIndoor") exitWith { _r = true };
+	} forEach (units _this);
+	
+	_r
+};
+
 dzn_fnc_dynai_unassignReinforcement = {
 	// [@Provider, @Requester] spawn dzn_fnc_dynai_unassignReinforcement
 	params["_provider","_requester"];
@@ -19,8 +31,8 @@ dzn_fnc_dynai_unassignReinforcement = {
 	{
 		_x call dzn_fnc_dynai_initResponseGroup;
 		
-		_wpPoints = [_x getVariable "dzn_dynai_homeZone", "keypoints"] call dzn_fnc_dynai_getZoneVars;
-		_area = [_x getVariable "dzn_dynai_homeZone", "area"] call dzn_fnc_dynai_getZoneVars;
+		_wpPoints = [_x getVariable "dzn_dynai_homeZone", "keypoints"] call dzn_fnc_dynai_getZoneVar;
+		_area = [_x getVariable "dzn_dynai_homeZone", "area"] call dzn_fnc_dynai_getZoneVar;
 		
 		if (typename _wpPoints == "ARRAY") then {			
 			[_x, _wpPoints] call dzn_fnc_createPathFromKeypoints;
@@ -228,7 +240,7 @@ dzn_fnc_dynai_updateActiveGroups = {
 	{
 		_activeGroups = [];
 		
-		_grps = [_x, "groups"] call dzn_fnc_dynai_getZoneVars;
+		_grps = [_x, "groups"] call dzn_fnc_dynai_getZoneVar;
 		{
 			if ( !(isNull _x) && { !((units _x) isEqualTo []) } ) then {
 				_activeGroups pushBack _x;
@@ -281,7 +293,6 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 	// Collect providers and requesters
 	_readyToProvide = [];
 	_requesters = [];
-	// _providers = [];
 	
 	{
 		_isRequester = _x call dzn_fnc_dynai_isRequestingReinforcement;
@@ -289,13 +300,11 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 		if (_isRequester) then {
 			_requesters pushBack _x;
 		};
-		/*
-		if (_isProvider) then {
-			_providers pushBack _x;
-		};
-		*/
+		
 		if !(_isProvider || _isRequester) then {
-			_readyToProvide pushBack _x;
+			if !(_x call dzn_fnc_dynai_isIndoorGroup) then {
+				_readyToProvide pushBack _x;
+			};
 		};
 	} forEach _grps;
 	
