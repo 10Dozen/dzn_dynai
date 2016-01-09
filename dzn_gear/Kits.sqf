@@ -55,43 +55,6 @@ kit_random = [
 	,"kit_merc"	
 ];
 
-kit_NewKitNameDef = [
-	#define	E_UNIFORM		["U_I_G_Story_Protagonist_F","U_BG_Guerilla2_1"]
-	#define	E_VEST		"V_TacVest_blk"
-	#define	E_BACKPACK		"B_Kitbag_cbr"
-	#define	E_HEADGEAR		["H_Watchcap_camo","H_Beret_02"]
-	#define	E_GOGGLES		["G_Bandanna_shades",""]
-	#define	EQUIPEMENT		E_UNIFORM, E_VEST, E_BACKPACK, E_HEADGEAR, E_GOGGLES
-	
-	#define	PW_Weapon		["LMG_Mk200_BI_F","srifle_LRR_camo_F"]
-	#define	PW_Mag		["200Rnd_65x39_cased_Box","7Rnd_408_Mag"]
-	#define	PW_Attach		["","acc_pointer_IR",["optic_Holosight","optic_Hamr"],"bipod_02_F_hex"]
-	#define	PRIMARY_WEAPON	PW_Weapon, PW_Mag, PW_Attach
-	
-	#define	SW_Weapom		""
-	#define	SW_Mag		""
-	#define	SW_Attach		["","","",""]
-	#define	LAUNCHER_WEAPON	SW_Weapom, SW_Mag, SW_Attach
-	
-	#define	HW_Weapom		"hgun_P07_F"
-	#define	HW_Mag		"16Rnd_9x21_Mag"
-	#define	HW_Attach		["muzzle_snds_L","","",""]
-	#define	HANDGUN_WEAPON	HW_Weapom, HW_Mag, HW_Attach
-	
-	#define	ASSIGNED_ITEMS	"ItemMap","ItemCompass","ItemWatch","ItemRadio","ItemGPS","Rangefinder"
-	
-	#define	UNIFORM_ITEMS	[["FirstAidKit",1],["HandGrenade",1],["MiniGrenade",1],["SmokeShell",1],["Chemlight_blue",1]]
-	#define	VEST_ITEMS		[["PRIMARY MAG",2],["SmokeShellGreen",1],["Chemlight_blue",1]]
-	#define	BACKPACK_ITEMS	[["FirstAidKit",2],["PRIMARY MAG",3],["SmokeShell",2],["SmokeShellYellow",2],["Chemlight_green",2],["Chemlight_red",2],["IEDUrbanSmall_Remote_Mag",2]]
-	["<EQUIPEMENT >>  ", EQUIPEMENT],
-	["<PRIMARY WEAPON >>  ", PRIMARY_WEAPON],
-	["<LAUNCHER WEAPON >>  ", LAUNCHER_WEAPON],
-	["<HANDGUN WEAPON >>  ", HANDGUN_WEAPON],
-	["<ASSIGNED ITEMS >>  ", ASSIGNED_ITEMS],
-	["<UNIFORM ITEMS >> ", UNIFORM_ITEMS],
-	["<VEST ITEMS >> ", VEST_ITEMS],
-	["<BACKPACK ITEMS >> ", BACKPACK_ITEMS]
-];
 
 kit_NewCargoKitName = [
 	[["arifle_Mk20_F",2]],
