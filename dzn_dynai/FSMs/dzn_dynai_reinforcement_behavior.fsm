@@ -1,0 +1,173 @@
+/*%FSM<COMPILE "D:\GMZ\BI Toolz\FSM Editor Personal Edition\scriptedFSM.cfg, dzn_dynai_vehicleHold_behavior">*/
+/*%FSM<HEAD>*/
+/*
+item0[] = {"Start",0,4346,425.000000,-1375.000000,525.000000,-1325.000000,0.000000,"Start"};
+item1[] = {"Active_Groups",2,250,425.000000,-1225.000000,525.000000,-1175.000000,0.000000,"Active Groups"};
+item2[] = {"Timer_2",4,218,425.000000,-1150.000000,525.000000,-1100.000000,0.000000,"Timer 2"};
+item3[] = {"No_groups",4,218,275.000000,-1225.000000,375.000000,-1175.000000,2.000000,"No groups"};
+item4[] = {"End",1,250,275.000000,-925.000000,375.000000,-875.000000,0.000000,"End"};
+item5[] = {"Timer",4,218,550.000000,-1225.000000,650.000000,-1175.000000,0.000000,"Timer"};
+item6[] = {"Call_Reinforceme",2,250,425.000000,-1075.000000,525.000000,-1025.000000,0.000000,"Call Reinforcement"};
+item7[] = {"Timer_3",4,218,425.000000,-1000.000000,525.000000,-950.000000,0.000000,"Timer 3"};
+item8[] = {"Assign_Reinforce",2,250,425.000000,-925.000000,525.000000,-875.000000,0.000000,"Assign" \n "Reinforcements"};
+item9[] = {"",7,210,596.000061,-903.999878,603.999939,-896.000061,0.000000,""};
+item10[] = {"Wait_Until__Active",4,218,425.000000,-1300.000000,525.000000,-1250.000000,0.000000,"Wait Until " \n "Active groups"};
+link0[] = {0,10};
+link1[] = {1,2};
+link2[] = {1,3};
+link3[] = {2,6};
+link4[] = {3,4};
+link5[] = {5,1};
+link6[] = {6,7};
+link7[] = {7,8};
+link8[] = {8,9};
+link9[] = {9,5};
+link10[] = {10,1};
+globals[] = {25.000000,1,0,0,16777215,640,480,1,267,6316128,1,83.561020,821.365967,-825.101990,-1482.770386,534,476,1};
+window[] = {0,-1,-1,-1,-1,746,125,1106,125,1,552};
+*//*%FSM</HEAD>*/
+class FSM
+{
+  fsmName = "dzn_dynai_vehicleHold_behavior";
+  class States
+  {
+    /*%FSM<STATE "Start">*/
+    class Start
+    {
+      name = "Start";
+      init = /*%FSM<STATEINIT""">*/"private[""_debug"",""_timer""];" \n
+       "" \n
+       "_debug = false;" \n
+       "" \n
+       "_timer = time + 30;" \n
+       "if (_debug) then {" \n
+       "	player sideChat format [""dzn_dynai :: GrpRsp :: FSM :: Init""];" \n
+       "}"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Wait_Until__Active">*/
+        class Wait_Until__Active
+        {
+          priority = 0.000000;
+          to="Active_Groups";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time > _timer) && { " \n
+           "	!(dzn_dynai_activatedZones isEqualTo [])" \n
+           "}"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Active_Groups">*/
+    class Active_Groups
+    {
+      name = "Active_Groups";
+      init = /*%FSM<STATEINIT""">*/"call dzn_fnc_dynai_updateActiveGroups;" \n
+       "" \n
+       "_timer = time + dzn_dynai_responseCheckTimer;" \n
+       "" \n
+       "if (_debug) then {" \n
+       "	player sideChat format [""dzn_dynai :: GrpRsp :: FSM :: Active groups""];" \n
+       "}"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "No_groups">*/
+        class No_groups
+        {
+          priority = 2.000000;
+          to="End";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time > _timer) && { dzn_dynai_activeGroups isEqualTo [] }"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+        /*%FSM<LINK "Timer_2">*/
+        class Timer_2
+        {
+          priority = 0.000000;
+          to="Call_Reinforceme";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time > _timer)"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "End">*/
+    class End
+    {
+      name = "End";
+      init = /*%FSM<STATEINIT""">*/""/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Call_Reinforceme">*/
+    class Call_Reinforceme
+    {
+      name = "Call_Reinforceme";
+      init = /*%FSM<STATEINIT""">*/"[] spawn dzn_fnc_dynai_callReinfocements;" \n
+       "" \n
+       "_timer = time + dzn_dynai_responseCheckTimer;" \n
+       "" \n
+       "if (_debug) then {" \n
+       "	player sideChat format [""dzn_dynai :: GrpRsp :: FSM :: Call Reinforcements""];" \n
+       "}"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Timer_3">*/
+        class Timer_3
+        {
+          priority = 0.000000;
+          to="Assign_Reinforce";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time > _timer)"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Assign_Reinforce">*/
+    class Assign_Reinforce
+    {
+      name = "Assign_Reinforce";
+      init = /*%FSM<STATEINIT""">*/"[] spawn dzn_fnc_dynai_assignReinforcementGroups;" \n
+       "" \n
+       "_timer = time + dzn_dynai_responseCheckTimer;" \n
+       "" \n
+       "if (_debug) then {" \n
+       "	player sideChat format [""dzn_dynai :: GrpRsp :: FSM :: Assign Reinforcements""];" \n
+       "}"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Timer">*/
+        class Timer
+        {
+          priority = 0.000000;
+          to="Active_Groups";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time > _timer)"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+  };
+  initState="Start";
+  finalStates[] =
+  {
+    "End",
+  };
+};
+/*%FSM</COMPILE>*/
