@@ -52,12 +52,6 @@ dzn_dynai_cachingTimeout			= 20; // seconds
 dzn_dynai_cacheCheckTimer			= 15; // seconds
 
 dzn_dynai_cacheDistance				= 800; // meters
-// dzn_dynai_cacheDistanceVehLight			= 1200;
-// dzn_dynai_cacheDistanceVehHeavy			= 2700;
-// dzn_dynai_cacheDistanceVehLongrange		= 4000;
-
-// dzn_dynai_cacheLongrangeClasses			= [];	// List of classes for Longrange weapon classes (AntiAirArtillery, SAM)
-
 
 //	************** END OF DZN_DYNAI PARAMETERS ******************
 
