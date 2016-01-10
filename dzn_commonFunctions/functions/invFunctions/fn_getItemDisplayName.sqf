@@ -11,7 +11,7 @@ _name = if (isText (configFile >> "cfgWeapons" >> _this >> "displayName")) then 
 if (_name == "") then {
 	_name = getText(configFile >>  "cfgMagazines" >> _this >> "displayName");
 	if (_name == "") then {
-		_name = getText(configFile >> "cfgVehicles" >> _this >> "displayName");;
+		_name = getText(configFile >> "cfgVehicles" >> _this >> "displayName");
 	};
 };
 
