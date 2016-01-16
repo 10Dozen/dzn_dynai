@@ -65,7 +65,7 @@ dzn_dynai_cacheDistance				= 800; // meters
 waitUntil { dzn_dynai_CONDITION_BEFORE_INIT };
 
 // Initialization of dzn_gear
-waitUntil { !isNil "dzn_gear_initialized" && { dzn_gear_initialized } };
+waitUntil { !isNil "dzn_gear_serverInitDone" || !isNil "dzn_gear_initDone" };
 
 // Initialization of dzn_dynai
 dzn_dynai_activatedZones = [];
