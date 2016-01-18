@@ -64,3 +64,8 @@ Use different second value in vehicle array ( ["B_G_Offroad_01_armed_F","Vehicle
 
 ### Groups Reaction
 If <tt>dzn_dynai_allowGroupResponse</tt> variable is <tt>true</tt> - group reactions will be used. That means, that group which met many hostiles or suffer great loses will call for help. Then nearby allied group will move to caller position to provide support.
+
+### Caching
+If <tt>dzn_dynai_enableCaching</tt> variable is <tt>true</tt> - units, which are placed far from the players become 'cached' and will not affect on performance. Cached unit will be hidden, excluded from simulation (no physics, no AI, no graphics). Anyway group leaders will not be cached, so AI groups will patrol areas (using single unit per group) and when players come closer - rest of the squad will be uncached at the current position of group leader.
+<br /><tt>dzn_dynai_cacheDistance</tt> variable allow you to set minimum distance between unit and nearest player when unit become cached.
+<br /><tt>dzn_dynai_cachingTimeout</tt> and <tt>dzn_dynai_cacheCheckTimer</tt> allow you to customize time between cache/uncache checks (e.g. make periods longer/shorter)
