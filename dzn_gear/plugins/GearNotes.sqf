@@ -47,8 +47,8 @@ dzn_gear_gnotes_myGearTemplate = "<font size='18'>%1</font><br />---------------
 */
 dzn_gear_gnotes_mySquadTemplate = "<br /><font size='12'><font size='12' color='#9acd32'>%1</font>%2 <font color='#9E9E9E'>(%3%4%5)</font></font>";
 
-#define ALL_SQUAD_GEARED_UP	private "_r"; _r = true; {if !(_x getVariable ["dzn_gear_done", false]) exitWith { _r = false };} forEach (units group player); _r
-dzn_gear_gnotes_waitUntilGroupEvent = { true };
+#define ALL_SQUAD_GEARED_UP	private "_r"; _r = true; {if (isNil {_x getVariable "dzn_gear_shortNote"}) exitWith { _r = false };} forEach (units group player); _r
+dzn_gear_gnotes_waitUntilGroupEvent = { ALL_SQUAD_GEARED_UP };
 dzn_gear_gnotes_waitUntilMyEvent = { player getVariable ["dzn_gear_done", false] };
 
 
@@ -71,6 +71,19 @@ if (isNil "dzn_fnc_getItemDisplayName") then {
 
 		_name
 	};
+};
+
+dzn_fnc_gear_gnote_trimSpaces = {
+	// @String = @String call dzn_fnc_gear_gnote_trimSpacesr
+	private ["_output", "_i"];
+	_output = "";
+	for "_i" from 0 to (count (toArray _this)) do {
+		if !(_this select [_i,1] == " ") then {
+			_output = format ["%1%2", _output, _this select [_i,1]];
+		};
+	};
+	
+	_output
 };
 
 dzn_fnc_gear_gnotes_getWeaponInfo = {
@@ -188,7 +201,7 @@ dzn_fnc_gear_gnotes_getFullGearNote = {
 	_kit = if (isNil { _this select 1 }) then { _unit call dzn_fnc_gear_getGear } else { _this select 1 };
 	_output = format [
 		dzn_gear_gnotes_myGearTemplate
-		, roleDescription player
+		, (roleDescription player) call dzn_fnc_gear_gnote_trimSpaces
 		, [_kit, "primary", "personal"] call dzn_fnc_gear_gnotes_getWeaponInfo
 		, [_kit, "secondary", "personal"] call dzn_fnc_gear_gnotes_getWeaponInfo
 		, [_kit, "handgun", "personal"] call dzn_fnc_gear_gnotes_getWeaponInfo
@@ -210,7 +223,7 @@ dzn_fnc_gear_gnotes_getShortGearNote = {
 	_output = format [
 		dzn_gear_gnotes_mySquadTemplate
 		, if (isPlayer _unit) then { format ["%1 - ", name _unit] } else { "" }
-		, roleDescription _unit
+		, (roleDescription _unit) call dzn_fnc_gear_gnote_trimSpaces
 		, [_kit, "primary", "squad"] call dzn_fnc_gear_gnotes_getWeaponInfo
 		, [_kit, "secondary", "squad"] call dzn_fnc_gear_gnotes_getWeaponInfo
 		, [_kit, "handgun", "squad"] call dzn_fnc_gear_gnotes_getWeaponInfo
