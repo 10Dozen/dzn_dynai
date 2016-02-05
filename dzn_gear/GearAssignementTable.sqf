@@ -5,6 +5,7 @@
 #define KIT	]
 //
 // Table starts here. Lines in format -- A "@UnitName or @RoleDescription" TO "@Kitname" KIT
+// Be aware, each line except the last one should be with "," at the end!
 
 A "1'1 Squad Leader"	TO "kit_ussf_sl" KIT,
 A "Combat Life Saver"	TO "kit_ussf_cls" KIT,
