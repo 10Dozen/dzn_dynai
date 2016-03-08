@@ -76,6 +76,8 @@ class CfgFunctions
 			file = "dzn_commonFunctions\functions\mapFunctions";
 			
 			class createMarkerIcon {};
+			class getMapGrid {};
+			class getPosOnMapGrid {};
 		};
 		#endif
 		
@@ -101,5 +103,11 @@ class CfgFunctions
 			class getVehicleDisplayName {};
 		};
 		#endif
+		
+		class uiFunctions
+		{
+			file = "dzn_commonFunctions\functions\uiFunctions";			
+			class ShowChooseDialog {};
+		};
 	};
 };

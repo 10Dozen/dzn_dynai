@@ -37,7 +37,7 @@ dzn_fnc_dynai_initZones = {
 				_loc = [_x, true] call dzn_fnc_convertTriggerToLocation;
 				_locations pushBack _loc;
 			
-				_locBuildings = [_loc] call dzn_fnc_dynai_getLocationBuildings;
+				_locBuildings = [[_loc]] call dzn_fnc_getLocationBuildings;
 				{ _zoneBuildings pushBack _x; } forEach _locBuildings;
 			};		
 		} forEach _syncObj;
@@ -255,12 +255,12 @@ dzn_fnc_dynai_createZone = {
 								case "indoors": {
 									if (isNil {_assigned select 1}) then {										
 										// Default houses
-										[_unit, _zoneBuildings] call dzn_fnc_assignInBuilding;
+										[_unit, _zoneBuildings] spawn dzn_fnc_assignInBuilding;
 									} else {
 										// Specified houses
-										[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;
+										[_unit, _zoneBuildings, _assigned select 1] spawn dzn_fnc_assignInBuilding;
 									};
-									[_unit, DEBUG] execFSM (format ["%1dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm", dzn_dynai_dirSuffix]);
+									[_unit, DEBUG] execFSM "dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm";
 									_unit setVariable ["dzn_dynai_isIndoor", true, true]; //dynai_isIndoor
 								};
 							};
@@ -297,7 +297,7 @@ dzn_fnc_dynai_createZone = {
 							_grp setVariable ["dzn_dynai_wpSet", true];
 							(waypoints _grp select 0) setWaypointType "Sentry";
 							if (dzn_dynai_allowVehicleHoldBehavior) then { 								
-								[_unit, false] execFSM (format ["%1dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm", dzn_dynai_dirSuffix]);
+								[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
 							};
 						};		
 						case (["Vehicle Advance", _assigned, false] call BIS_fnc_inString): {
@@ -353,6 +353,9 @@ dzn_fnc_dynai_createZone = {
 	if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: Zone Created", _name]; };
 };
 
+
+
+
 // ================================================
 //           DZN DYNAI -- New zone creation
 // ================================================
@@ -391,7 +394,7 @@ dzn_fnc_dynai_addNewZone = {
 		case "LOCATION": { _loc = _zP select 3; };
 	};
 	_zP set [3, _loc];
-	_zP pushBack ((_zP select 3) call dzn_fnc_dynai_getLocationBuildings);
+	_zP pushBack ([_zP select 3] call dzn_fnc_getLocationBuildings);
 	
 	_grp = createGroup (call compile (_zP select 1));
 	_zoneObject = _grp createUnit ["Logic", (locationPosition (_zP select 3 select 0)), [], 0, "NONE"];
@@ -408,8 +411,16 @@ dzn_fnc_dynai_addNewZone = {
 	
 	//dzn_dynai_zoneProperties pushBack _zP;
 	
-	_zP call dzn_fnc_dynai_createZone;
+	_zP spawn dzn_fnc_dynai_createZone;
 };
+
+
+
+
+
+
+
+
 
 
 // ================================================
@@ -494,7 +505,7 @@ dzn_fnc_dynai_moveZone = {
 		_x setPosition _newOffsetPos;
 		_x setDirection (direction _x + _deltaDir);
 		
-		_locBuildings = [_x] call dzn_fnc_dynai_getLocationBuildings;
+		_locBuildings = [[_x]] call dzn_fnc_getLocationBuildings;
 		{ _zoneBuildings pushBack _x; } forEach _locBuildings;
 	} forEach _locations;
 	
@@ -522,7 +533,7 @@ dzn_fnc_dynai_getZoneKeypoints = {
 			0: OBJECT	- SpawnAI Module of zone
 		OUTPUT: ARRAY of keypoints (pos3d)
 	*/
-	(GET_PROP(_this,"properties")) select 4;
+	(GET_PROP(_this,"properties")) select 4
 };
 
 dzn_fnc_dynai_setZoneKeypoints = {
@@ -547,28 +558,23 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	_zone setVariable ["dzn_dynai_properties", _properties, true];
 };
 
-// ================================================
-//           DZN DYNAI -- Other Functions
-// ================================================
-dzn_fnc_dynai_getLocationBuildings = {
-	// @ZoneBuildings = @ArrayOfLocations call dzn_fnc_dynai_getLocationBuildings;
-	private ["_zoneBuildings", "_loc", "_locationBuildings"];
+dzn_fnc_dynai_getGroupTemplates = {
+	// @Template = @Zone call dzn_fnc_dynai_getGroupTemplates
+	( GET_PROP(_this,"prop") ) select 5
+};
+
+dzn_fnc_dynai_setGroupTemplates = {
+	// [@Zone, @Template] call dzn_fnc_dynai_setGroupTemplates
+	if ( (_this select 0) call dzn_fnc_dynai_isActive ) exitWith {diag_log format ["dzn_dynai :: Zone %1 :: already active!", _this select 0];};
+	if ( typename (_this select 1) != "ARRAY" ) exitWith {diag_log format ["dzn_dynai ::  Zone %1 :: Template is not an array!", _this select 0];};
 	
-	_zoneBuildings = [];
-	{
-		_loc = _x;
-		_locationBuildings = [
-			locationPosition _loc,
-			(size _loc select 0) max (size _loc select 1),
-			dzn_dynai_allowedHouses
-		] call dzn_fnc_getHousesNear;
+	private["_prop"];
 	
-		{
-			if (!(_x in _zoneBuildings) && ([getPosASL _x, [_loc]] call dzn_fnc_isInLocation)) then {
-				_zoneBuildings = _zoneBuildings + [_x];	
-			};
-		} forEach _locationBuildings;
-	} forEach _this;
+	_prop =  GET_PROP(_this select 0,"prop");
+	_prop set [5, _this select 1];
 	
-	_zoneBuildings
+	(_this select 0) setVariable [
+		"dzn_dynai_properties"
+		, _prop
+	];
 };
