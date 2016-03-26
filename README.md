@@ -22,8 +22,8 @@ Copy generated structured info inside dzn_dynai_zoneProperties array.
 
 ## Control Zone
 If zone is not active by default and before it activated you can use some functions to control zones:
-  - <tt>dzn_zone1 call dzn_fnc_dynai_activateZone</tt> - activates zone and start spawn groups. Parameters: spawn module;
-  - <tt>[dzn_zone1, [200,200,0], 90] call dzn_fnc_dynai_moveZone</tt> - moves and rotates given zone. Parameters: spawn module, pos3d, direction (optional);
+  - <tt>dzn_zone1 call dzn_fnc_dynai_activateZone</tt> - activates zone and start spawn groups. Parameters: gamelogic object;
+  - <tt>[dzn_zone1, [200,200,0], 90] call dzn_fnc_dynai_moveZone</tt> - moves and rotates given zone. Parameters: gamelogic object, pos3d, direction (optional);
   - <tt>dzn_zone1 call dzn_fnc_dynai_getZoneKeypoints</tt> - return all zone's keypoints (array of pos3ds);
   - <tt>[dzn_zone1, [ [200,200,0], [300,300,0], [400,400,0] ]] call dzn_fnc_dynai_setZoneKeypoints</tt> - set new keypoints for zone. Parameters: spawn module, array of pos3ds
 
