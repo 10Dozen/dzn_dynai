@@ -13,7 +13,7 @@ Dynamic AI with Blackjack and Whores
 3. Place trigger which will represent the area of spawn zone. You may place several triggers to set a specific area to spawn. Synchronize all triggers with "myZone" game object. 
 4. By default, spawned units will get several random waypoints inside given area. If you want to set specific waypoints (e.g. to make units 'advance' to given position), place GameLogic object named "dzn_dynai_wp" and place waypoints for this GameLogic object. Then synchronize "dzn_dynai_wp"-gamelogic with spawn module.
 5. In "dzn_dynai_customZones.sqf" specify dzn_dynai_zoneProperties value with structured zone info. To create structured zone info use "xmlDynai.html" generator from Tools folder.
-  - Use the same name for Game Logic and zone (e.g. "myName")
+  - Use the same name for Game Logic and zone (e.g. "myZone")
   - Set zone's side
   - Mark is zone is active at the start
   - Set groups and group units, assign gear kits to units
