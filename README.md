@@ -1,5 +1,5 @@
 # dzn_dynai
-##### Version: 0.3
+##### Version: 0.4
 Dynamic AI with Blackjack and Whores
 
 #### Dependencies
@@ -11,7 +11,7 @@ Dynamic AI with Blackjack and Whores
 1. Place GameLogic object named "dzn_dynai_core"
 2. Place GameLogic object of DynAI zone. Set name to something like "myZone". Synchronize it with "dzn_dynai_core" object.
 3. Place trigger which will represent the area of spawn zone. You may place several triggers to set a specific area to spawn. Synchronize all triggers with "myZone" game object. 
-4. By default, spawned units will get several random waypoints inside given area. If you want to set specific waypoints (e.g. to make units 'advance' to given position), place GameLogic object named "dzn_dynai_wp" and place waypoints for this GameLogic object. Then synchronize "dzn_dynai_wp"-gamelogic with spawn module.
+4. By default, spawned units will get several random waypoints inside given area. [only 2d editor] If you want to set specific waypoints (e.g. to make units 'advance' to given position) - add waypoints to zone's game logic.
 5. In "Zones.sqf" specify your zones with structured zone info. To create structured zone info use "xmlDynai.html" generator from Tools folder.
   - Use the same name for Game Logic and zone (e.g. "myZone")
   - Set zone's side
@@ -21,11 +21,11 @@ Dynamic AI with Blackjack and Whores
 Copy generated structured info inside Zone.sqf file (separate each zone with comma).
 
 ## Control Zone
-If zone is not active by default and before it activated you can use some functions to control zones:
+If zone is not active by default and *before* it activated you can use some functions to control zones:
   - <tt>dzn_zone1 call dzn_fnc_dynai_activateZone</tt> - activates zone and start spawn groups. Parameters: gamelogic object;
   - <tt>[dzn_zone1, [200,200,0], 90] call dzn_fnc_dynai_moveZone</tt> - moves and rotates given zone. Parameters: gamelogic object, pos3d, direction (optional);
   - <tt>dzn_zone1 call dzn_fnc_dynai_getZoneKeypoints</tt> - return all zone's keypoints (array of pos3ds);
-  - <tt>[dzn_zone1, [ [200,200,0], [300,300,0], [400,400,0] ]] call dzn_fnc_dynai_setZoneKeypoints</tt> - set new keypoints for zone. Parameters: spawn module, array of pos3ds
+  - <tt>[dzn_zone1, [ [200,200,0], [300,300,0], [400,400,0] ]] call dzn_fnc_dynai_setZoneKeypoints</tt> - set new keypoints for zone. Parameters: zone's GameLogic, array of pos3ds
 
 ## Creating Zone Properties
 Use xmlDynai.html to set zone properties.
