@@ -120,6 +120,7 @@ dzn_fnc_dynai_initResponseGroup = {
 		,["dzn_dynai_requestingReinfocementPosition", [0,0,0]]
 		,["dzn_dynai_reinforcementProvider", "grpNull"]		
 		,["dzn_dynai_reinforcementRequester", "grpNull"]
+		,["dzn_dynai_canSupport", true]
 	];	
 };
 
@@ -330,11 +331,11 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 // 0.5: Add units as supporters
 dzn_fnc_dynai_addGroupAsSupporter = {
 	//	@Unit/@Group call dzn_fnc_dynai_addGroupBehavior
-	
 	private _group = if (typename _this == "GROUP") then { _this } else { group _this };
-	private _pos = getPosATL ((units _group) select 0);
+	if (_group getVariable ["dzn_dynai_canSupport", false]) exitWith {};
 	
 	// Get nearest zone
+	private _pos = getPosATL ((units _group) select 0);
 	private _nearestZone = objNull;
 	private _nearestDist = 50000;
 	{
@@ -351,6 +352,7 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 
 dzn_fnc_dynai_addUnitBehavior = {
 	// [@Unit, @Behavior] call dzn_fnc_dynai_addGroupBehavior
+	// @Unit		-- Unit or Vehicle with crew 
 	// "Indoors" 		-- behavior for units inside the buildings/sentries
 	// "Vehicle Hold" 	-- vehicle/turret behaviour (rotation)
 	params ["_unit", "_behaviour"];
@@ -363,4 +365,39 @@ dzn_fnc_dynai_addUnitBehavior = {
 			[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
 		};
 	};
+};
+
+dzn_fnc_dynai_processUnitBehaviours = {
+	// spawn dzn_fnc_dynai_processUnitBehaviours
+	// Process all units with Supporting and Behavior options
+	
+	// Units with variable
+	{ _unit call dzn_fnc_dynai_addGroupAsSupporter; } forEach (entities "CAManBase");
+	
+	// Synchronized units
+	{
+		private _logic = _x;
+		private _syncUnits = synchronizedObjects _x;
+		
+		// Logic with 'dzn_dynai_canSupport'
+		if (_logic getVariable ["dzn_dynai_canSupport", false]) then {
+			{
+				private _unit = _x;
+				if (_unit isKindOf "CAManBase") then {
+					_unit call dzn_fnc_dynai_addGroupAsSupporter;
+				} else {
+					if !((crew _unit) isEqualTo []) then {
+						{ _unit call dzn_fnc_dynai_addGroupAsSupporter; } forEach (crew _unit);
+					};
+				};
+			} forEach _syncUnits;
+		};
+		
+		// Logic with 'dzn_dynai_addBehavior'
+		if (!isNil {_logic getVariable "dzn_dynai_addBehaviour"}) then {
+			{
+			
+			} forEach _syncUnits;
+		};
+	} forEach (entities "Logic");
 };
