@@ -326,3 +326,24 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 		};
 	} forEach _requesters;
 };
+
+// 0.5: Add units as supporters
+dzn_fnc_dynai_addGroupBehaviour = {
+	//	@Unit/@Group call dzn_fnc_dynai_addGroupBehavior
+	
+	private _group = if (typename _this == "GROUP") then { _this } else { group _this };
+	private _pos = getPosATL ((units _group) select 0);
+	
+	// Get nearest zone
+	private _nearestZone = objNull;
+	private _nearestDist = 50000;
+	{
+		private _zonePos = ( ([_x, "area"] call dzn_fnc_dynai_getZoneVar) call dzn_fnc_getZonePosition ) select 0;
+		if (_zonePos distance _pos < _nearestDist) then {
+			_nearestZone = _x;
+		};
+	} forEach (synchronizedObjects dzn_dynai_core);
+	
+	private _nearestZoneGroups = [_nearestZone, "groups"] call dzn_fnc_dynai_getZoneVar;
+	_nearestZoneGroups pushBack _group;
+};
