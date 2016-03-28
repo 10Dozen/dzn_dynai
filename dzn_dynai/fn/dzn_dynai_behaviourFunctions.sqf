@@ -328,7 +328,7 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 };
 
 // 0.5: Add units as supporters
-dzn_fnc_dynai_addGroupBehaviour = {
+dzn_fnc_dynai_addGroupAsSupporter = {
 	//	@Unit/@Group call dzn_fnc_dynai_addGroupBehavior
 	
 	private _group = if (typename _this == "GROUP") then { _this } else { group _this };
@@ -346,4 +346,21 @@ dzn_fnc_dynai_addGroupBehaviour = {
 	
 	private _nearestZoneGroups = [_nearestZone, "groups"] call dzn_fnc_dynai_getZoneVar;
 	_nearestZoneGroups pushBack _group;
+	_group call dzn_fnc_dynai_initGroupForResponse;
+};
+
+dzn_fnc_dynai_addUnitBehavior = {
+	// [@Unit, @Behavior] call dzn_fnc_dynai_addGroupBehavior
+	// "Indoors" 		-- behavior for units inside the buildings/sentries
+	// "Vehicle Hold" 	-- vehicle/turret behaviour (rotation)
+	params ["_unit", "_behaviour"];
+	switch toLower(_behaviour) do {
+		case "indoor": {
+			[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm";
+			_unit setVariable ["dzn_dynai_isIndoor", true, true];
+		};
+		case "vehicle hold": {
+			[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+		};
+	};
 };
