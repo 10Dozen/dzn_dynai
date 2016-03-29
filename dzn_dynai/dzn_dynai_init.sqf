@@ -55,13 +55,15 @@ dzn_dynai_cacheCheckTimer			= 15; // seconds
 
 dzn_dynai_cacheDistance				= 800; // meters
 
+
+
+
 //	************** END OF DZN_DYNAI PARAMETERS ******************
 //
 //
 //
 //	**************	INITIALIZATION 	*************************
-//	
-
+//
 waitUntil { dzn_dynai_CONDITION_BEFORE_INIT };
 
 // Initialization of dzn_gear
@@ -80,10 +82,7 @@ if (dzn_dynai_allowGroupResponse) then {
 };
 
 //	**************	SERVER OR HEADLESS	*****************
-
-if (!isNil "HC") then {
-	if (isServer) exitWith {};
-};
+if (!isNil "HC") then {if (isServer) exitWith {};};
 
 // ************** Start of DZN_DYNAI ********************
 waitUntil { time > dzn_dynai_preInitTimeout };
@@ -92,7 +91,11 @@ call dzn_fnc_dynai_initZones;
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout) };
 call dzn_fnc_dynai_startZones;
 
-if (dzn_dynai_allowGroupResponse) then { [] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm"; };
+// ************* Group Responses ***********************
+if (dzn_dynai_allowGroupResponse) then { 
+	call dzn_fnc_dynai_processUnitBehaviours;
+	[] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm";
+};
 
 // ************** Start of DZN_DYNAI Caching ********************
 if !(dzn_dynai_enableCaching) exitWith {dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";};
