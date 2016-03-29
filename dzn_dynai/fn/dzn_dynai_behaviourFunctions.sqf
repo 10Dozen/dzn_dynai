@@ -351,7 +351,7 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 };
 
 dzn_fnc_dynai_addUnitBehavior = {
-	// [@Unit, @Behavior] call dzn_fnc_dynai_addGroupBehavior
+	// [@Unit, @Behavior] call dzn_fnc_dynai_addUnitBehavior
 	// @Unit		-- Unit or Vehicle with crew 
 	// "Indoors" 		-- behavior for units inside the buildings/sentries
 	// "Vehicle Hold" 	-- vehicle/turret behaviour (rotation)
@@ -371,15 +371,25 @@ dzn_fnc_dynai_processUnitBehaviours = {
 	// spawn dzn_fnc_dynai_processUnitBehaviours
 	// Process all units with Supporting and Behavior options
 	
-	// Units with variable
-	{ _unit call dzn_fnc_dynai_addGroupAsSupporter; } forEach (entities "CAManBase");
+	// REINFORCEMENT: Units with variable
+	{
+		//if (_x getVariable ["dzn_dynai_canSupport", false])
+		//_unit call dzn_fnc_dynai_addGroupAsSupporter; 
+	} forEach (vehicles + allUnits);
+	
+	// BEHAVIOUR:  Units with variable
+	{ 
+		if !(isNil {_x getVariable "dzn_dynai_setBehavior"}) then {
+			[_x, _x getVariable "dzn_dynai_setBehavior"] call dzn_fnc_dynai_addUnitBehavior
+		};
+	} forEach (vehicles + allUnits);
 	
 	// Synchronized units
 	{
 		private _logic = _x;
 		private _syncUnits = synchronizedObjects _x;
 		
-		// Logic with 'dzn_dynai_canSupport'
+		// REINFORCEMENT: Logic with 'dzn_dynai_canSupport'
 		if (_logic getVariable ["dzn_dynai_canSupport", false]) then {
 			{
 				private _unit = _x;
@@ -393,10 +403,11 @@ dzn_fnc_dynai_processUnitBehaviours = {
 			} forEach _syncUnits;
 		};
 		
-		// Logic with 'dzn_dynai_addBehavior'
-		if (!isNil {_logic getVariable "dzn_dynai_addBehaviour"}) then {
+		// BEHAVIOUR: Logic with 'dzn_dynai_setBehavior'
+		if (!isNil {_logic getVariable "dzn_dynai_setBehavior"}) then {
+			private _behaviorType = _logic getVariable "dzn_dynai_setBehavior";
 			{
-			
+				[_x, _behaviorType] call dzn_fnc_dynai_addUnitBehavior;
 			} forEach _syncUnits;
 		};
 	} forEach (entities "Logic");
