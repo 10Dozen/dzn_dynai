@@ -335,6 +335,7 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 	if (_group getVariable ["dzn_dynai_canSupport", false]) exitWith {};
 	
 	// Get nearest zone
+	/*
 	private _pos = getPosATL ((units _group) select 0);
 	private _nearestZone = objNull;
 	private _nearestDist = 50000;
@@ -347,6 +348,8 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 	
 	private _nearestZoneGroups = [_nearestZone, "groups"] call dzn_fnc_dynai_getZoneVar;
 	_nearestZoneGroups pushBack _group;
+	*/
+	
 	_group call dzn_fnc_dynai_initGroupForResponse;
 };
 
@@ -371,9 +374,9 @@ dzn_fnc_dynai_processUnitBehaviours = {
 	// spawn dzn_fnc_dynai_processUnitBehaviours
 	// Process all units with Supporting and Behavior options
 	
-	// REINFORCEMENT: Units with variable
+	// REINFORCEMENT: Units with variable or Forced to all
 	{
-		if (_x getVariable ["dzn_dynai_canSupport", false]) then {
+		if (_x getVariable ["dzn_dynai_canSupport", false] || dzn_dynai_forceGroupResponse) then {
 			_x call dzn_fnc_dynai_addGroupAsSupporter; 
 		};
 	} forEach (vehicles + allUnits);
