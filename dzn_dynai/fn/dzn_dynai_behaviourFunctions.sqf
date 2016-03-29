@@ -373,14 +373,15 @@ dzn_fnc_dynai_processUnitBehaviours = {
 	
 	// REINFORCEMENT: Units with variable
 	{
-		//if (_x getVariable ["dzn_dynai_canSupport", false])
-		//_unit call dzn_fnc_dynai_addGroupAsSupporter; 
+		if (_x getVariable ["dzn_dynai_canSupport", false]) then {
+			_x call dzn_fnc_dynai_addGroupAsSupporter; 
+		};
 	} forEach (vehicles + allUnits);
 	
 	// BEHAVIOUR:  Units with variable
 	{ 
 		if !(isNil {_x getVariable "dzn_dynai_setBehavior"}) then {
-			[_x, _x getVariable "dzn_dynai_setBehavior"] call dzn_fnc_dynai_addUnitBehavior
+			[_x, _x getVariable "dzn_dynai_setBehavior"] call dzn_fnc_dynai_addUnitBehavior;
 		};
 	} forEach (vehicles + allUnits);
 	
