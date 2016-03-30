@@ -1,5 +1,5 @@
-// #define	DEBUG		true
-#define	DEBUG		false
+#define	DEBUG		true
+// #define	DEBUG		false
 
 dzn_fnc_dynai_isIndoorGroup = {
 	// @Boolean = @Grp call dzn_fnc_dynai_isIndoorGroup
@@ -111,7 +111,7 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 };
 
 dzn_fnc_dynai_initResponseGroup = {
-	// @SquadGrp call dzn_fnc_dynai_initGroupForResponse
+	// @SquadGrp call dzn_fnc_dynai_initResponseGroup
 	{
 		call compile format ["_this setVariable ['%1', %2];", _x select 0, _x select 1];
 	} forEach [
@@ -350,13 +350,13 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 	_nearestZoneGroups pushBack _group;
 	*/
 	
-	_group call dzn_fnc_dynai_initGroupForResponse;
+	_group call dzn_fnc_dynai_initResponseGroup;
 };
 
 dzn_fnc_dynai_addUnitBehavior = {
 	// [@Unit, @Behavior] call dzn_fnc_dynai_addUnitBehavior
 	// @Unit		-- Unit or Vehicle with crew 
-	// "Indoors" 		-- behavior for units inside the buildings/sentries
+	// "Indoor" 		-- behavior for units inside the buildings/sentries
 	// "Vehicle Hold" 	-- vehicle/turret behaviour (rotation)
 	params ["_unit", "_behaviour"];
 	switch toLower(_behaviour) do {
@@ -369,6 +369,8 @@ dzn_fnc_dynai_addUnitBehavior = {
 		};
 	};
 };
+
+
 
 dzn_fnc_dynai_processUnitBehaviours = {
 	// spawn dzn_fnc_dynai_processUnitBehaviours
