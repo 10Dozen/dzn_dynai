@@ -1,5 +1,5 @@
-#define	DEBUG		true
-// #define	DEBUG		false
+//#define	DEBUG		true
+#define	DEBUG		false
 
 dzn_fnc_dynai_isIndoorGroup = {
 	// @Boolean = @Grp call dzn_fnc_dynai_isIndoorGroup
@@ -31,13 +31,15 @@ dzn_fnc_dynai_unassignReinforcement = {
 	{
 		_x call dzn_fnc_dynai_initResponseGroup;
 		
-		_wpPoints = [_x getVariable "dzn_dynai_homeZone", "keypoints"] call dzn_fnc_dynai_getZoneVar;
-		_area = [_x getVariable "dzn_dynai_homeZone", "area"] call dzn_fnc_dynai_getZoneVar;
-		
-		if (typename _wpPoints == "ARRAY") then {			
-			[_x, _wpPoints] call dzn_fnc_createPathFromKeypoints;
-		} else {			
-			[_x, _area] call dzn_fnc_createPathFromRandom;
+		if !(isNil { _x getVariable "dzn_dynai_homeZone" }) then {
+			_wpPoints = [_x getVariable "dzn_dynai_homeZone", "keypoints"] call dzn_fnc_dynai_getZoneVar;
+			_area = [_x getVariable "dzn_dynai_homeZone", "area"] call dzn_fnc_dynai_getZoneVar;
+			
+			if (typename _wpPoints == "ARRAY") then {			
+				[_x, _wpPoints] call dzn_fnc_createPathFromKeypoints;
+			} else {			
+				[_x, _area] call dzn_fnc_createPathFromRandom;
+			};
 		};
 	} forEach [_provider, _requester];
 	
@@ -254,8 +256,8 @@ dzn_fnc_dynai_updateActiveGroups = {
 	
 	if (DEBUG) then {
 		player sideChat format [
-			"dzn_dynai :: GrpRsp :: Updating groups! Active are: "
-			, str(dzn_dynai_activeGroups)
+			"dzn_dynai :: GrpRsp :: Updating groups! Active are: %1"
+			, str[dzn_dynai_activeGroups]
 		];
 	};
 };
