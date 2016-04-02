@@ -336,8 +336,7 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 	private _group = if (typename _this == "GROUP") then { _this } else { group _this };
 	if (_group getVariable ["dzn_dynai_canSupport", false]) exitWith {};
 	
-	// Get nearest zone
-	/*
+	// Get nearest zone	
 	private _pos = getPosATL ((units _group) select 0);
 	private _nearestZone = objNull;
 	private _nearestDist = 50000;
@@ -350,7 +349,7 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 	
 	private _nearestZoneGroups = [_nearestZone, "groups"] call dzn_fnc_dynai_getZoneVar;
 	_nearestZoneGroups pushBack _group;
-	*/
+	
 	
 	_group call dzn_fnc_dynai_initResponseGroup;
 };
