@@ -1,4 +1,4 @@
-//#define	DEBUG		true
+// #define	DEBUG		true
 #define	DEBUG		false
 
 dzn_fnc_dynai_isIndoorGroup = {
@@ -335,6 +335,7 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 	//	@Unit/@Group call dzn_fnc_dynai_addGroupBehavior
 	private _group = if (typename _this == "GROUP") then { _this } else { group _this };
 	if (_group getVariable ["dzn_dynai_canSupport", false]) exitWith {};
+	_group setVariable ["dzn_dynai_units", units _group];	
 	
 	// Get nearest zone	
 	private _pos = getPosATL ((units _group) select 0);
