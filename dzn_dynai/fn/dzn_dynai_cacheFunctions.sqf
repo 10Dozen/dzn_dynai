@@ -96,8 +96,10 @@ dzn_fnc_dynai_uncacheSquad = {
 	_rPositions = _this getVariable "cache_rPositions";
 	
 	{
-		_pos = (_this modelToWorldVisual (_rPositions select _forEachIndex));
-		_x setPos [_pos select 0, _pos select 1, 0];
+		if (isNil { _x getVariable "dzn_dynai_isIndoor" }) then {
+			_pos = (_this modelToWorldVisual (_rPositions select _forEachIndex));
+			_x setPos [_pos select 0, _pos select 1, 0];
+		};
 		
 		sleep 1;
 		

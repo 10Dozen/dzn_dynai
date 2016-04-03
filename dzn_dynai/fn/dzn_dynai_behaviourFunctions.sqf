@@ -31,13 +31,15 @@ dzn_fnc_dynai_unassignReinforcement = {
 	{
 		_x call dzn_fnc_dynai_initResponseGroup;
 		
-		_wpPoints = [_x getVariable "dzn_dynai_homeZone", "keypoints"] call dzn_fnc_dynai_getZoneVar;
-		_area = [_x getVariable "dzn_dynai_homeZone", "area"] call dzn_fnc_dynai_getZoneVar;
-		
-		if (typename _wpPoints == "ARRAY") then {			
-			[_x, _wpPoints] call dzn_fnc_createPathFromKeypoints;
-		} else {			
-			[_x, _area] call dzn_fnc_createPathFromRandom;
+		if !(isNil { _x getVariable "dzn_dynai_homeZone" }) then {
+			_wpPoints = [_x getVariable "dzn_dynai_homeZone", "keypoints"] call dzn_fnc_dynai_getZoneVar;
+			_area = [_x getVariable "dzn_dynai_homeZone", "area"] call dzn_fnc_dynai_getZoneVar;
+			
+			if (typename _wpPoints == "ARRAY") then {			
+				[_x, _wpPoints] call dzn_fnc_createPathFromKeypoints;
+			} else {			
+				[_x, _area] call dzn_fnc_createPathFromRandom;
+			};
 		};
 	} forEach [_provider, _requester];
 	
@@ -111,7 +113,7 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 };
 
 dzn_fnc_dynai_initResponseGroup = {
-	// @SquadGrp call dzn_fnc_dynai_initGroupForResponse
+	// @SquadGrp call dzn_fnc_dynai_initResponseGroup
 	{
 		call compile format ["_this setVariable ['%1', %2];", _x select 0, _x select 1];
 	} forEach [
@@ -120,6 +122,7 @@ dzn_fnc_dynai_initResponseGroup = {
 		,["dzn_dynai_requestingReinfocementPosition", [0,0,0]]
 		,["dzn_dynai_reinforcementProvider", "grpNull"]		
 		,["dzn_dynai_reinforcementRequester", "grpNull"]
+		,["dzn_dynai_canSupport", true]
 	];	
 };
 
@@ -253,8 +256,8 @@ dzn_fnc_dynai_updateActiveGroups = {
 	
 	if (DEBUG) then {
 		player sideChat format [
-			"dzn_dynai :: GrpRsp :: Updating groups! Active are: "
-			, str(dzn_dynai_activeGroups)
+			"dzn_dynai :: GrpRsp :: Updating groups! Active are: %1"
+			, str[dzn_dynai_activeGroups]
 		];
 	};
 };
@@ -325,4 +328,95 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 			[_grp, _x] spawn dzn_fnc_dynai_provideReinforcement
 		};
 	} forEach _requesters;
+};
+
+// 0.5: Add units as supporters
+dzn_fnc_dynai_addGroupAsSupporter = {
+	//	@Unit/@Group call dzn_fnc_dynai_addGroupBehavior
+	private _group = if (typename _this == "GROUP") then { _this } else { group _this };
+	if (_group getVariable ["dzn_dynai_canSupport", false]) exitWith {};
+	_group setVariable ["dzn_dynai_units", units _group];	
+	
+	// Get nearest zone	
+	private _pos = getPosATL ((units _group) select 0);
+	private _nearestZone = objNull;
+	private _nearestDist = 50000;
+	{
+		private _zonePos = ( ([_x, "area"] call dzn_fnc_dynai_getZoneVar) call dzn_fnc_getZonePosition ) select 0;
+		if (_zonePos distance _pos < _nearestDist) then {
+			_nearestZone = _x;
+		};
+	} forEach (synchronizedObjects dzn_dynai_core);
+	
+	private _nearestZoneGroups = [_nearestZone, "groups"] call dzn_fnc_dynai_getZoneVar;
+	_nearestZoneGroups pushBack _group;
+	
+	
+	_group call dzn_fnc_dynai_initResponseGroup;
+};
+
+dzn_fnc_dynai_addUnitBehavior = {
+	// [@Unit, @Behavior] call dzn_fnc_dynai_addUnitBehavior
+	// @Unit		-- Unit or Vehicle with crew 
+	// "Indoor" 		-- behavior for units inside the buildings/sentries
+	// "Vehicle Hold" 	-- vehicle/turret behaviour (rotation)
+	params ["_unit", "_behaviour"];
+	switch toLower(_behaviour) do {
+		case "indoor": {
+			[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm";
+			_unit setVariable ["dzn_dynai_isIndoor", true, true];
+		};
+		case "vehicle hold": {
+			[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+		};
+	};
+};
+
+
+
+dzn_fnc_dynai_processUnitBehaviours = {
+	// spawn dzn_fnc_dynai_processUnitBehaviours
+	// Process all units with Supporting and Behavior options
+	
+	// REINFORCEMENT: Units with variable or Forced to all
+	{
+		if (_x getVariable ["dzn_dynai_canSupport", false] || dzn_dynai_forceGroupResponse) then {
+			_x call dzn_fnc_dynai_addGroupAsSupporter; 
+		};
+	} forEach (vehicles + allUnits);
+	
+	// BEHAVIOUR:  Units with variable
+	{ 
+		if !(isNil {_x getVariable "dzn_dynai_setBehavior"}) then {
+			[_x, _x getVariable "dzn_dynai_setBehavior"] call dzn_fnc_dynai_addUnitBehavior;
+		};
+	} forEach (vehicles + allUnits);
+	
+	// Synchronized units
+	{
+		private _logic = _x;
+		private _syncUnits = synchronizedObjects _x;
+		
+		// REINFORCEMENT: Logic with 'dzn_dynai_canSupport'
+		if (_logic getVariable ["dzn_dynai_canSupport", false]) then {
+			{
+				private _unit = _x;
+				if (_unit isKindOf "CAManBase") then {
+					_unit call dzn_fnc_dynai_addGroupAsSupporter;
+				} else {
+					if !((crew _unit) isEqualTo []) then {
+						{ _unit call dzn_fnc_dynai_addGroupAsSupporter; } forEach (crew _unit);
+					};
+				};
+			} forEach _syncUnits;
+		};
+		
+		// BEHAVIOUR: Logic with 'dzn_dynai_setBehavior'
+		if (!isNil {_logic getVariable "dzn_dynai_setBehavior"}) then {
+			private _behaviorType = _logic getVariable "dzn_dynai_setBehavior";
+			{
+				[_x, _behaviorType] call dzn_fnc_dynai_addUnitBehavior;
+			} forEach _syncUnits;
+		};
+	} forEach (entities "Logic");
 };
