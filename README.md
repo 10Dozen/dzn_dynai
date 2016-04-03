@@ -7,6 +7,11 @@ Dynamic AI with Blackjack and Whores
 - dzn_gear (https://github.com/10Dozen/dzn_gear)
 
 ## How To
+* [Step By Step](https://github.com/10Dozen/dzn_gear/blob/master/README.md#how-to)
+* [Edit mode](https://github.com/10Dozen/dzn_gear/blob/master/README.md#edit-mode)
+* [API](https://github.com/10Dozen/dzn_gear/blob/master/README.md#api)
+
+## Step By Step
 
 1. Place GameLogic object named "dzn_dynai_core"
 2. Place GameLogic object of DynAI zone. Set name to something like "myZone". Synchronize it with "dzn_dynai_core" object.
@@ -20,15 +25,15 @@ Dynamic AI with Blackjack and Whores
   - Set Speed Mode, Behavior, Combat Mode and Formation of the groups (**note:** do not use Careless mode!)
 Copy generated structured info inside Zone.sqf file (separate each zone with comma).
 
+## Creation of Zone Properties
+Use xmlDynai.html to set zone properties.
+
 ## Control Zone
 If zone is not active by default and *before* it activated you can use some functions to control zones:
   - <tt>dzn_zone1 call dzn_fnc_dynai_activateZone</tt> - activates zone and start spawn groups. Parameters: gamelogic object;
   - <tt>[dzn_zone1, [200,200,0], 90] call dzn_fnc_dynai_moveZone</tt> - moves and rotates given zone. Parameters: gamelogic object, pos3d, direction (optional);
   - <tt>dzn_zone1 call dzn_fnc_dynai_getZoneKeypoints</tt> - return all zone's keypoints (array of pos3ds);
   - <tt>[dzn_zone1, [ [200,200,0], [300,300,0], [400,400,0] ]] call dzn_fnc_dynai_setZoneKeypoints</tt> - set new keypoints for zone. Parameters: zone's GameLogic, array of pos3ds
-
-## Creating Zone Properties
-Use xmlDynai.html to set zone properties.
 
 ### Vehicle Behavior
 Use different second value in vehicle array ( ["B_G_Offroad_01_armed_F","Vehicle",""] ) to get different behavior:
