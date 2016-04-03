@@ -1,43 +1,18 @@
-// If a player - exits script
-if (hasInterface && !isServer) exitWith {};
-dzn_dynai_initialized = false;
+// **************************
+// 	DZN DYNAI v0.5
+//
+//	Initialized when:
+//	{ !isNil "dzn_dynai_initialized" }
+//
+//	Server-side initialized when:
+//	{ !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } }
+//
+// **************************
+if (hasInterface && !isServer) exitWith {}; // If a player - exits script
 
-//	************** DZN_DYNAI PARAMETERS ******************
-
-// Condition of initialization
-#define	dzn_dynai_CONDITION_BEFORE_INIT	true
-
-// Delay before and after zones initializations
-dzn_dynai_preInitTimeout			=	3;
-dzn_dynai_afterInitTimeout			=	3;
-
-// Default simple skill of units
-dzn_dynai_complexSkill				=	false;
-dzn_dynai_skill = if (dzn_dynai_complexSkill) then {
-	/*	
-	Or detailed skill (comment skills that shouldn't be changed) 
-	More info about skills https://community.bistudio.com/wiki/AI_Sub-skills
-	*/
-	[
-		["general", 0.5]
-		,["aimingAccuracy", 0.5]
-		//	,["aimingShake", 0.5]
-		//	,["aimingSpeed", 0.5]
-		,["endurance", 0.5]
-		,["spotDistance", 0.5]
-		,["spotTime", 0.5]
-		,["courage", 0.5]
-		//	,["reloadSpeed", 0.5]
-		,["commanding", 0.5]
-	]
-} else {
-	/* 	Simple Skill Level */
-	0.95	
-};
-dzn_dynai_complexSkill = [ dzn_dynai_complexSkill, dzn_dynai_skill ];
-
-// Building list
-dzn_dynai_allowedHouses				= ["House"];
+// **************************
+//	SETTINGS
+// **************************
 
 // Behavior settings
 dzn_dynai_allowVehicleHoldBehavior		= true;
@@ -47,6 +22,28 @@ dzn_dynai_allowGroupResponse			= true;
 dzn_dynai_forceGroupResponse			= false; // Include all mission units to participate in Group Responses
 dzn_dynai_responseDistance			= 800; // meters
 dzn_dynai_responseCheckTimer			= 30; // seconds
+
+// Default simple skill of units
+dzn_dynai_complexSkill				=	false;
+dzn_dynai_skill = if (dzn_dynai_complexSkill) then {
+	/*	
+	Or detailed skill (comment skills that shouldn't be changed)
+	More info about skills https://community.bistudio.com/wiki/AI_Sub-skills
+	*/
+	[
+		["general", 0.5]
+		,["aimingAccuracy", 0.5],["aimingShake", 0.5],["aimingSpeed", 0.5],["reloadSpeed", 0.5]
+		,["spotDistance", 0.5],["spotTime", 0.5],["commanding", 0.5]
+		,["endurance", 0.5],["courage", 0.5]
+	]
+} else {
+	/* 	Simple Skill Level */
+	0.95	
+};
+dzn_dynai_complexSkill = [ dzn_dynai_complexSkill, dzn_dynai_skill ];
+
+// Building list
+dzn_dynai_allowedHouses				= ["House"];
 
 // Caching Settings
 dzn_dynai_enableCaching				= true;
@@ -58,12 +55,24 @@ dzn_dynai_cacheDistance				= 800; // meters
 
 
 
-//	************** END OF DZN_DYNAI PARAMETERS ******************
-//
-//
-//
-//	**************	INITIALIZATION 	*************************
-//
+// **************************
+//	INIT CONDITIONS
+// **************************
+
+// Condition of initialization
+#define	dzn_dynai_CONDITION_BEFORE_INIT	true
+
+// Delay before and after zones initializations
+dzn_dynai_preInitTimeout			=	3;
+dzn_dynai_afterInitTimeout			=	3;
+
+
+
+// **************************
+//	INITIALIZATION
+// **************************
+
+dzn_dynai_initialized = false;
 waitUntil { dzn_dynai_CONDITION_BEFORE_INIT };
 
 // Initialization of dzn_gear
@@ -84,24 +93,39 @@ if (dzn_dynai_allowGroupResponse) then {
 //	**************	SERVER OR HEADLESS	*****************
 if (!isNil "HC") then {if (isServer) exitWith {};};
 
-// ************** Start of DZN_DYNAI ********************
+
+
+
+// **************************
+//	DZN DYANI START
+// **************************
 waitUntil { time > dzn_dynai_preInitTimeout };
 call dzn_fnc_dynai_initZones;
 
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout) };
 call dzn_fnc_dynai_startZones;
 
-// ************* Group Responses ***********************
+// **************************
+//	GROUP RESPONSES SYSTEM
+// **************************
+
 if (dzn_dynai_allowGroupResponse) then { 
 	call dzn_fnc_dynai_processUnitBehaviours;
 	[] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm";
 };
 
-// ************** Start of DZN_DYNAI Caching ********************
+// **************************
+//	CACHING SYSTEM
+// **************************
 if !(dzn_dynai_enableCaching) exitWith {dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";};
 
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf";
 [false] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
 
-dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";
+
+// **************************
+//	INITIALIZED
+// **************************
+dzn_dynai_initialized = true; 
+publicVariable "dzn_dynai_initialized";
