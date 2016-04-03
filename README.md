@@ -7,9 +7,13 @@ Dynamic AI with Blackjack and Whores
 - dzn_gear (https://github.com/10Dozen/dzn_gear)
 
 ## How To
-* [Step By Step](https://github.com/10Dozen/dzn_gear/blob/master/README.md#how-to)
-* [Edit mode](https://github.com/10Dozen/dzn_gear/blob/master/README.md#edit-mode)
-* [API](https://github.com/10Dozen/dzn_gear/blob/master/README.md#api)
+* [Step By Step](https://github.com/10Dozen/dzn_dynai#step-by-step)
+* [Creation of Zone Properties](https://github.com/10Dozen/dzn_dynai#creation-of-zone-properties)
+* [Control Zone](https://github.com/10Dozen/dzn_dynai#control-zone)
+* [Vehicle Behavior](https://github.com/10Dozen/dzn_dynai#vehicle-behavior)
+* [Groups Reaction](https://github.com/10Dozen/dzn_dynai#groups-reaction)
+* [Caching](https://github.com/10Dozen/dzn_dynai#caching)
+* [Group Custom Skill Level](https://github.com/10Dozen/dzn_dynai#group-custom-skill-level)
 
 ## Step By Step
 
@@ -44,7 +48,6 @@ Use different second value in vehicle array ( ["B_G_Offroad_01_armed_F","Vehicle
 ### Groups Reaction
 If <tt>dzn_dynai_allowGroupResponse</tt> variable is <tt>true</tt> - group reactions will be used. That means, that group which met many hostiles or suffer great loses will call for help. Then nearby allied group will move to caller position to provide support.
 You can add Editor-placed units/groups to Group Reaction system.
-
 
 ### Caching
 If <tt>dzn_dynai_enableCaching</tt> variable is <tt>true</tt> - units, which are placed far from the players become 'cached' and will not affect on performance. Cached unit will be hidden, excluded from simulation (no physics, no AI, no graphics). Anyway group leaders will not be cached, so AI groups will patrol areas (using single unit per group) and when players come closer - rest of the squad will be uncached at the current position of group leader.
