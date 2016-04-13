@@ -18,12 +18,22 @@ if ( typename (_this select 0) == "ARRAY" ) then {
 	_bp = getPos (_this select 0);
 	_bd = getDir (_this select 0);
 };
-	
+
+private _objs = [];	
 {
 	_pos = [_bp, (_x select 1) + _bd, _x select 2] call dzn_fnc_getPosOnGivenDir;
 	_pos set [2, _x select 4];
 	
 	_v = (_x select 0) createVehicle _pos;
+	_v enableSimulation false;
+	_objs pushBack _v;
+	
 	_v setPos _pos;
 	_v setDir ((_x select 3) + _bd);
 } forEach (_this select 1);
+
+{
+	_x allowDamage false;
+	_x enableSimulation true;
+	_x spawn { sleep 2; _this allowDamage true; };
+} forEach _objs;
