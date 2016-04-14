@@ -15,7 +15,7 @@ _arr = [];
 {
 	if (
 		(getText(configfile >> "CfgVehicles" >> typeOf (_x) >> "displayName") != "")
-		&& !(typeOf _x in ["Rabbit_F","Snake_random_F","FxWindLeaf3"])
+		&& !(typeOf _x in ["Rabbit_F","Snake_random_F","FxWindLeaf1","FxWindLeaf2","FxWindLeaf3"])
 		&& !(_x isKindOf "CAManBase")
 	) then {
 		_arr pushBack [
