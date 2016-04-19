@@ -14,7 +14,7 @@ _dist = if (isNil {_this select 1}) then { 1000 } else { _this select 1 };
 
 _r = false;
 {
-	if (_x distance _pos <= _dist) exitWith { _r = true };
+	if ((getPosASL _x) distance _pos <= _dist) exitWith { _r = true };
 } forEach (call BIS_fnc_listPlayers);
 
 _r
