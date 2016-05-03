@@ -29,6 +29,8 @@ class CfgFunctions
 			class setValueByKey {};	
 
 			class assignInVehicle {};
+			class createVehicle  {};
+			class createVehicleCrew {};
 			class isCombatCrewAlive {};
 			class getPosOnGivenDir  {};
 			class isPlayerNear {};
