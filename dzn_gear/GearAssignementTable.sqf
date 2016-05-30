@@ -13,4 +13,4 @@ A "Team Leader"		TO "kit_ussf_tl" KIT,
 A "Automatic Rifleman"	TO "kit_ussf_ar" KIT,
 A "Grenadier"		TO "kit_ussf_gr" KIT,
 A "JTAC"			TO "kit_ussf_jtac" KIT,
-A "Engineer"		TO "kit_ussf_demo" KIT
+A "Сапер"		TO "kit_ussf_demo" KIT
