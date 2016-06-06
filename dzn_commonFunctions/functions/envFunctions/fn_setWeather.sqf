@@ -4,6 +4,7 @@
 	
 */
 if !(isServer || isDedicated) exitWith {};
+VARWEATHER = _this;
 private["_weatherSettingsMapping"];
 
 _weatherSettingsMapping = [
@@ -37,14 +38,11 @@ if (typename _this == "STRING") then {
 		};
 	};
 } else {
-	if (_this > 0) then {
-		0 setOvercast (_weatherSettingsMapping select (_this - 1));
-		switch (_this) do {
-			case 4: { 0 setRain 0.5; };
-			case 5: { 0 setRain 1; };
-		};
-	} else {
-		0 setOvercast ( ((_this select 1) call BIS_fnc_selectRandom) select 1 );
+	private _weatherId = if (_this > 0) then { _this } else { ceil(random 5) };
+	0 setOvercast (_weatherSettingsMapping select _weatherId);
+	switch (_weatherId) do {
+		case 4: { 0 setRain 0.5; };
+		case 5: { 0 setRain 1; };
 	};
 };
 	
