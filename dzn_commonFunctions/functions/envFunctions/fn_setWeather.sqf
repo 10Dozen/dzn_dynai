@@ -4,7 +4,6 @@
 	
 */
 if !(isServer || isDedicated) exitWith {};
-VARWEATHER = _this;
 private["_weatherSettingsMapping"];
 
 _weatherSettingsMapping = [
