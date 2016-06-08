@@ -37,6 +37,8 @@ class CfgFunctions
 			
 			class getComposition {};
 			class setComposition {};
+			
+			class inString {};
 		};
 		#endif
 		
@@ -103,12 +105,16 @@ class CfgFunctions
 			
 			class getItemDisplayName {};
 			class getVehicleDisplayName {};
+			class addWhitelistedArsenal {};
 		};
 		#endif
 		
 		class uiFunctions
 		{
-			file = "dzn_commonFunctions\functions\uiFunctions";			
+			file = "dzn_commonFunctions\functions\uiFunctions";
+			class CountTextLines {};			
+			class ShowBasicDialog {};
+			class ShowMessage {};
 			class ShowChooseDialog {};
 		};
 	};
