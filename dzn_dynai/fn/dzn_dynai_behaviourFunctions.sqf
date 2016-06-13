@@ -334,7 +334,7 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 dzn_fnc_dynai_addGroupAsSupporter = {
 	//	@Unit/@Group call dzn_fnc_dynai_addGroupBehavior
 	private _group = if (typename _this == "GROUP") then { _this } else { group _this };
-	if (_group getVariable ["dzn_dynai_canSupport", false]) exitWith {};
+	if (isNil "dzn_dynai_initialized" || { !dzn_dynai_initialized }) exitWith { _group call dzn_fnc_dynai_addGroupAsSupporter;  }; 
 	_group setVariable ["dzn_dynai_units", units _group];	
 	
 	// Get nearest zone	
@@ -371,8 +371,6 @@ dzn_fnc_dynai_addUnitBehavior = {
 		};
 	};
 };
-
-
 
 dzn_fnc_dynai_processUnitBehaviours = {
 	// spawn dzn_fnc_dynai_processUnitBehaviours
