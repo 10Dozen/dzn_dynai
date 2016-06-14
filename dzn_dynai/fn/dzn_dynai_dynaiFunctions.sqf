@@ -418,11 +418,6 @@ dzn_fnc_dynai_addNewZone = {
 
 
 
-
-
-
-
-
 // ================================================
 //           DZN DYNAI -- Zone Controls
 // ================================================
@@ -545,18 +540,20 @@ dzn_fnc_dynai_setZoneKeypoints = {
 			1: ARRAY	- array of keypoints (pos3d)
 		OUTPUT: null
 	*/
-	private["_zone","_newKeypoints","_properties"];
+	params ["_zone","_newKeypoints"];
+	private["_properties"];
 	
-	_zone = _this select 0;
-	_newKeypoints = _this select 1;
-	
-	if (GET_PROP(_zone,"isActive")) exitWith { hintSilent format ["dzn_dynai: %1 is activated already", str(_zone)]; };
+	if (GET_PROP(_zone,"isActive")) then { 
+		[_zone, _newKeypoints, "PATROL"] call dzn_fnc_dynai_moveGroups;
+	};
 
 	_properties = GET_PROP(_zone,"properties");
 	_properties set [4, _newKeypoints];
 	
 	_zone setVariable ["dzn_dynai_properties", _properties, true];
 };
+
+
 
 dzn_fnc_dynai_getGroupTemplates = {
 	// @Template = @Zone call dzn_fnc_dynai_getGroupTemplates

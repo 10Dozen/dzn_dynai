@@ -154,7 +154,7 @@ dzn_fnc_dynai_checkSquadCriticalLosses = {
 	_r = false;
 	_leader = leader _this;
 	
-	if (count (units group (_leader)) < round (count (_this getVariable "dzn_dynai_units") / 2)) then {
+	if ({alive _x} count (units group (_leader)) < round (count (_this getVariable "dzn_dynai_units") / 2)) then {
 		_r = true;
 	};
 
@@ -334,7 +334,12 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 dzn_fnc_dynai_addGroupAsSupporter = {
 	//	@Unit/@Group call dzn_fnc_dynai_addGroupBehavior
 	private _group = if (typename _this == "GROUP") then { _this } else { group _this };
-	if (_group getVariable ["dzn_dynai_canSupport", false]) exitWith {};
+	if (isNil "dzn_dynai_initialized" || { !dzn_dynai_initialized }) exitWith { 
+		_group spawn {
+			waitUntil { !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } };
+			_this call dzn_fnc_dynai_addGroupAsSupporter;
+		};
+	}; 
 	_group setVariable ["dzn_dynai_units", units _group];	
 	
 	// Get nearest zone	
@@ -371,8 +376,6 @@ dzn_fnc_dynai_addUnitBehavior = {
 		};
 	};
 };
-
-
 
 dzn_fnc_dynai_processUnitBehaviours = {
 	// spawn dzn_fnc_dynai_processUnitBehaviours
@@ -419,4 +422,91 @@ dzn_fnc_dynai_processUnitBehaviours = {
 			} forEach _syncUnits;
 		};
 	} forEach (entities "Logic");
+};
+
+
+// 0.51: Group Controls
+dzn_fnc_dynai_moveGroups = {
+	/*
+	 * [@Zone, [@Pos3d], @Type] call dzn_fnc_dynai_moveGroups
+	 * Remove all WPs and move zone's group throug given waypoints
+	 * Type: 
+	 * 		"PATROL" - random order of poses; 
+	 *		"SAD" - move through given poses and SAD on last one
+	 *		"RANDOM SAD" - SAD on random poses
+	 */
+	 
+	params["_zone","_poses",["_type", "PATROL"]];
+	
+	private _grps = [_zone, "groups"] call dzn_fnc_dynai_getZoneVar;
+	if (_poses isEqualTo []) then {
+		// If no poses given -- new random waypoint will be created inside current zone
+		private _zoneLocations = [_zone, "area"] call dzn_fnc_dynai_getZoneVar;
+		for "_i" from 0 to 5 do {
+			_poses pushBack (_zoneLocations call dzn_fnc_getRandomPointInZone);
+		};
+	};
+	
+	#define	ASSIGN_WP(X,Y,Z,K)	_wp setWaypointType X;_wp setWaypointCombatMode Y;_wp setWaypointBehaviour Z;_wp setWaypointSpeed K;
+	
+	{
+		private _squad = _x;
+		while {(count (waypoints _squad)) > 0} do {
+			deleteWaypoint ((waypoints _squad) select 0);
+		};
+		
+		switch (toUpper(_type)) do {
+			case "SAD": {
+				{
+					private _wp = _squad addWaypoint [_x, 200];
+					ASSIGN_WP("SAD","RED","AWARE","NORMAL")
+				} forEach _poses;
+			};
+			case "RANDOM SAD": {
+				private _randomPoses = _poses call BIS_fnc_arrayShuffle;
+				{
+					private _wp = _squad addWaypoint [_x, 200];
+					ASSIGN_WP("SAD","RED","AWARE","NORMAL")
+				} forEach _randomPoses;				
+			};
+			default {
+				[_squad, _poses call BIS_fnc_arrayShuffle] call dzn_fnc_createPathFromKeypoints;				
+			};
+		};	
+	} forEach _grps;
+	
+	true
+};
+
+dzn_fnc_dynai_setGroupsMode = {
+	/*
+	 * [@Zone, @Template or [@Behaviour, @Combat, @Speed]] call dzn_fnc_dynai_setGroupsMode
+	 * Change's group behavior settings
+	 * Templates:
+	 *		"SAFE" - move with limited speed, weapons down. Do not wait for enemy;
+	 *		"AWARE" - move with limited speed, weapons down, wait for enemy;
+	 *		"COMBAT" - move normal speed, weapon up, wait for enemy;
+	 */
+	 
+	params["_zone", "_template"];
+	
+	private _grps = [_zone, "groups"] call dzn_fnc_dynai_getZoneVar;
+	private _modeSettings = [];
+	if (typename _template == "STRING") then {
+		_modeSettings = switch (toUpper(_template)) do {
+			case "SAFE": {["SAFE","WHITE","LIMITED"]};
+			case "AWARE": {["SAFE","YELLOW","LIMITED"]};
+			case "COMBAT": {["COMBAT","RED","NORMAL"]};		
+		};	
+	} else {
+		_modeSettings = _template;
+	};
+	
+	{
+		_x setBehaviour (_modeSettings select 0);
+		_x setCombatMode (_modeSettings select 1);
+		_x setSpeedMode (_modeSettings select 2);
+	} forEach _grps;
+	
+	true
 };
