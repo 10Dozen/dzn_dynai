@@ -477,3 +477,36 @@ dzn_fnc_dynai_moveGroups = {
 	
 	true
 };
+
+dzn_fnc_dynai_setGroupsMode = {
+	/*
+	 * [@Zone, @Template or [@Behaviour, @Combat, @Speed]] call dzn_fnc_dynai_setGroupsMode
+	 * Change's group behavior settings
+	 * Templates:
+	 *		"SAFE" - move with limited speed, weapons down. Do not wait for enemy;
+	 *		"AWARE" - move with limited speed, weapons down, wait for enemy;
+	 *		"COMBAT" - move normal speed, weapon up, wait for enemy;
+	 */
+	 
+	params["_zone", "_template"];
+	
+	private _grps = [_zone, "groups"] call dzn_fnc_dynai_getZoneVar;
+	private _modeSettings = [];
+	if (typename _template == "STRING") then {
+		_modeSettings = switch (toUpper(_template)) do {
+			case "SAFE": {["SAFE","WHITE","LIMITED"]};
+			case "AWARE": {["SAFE","YELLOW","LIMITED"]};
+			case "COMBAT": {["COMBAT","RED","NORMAL"]};		
+		};	
+	} else {
+		_modeSettings = _template;
+	};
+	
+	{
+		_x setBehaviour (_modeSettings select 0);
+		_x setCombatMode (_modeSettings select 1);
+		_x setSpeedMode (_modeSettings select 2);
+	} forEach _grps;
+	
+	true
+};
