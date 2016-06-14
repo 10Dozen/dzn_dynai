@@ -154,7 +154,7 @@ dzn_fnc_dynai_checkSquadCriticalLosses = {
 	_r = false;
 	_leader = leader _this;
 	
-	if (count (units group (_leader)) < round (count (_this getVariable "dzn_dynai_units") / 2)) then {
+	if ({alive _x} count (units group (_leader)) < round (count (_this getVariable "dzn_dynai_units") / 2)) then {
 		_r = true;
 	};
 
