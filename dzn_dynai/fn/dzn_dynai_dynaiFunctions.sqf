@@ -418,11 +418,6 @@ dzn_fnc_dynai_addNewZone = {
 
 
 
-
-
-
-
-
 // ================================================
 //           DZN DYNAI -- Zone Controls
 // ================================================
@@ -556,6 +551,56 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	_properties set [4, _newKeypoints];
 	
 	_zone setVariable ["dzn_dynai_properties", _properties, true];
+};
+
+dzn_fnc_dynai_moveGroups = {
+	/*
+	 * [@Zone, [@Pos3d], @Type] call dzn_fnc_dynai_moveZoneGroups
+	 * Remove all WPs and move zone's group throug given waypoints
+	 * Type: 
+	 * 		"PATROL" - random order of poses; 
+	 *		"SAD" - move through given poses and SAD on last one
+	 *		"RANDOM SAD" - SAD on random poses
+	 */
+	 
+	params["_zone","_poses",["_type", "PATROL"]];
+	private _grps = [_zone, "groups"] call dzn_fnc_dynai_getZoneVar;
+	
+	{
+		private _squad = _x;
+		while {(count (waypoints _squad)) > 0} do {
+			deleteWaypoint ((waypoints _squad) select 0);
+		};
+		
+		switch (toUpper(_type)) do {
+			case "SAD": {
+				{
+					private _wp = _squad addWaypoint [_x, 200];
+					_wp setWaypointType "SAD";
+					_wp setWaypointCombatMode "RED";
+					_wp setWaypointBehaviour "AWARE";				
+				} forEach _poses;
+			};
+			case "RANDOM SAD": {
+				private _randomPoses = _poses call BIS_fnc_arrayShuffle;
+				{
+					private _wp = _squad addWaypoint [_x, 200];
+					_wp setWaypointType "SAD";
+					_wp setWaypointCombatMode "RED";
+					_wp setWaypointBehaviour "AWARE";				
+				} forEach _randomPoses;				
+			};
+			default {
+				private _randomPoses = _poses call BIS_fnc_arrayShuffle;
+				{
+					private _wp = _squad addWaypoint [_x, 200];
+					_wp setWaypointType "MOVE";			
+				} forEach _randomPoses;
+			};
+		};	
+	} forEach _grps;
+	
+	true
 };
 
 dzn_fnc_dynai_getGroupTemplates = {
