@@ -564,7 +564,17 @@ dzn_fnc_dynai_moveGroups = {
 	 */
 	 
 	params["_zone","_poses",["_type", "PATROL"]];
+	
 	private _grps = [_zone, "groups"] call dzn_fnc_dynai_getZoneVar;
+	if (_poses isEqualTo []) then {
+		// If no poses given -- new random waypoint will be created inside current zone
+		private _zoneLocations = [_zone, "area"] call dzn_fnc_dynai_getZoneVar;
+		for "_i" from 0 to 5 do {
+			_poses pushBack (_zoneLocations call dzn_fnc_getRandomPointInZone);
+		};
+	};
+	
+	#define	ASSIGN_WP(X,Y,Z,K)	_wp setWaypointType X;_wp setWaypointCombatMode Y;_wp setWaypointBehaviour Z;_wp setWaypointSpeed K;
 	
 	{
 		private _squad = _x;
@@ -576,26 +586,18 @@ dzn_fnc_dynai_moveGroups = {
 			case "SAD": {
 				{
 					private _wp = _squad addWaypoint [_x, 200];
-					_wp setWaypointType "SAD";
-					_wp setWaypointCombatMode "RED";
-					_wp setWaypointBehaviour "AWARE";				
+					ASSIGN_WP("SAD","RED","AWARE","NORMAL")
 				} forEach _poses;
 			};
 			case "RANDOM SAD": {
 				private _randomPoses = _poses call BIS_fnc_arrayShuffle;
 				{
 					private _wp = _squad addWaypoint [_x, 200];
-					_wp setWaypointType "SAD";
-					_wp setWaypointCombatMode "RED";
-					_wp setWaypointBehaviour "AWARE";				
+					ASSIGN_WP("SAD","RED","AWARE","NORMAL")
 				} forEach _randomPoses;				
 			};
 			default {
-				private _randomPoses = _poses call BIS_fnc_arrayShuffle;
-				{
-					private _wp = _squad addWaypoint [_x, 200];
-					_wp setWaypointType "MOVE";			
-				} forEach _randomPoses;
+				[_squad, _poses call BIS_fnc_arrayShuffle] call dzn_fnc_createPathFromKeypoints;				
 			};
 		};	
 	} forEach _grps;
