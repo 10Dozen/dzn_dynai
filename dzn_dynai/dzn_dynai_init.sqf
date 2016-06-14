@@ -19,7 +19,7 @@ dzn_dynai_allowVehicleHoldBehavior		= true;
 
 // Group Responses
 dzn_dynai_allowGroupResponse			= true;
-dzn_dynai_forceGroupResponse			= false; // Include all mission units to participate in Group Responses
+dzn_dynai_forceGroupResponse			= true; // Include all mission units to participate in Group Responses
 dzn_dynai_responseDistance			= 800; // meters
 dzn_dynai_responseCheckTimer			= 30; // seconds
 
@@ -80,15 +80,13 @@ waitUntil { !isNil "dzn_gear_serverInitDone" || !isNil "dzn_gear_initDone" };
 
 // Initialization of dzn_dynai
 dzn_dynai_activatedZones = [];
+dzn_dynai_activeGroups = [];
 dzn_dynai_zoneProperties = [
 	#include "Zones.sqf"
 ];
 
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
-if (dzn_dynai_allowGroupResponse) then {
-	dzn_dynai_activeGroups = [];
-	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
-};
+call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
 
 //	**************	SERVER OR HEADLESS	*****************
 if (!isNil "HC") then {if (isServer) exitWith {};};
