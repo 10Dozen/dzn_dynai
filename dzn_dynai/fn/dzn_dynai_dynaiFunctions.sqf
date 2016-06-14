@@ -540,12 +540,12 @@ dzn_fnc_dynai_setZoneKeypoints = {
 			1: ARRAY	- array of keypoints (pos3d)
 		OUTPUT: null
 	*/
-	private["_zone","_newKeypoints","_properties"];
+	params ["_zone","_newKeypoints"];
+	private["_properties"];
 	
-	_zone = _this select 0;
-	_newKeypoints = _this select 1;
-	
-	if (GET_PROP(_zone,"isActive")) exitWith { hintSilent format ["dzn_dynai: %1 is activated already", str(_zone)]; };
+	if (GET_PROP(_zone,"isActive")) then { 
+		[_zone, _newKeypoints, "PATROL"] call dzn_fnc_dynai_moveGroups;
+	};
 
 	_properties = GET_PROP(_zone,"properties");
 	_properties set [4, _newKeypoints];
@@ -555,7 +555,7 @@ dzn_fnc_dynai_setZoneKeypoints = {
 
 dzn_fnc_dynai_moveGroups = {
 	/*
-	 * [@Zone, [@Pos3d], @Type] call dzn_fnc_dynai_moveZoneGroups
+	 * [@Zone, [@Pos3d], @Type] call dzn_fnc_dynai_moveGroups
 	 * Remove all WPs and move zone's group throug given waypoints
 	 * Type: 
 	 * 		"PATROL" - random order of poses; 
