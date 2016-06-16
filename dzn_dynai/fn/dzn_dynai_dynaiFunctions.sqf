@@ -424,12 +424,16 @@ dzn_fnc_dynai_addNewZone = {
 
 dzn_fnc_dynai_activateZone = {
 	/*
-		Set zone active.
-		EXAMPLE: dzn_zone1 call dzn_fnc_dynai_activateZone
-		INPUT:
-			0: OBJECT	- SpawnAI Module of zone
-		OUTPUT: NULL
-	*/
+	 * @ZoneLogic call dzn_fnc_dynai_activateZone
+	 * Activates given zone (spawn units, set group waypoints)
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * OUTPUT: NULL
+	 * 
+	 * EXAMPLES:
+	 *      InsZone1 call dzn_fnc_dynai_activateZone
+	 */
 	private["_properties"];
 	if !(isNil {GET_PROP(_this,"isActive")} && isNil {GET_PROP(_this, "init")}) then {	
 		_this setVariable ["dzn_dynai_isActive", true, true];	
