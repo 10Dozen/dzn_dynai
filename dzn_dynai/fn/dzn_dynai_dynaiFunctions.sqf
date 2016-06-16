@@ -405,7 +405,7 @@ dzn_fnc_dynai_addNewZone = {
 	 * 
 	 * INPUT:
 	 * 0: STRING - Zone's name
-	 * 1: STRING - Zone's side (e.g. "WEST", "EAST", "INDEP", "CIV")
+	 * 1: STRING - Zone's side (e.g. "west", "east", "resistance", "civilian")
 	 * 2: BOOLEAN - true - active, false - inactive on creation
 	 * 3: ARRAY - List of Locations or Triggers or [Pos3d, WidthX, WidthY, Direction, IsSquare(true/false)]
 	 * 4: ARRAY or STRING - Keypoints (array of Pos3ds) or "randomize" to generate waypoints from zone's area
