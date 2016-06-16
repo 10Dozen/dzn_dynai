@@ -444,21 +444,37 @@ dzn_fnc_dynai_activateZone = {
 };
 
 dzn_fnc_dynai_isActive = {
+	/*
+	 * @IsActive? = @ZoneLogic call dzn_fnc_dynai_isActive
+	 * Return true if zone was already activated
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * OUTPUT: BOOLEAN (true - if zone was activated, false - if zone is inactive)
+	 * 
+	 * EXAMPLES:
+	 *      InsZone1 call dzn_fnc_dynai_activateZone
+	 */
 	if (isNil {GET_PROP(_this,"isActive")}) exitWith { false };	
 	GET_PROP(_this,"isActive")
 };
 
 dzn_fnc_dynai_moveZone = {
 	/*
-		[@Zone, @Pos3d, @Direction] call dzn_fnc_dynai_moveZone
-		Move zone to given position.
-		EXAMPLE: [dzn_zone1, getPos player, directin] call dzn_fnc_dynai_moveZone
-		INPUT:
-			0: OBJECT		- SpawnAI Module of zone
-			1: POS3D/OBJECT	- New zone position or object
-			2: DIRECTION	- New direction
-		OUTPUT: NULL
-	*/	
+	 * [@Zone, @Pos3d, @Direction] call dzn_fnc_dynai_moveZone
+	 * Moves inactive zone to new position. Zone can be rotated on given angle
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * 1: POS3d or OBJECT - New position of the zone as Pos3d or object
+	 * 2: NUMBER - (Optional) New direction of the zone (zone will be rotated on given angle)
+	 * OUTPUT: NULL
+	 * 
+	 * EXAMPLES:
+	 *      [EnemyZone1, [3222,2000,0], 120] call dzn_fnc_dynai_moveZone
+	 *      [EnemyZone2, [3222,2000,0]] call dzn_fnc_dynai_moveZone
+	 *      [EnemyZone3, baseObject] call dzn_fnc_dynai_moveZone
+	 */
 	private["_zone","_newPos","_newDir","_deltaDir","_curPos","_locations","_offsets","_dir","_dist","_oldOffset","_newOffsetPos","_props","_wps","_wpOffsets","_locBuildings"];
 	
 	_zone = if (!isNil {_this select 0}) then {_this select 0};
