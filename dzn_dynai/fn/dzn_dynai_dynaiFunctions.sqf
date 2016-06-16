@@ -584,12 +584,33 @@ dzn_fnc_dynai_setZoneKeypoints = {
 
 
 dzn_fnc_dynai_getGroupTemplates = {
-	// @Template = @Zone call dzn_fnc_dynai_getGroupTemplates
+	/*
+	 * @Templates = @Zone call dzn_fnc_dynai_getGroupTemplates
+	 * Returns the list of the zone's groups templates
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * OUTPUT: ARRAY (List of zone's groups templates)
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
 	( GET_PROP(_this,"prop") ) select 5
 };
 
-dzn_fnc_dynai_setGroupTemplates = {
-	// [@Zone, @Template] call dzn_fnc_dynai_setGroupTemplates
+dzn_fnc_dynai_setGroupTemplates = {	
+	/*
+	 * [@Zone, @Templates] call dzn_fnc_dynai_setGroupTemplates
+	 * Update zone with new group templates. For active zone - does nothing, but for inactive zone - allows to change what units will be spawned in zone.
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * 1: ARRAY - List of the new group templates
+	 * OUTPUT: NULL
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
 	if ( (_this select 0) call dzn_fnc_dynai_isActive ) exitWith {diag_log format ["dzn_dynai :: Zone %1 :: already active!", _this select 0];};
 	if ( typename (_this select 1) != "ARRAY" ) exitWith {diag_log format ["dzn_dynai ::  Zone %1 :: Template is not an array!", _this select 0];};
 	
