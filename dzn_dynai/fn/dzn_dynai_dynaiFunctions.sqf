@@ -542,24 +542,32 @@ dzn_fnc_dynai_moveZone = {
 
 dzn_fnc_dynai_getZoneKeypoints = {
 	/*
-		Get keypoints of the zone.
-		EXAMPLE: dzn_zone1 call dzn_fnc_dynai_moveZone
-		INPUT:
-			0: OBJECT	- SpawnAI Module of zone
-		OUTPUT: ARRAY of keypoints (pos3d)
-	*/
+	 * @List of Keypoints = @Zone call dzn_fnc_dynai_getZoneKeypoints
+	 * Returns the list of zone's keypoints (Pos3d)
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * OUTPUT: ARRAY (List of POS3d)
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
 	(GET_PROP(_this,"properties")) select 4
 };
 
 dzn_fnc_dynai_setZoneKeypoints = {
 	/*
-		Get keypoints of the zone.
-		EXAMPLE: dzn_zone1 call dzn_fnc_dynai_moveZone
-		INPUT:
-			0: OBJECT	- SpawnAI Module of zone
-			1: ARRAY	- array of keypoints (pos3d)
-		OUTPUT: null
-	*/
+	 * [@Zone, @List of Keypoint] call dzn_fnc_dynai_getZoneKeypoints
+	 * Updates zone's keypoints with new values. If zone already activated - force zone's groups to acquire new waypoints.
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * 1: ARRAY - List of POS3d of new keypoints (e.g. [[100,100,0], [200,200,0]])
+	 * OUTPUT: NULL
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
 	params ["_zone","_newKeypoints"];
 	private["_properties"];
 	
