@@ -86,7 +86,26 @@ dzn_fnc_dynai_initZones = {
 };
 
 dzn_fnc_dynai_getZoneVar = {
-	// @Zone call dzn_fnc_dynai_getZoneVar
+	/*
+	 * @Property = [@Zone, @PropertyName] call dzn_fnc_dynai_getZoneVar
+	 * Returns value of the given property.
+	 *      Properties are:
+	 *      "list" - (array) list of all available properties;
+	 *      "area" - (array) list of zone's locations;
+	 *      "kp"/"points"/"keypoints" - (array) list of zone's keypoints (Pos3ds);
+	 *      "isactive" - (boolean) is zone was activated;
+	 *      "prop"/"properties" - (array) list of zone's basic properties (that were set up with DynAI tool);
+	 *      "init"/"initialized" - (boolean) is zone initialized;
+	 *      "groups" - (array) list of zone's groups
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * 1: STRING - Property name (e.g. "isactive", "groups")
+	 * OUTPUT: @Property value (can be any format)
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
 	private["_r","_z"];
 	_z = _this select 0;
 	_r = switch toLower(_this select 1) do {	
@@ -104,12 +123,31 @@ dzn_fnc_dynai_getZoneVar = {
 };
 
 dzn_fnc_dynai_getGroupVar = {
-	// @Variable =  [@Group, @Key] call dzn_fnc_dynai_getZoneVars
+	/*
+	 * @Property = [@Group, @PropertyName] call dzn_fnc_dynai_getGroupVar
+	 * Returns value of the given property.
+	 *      Properties are:
+	 *      "list" - (array) list of all available properties;
+	 *      "home" - (object) home zone's game logic;
+	 *      "units" - (array) list of group's units;
+	 *      "vehicles" - (array) list of group's vehicles;
+	 *      "wpset" - (boolean) is group already has waypoints
+	 *      
+	 *      
+	 * 
+	 * INPUT:
+	 * 0: GROUP - Zone's group
+	 * 1: STRING - Property name (e.g. "wpSet", "units")
+	 * OUTPUT: @Property value (can be any format)
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
 	private["_r","_g"];
 	_g = _this select 0;
 	_r = switch toLower(_this select 1) do {
 		case "list": { ["home", "units", "vehicles", "wpSet"] };
-		case "wpSet": { _g getVariable "dzn_dynai_wpSet" };
+		case "wpset": { _g getVariable "dzn_dynai_wpSet" };
 		case "home": { _g getVariable "dzn_dynai_homeZone" };
 		case "units": { _g getVariable "dzn_dynai_units" };
 		case "vehicles": { _g getVariable "dzn_dynai_vehicles" };
