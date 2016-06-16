@@ -332,7 +332,17 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 
 // 0.5: Add units as supporters
 dzn_fnc_dynai_addGroupAsSupporter = {
-	//	@Unit/@Group call dzn_fnc_dynai_addGroupBehavior
+	/*
+	 * @Unit call dzn_fnc_dynai_addGroupAsSupporter
+	 * Add unit's group to Reinforcement Response system
+	 * 
+	 * INPUT:
+	 * 0: OBJECT or GROUP - Unit or group to add as supporter
+	 * OUTPUT: NULL
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
 	private _group = if (typename _this == "GROUP") then { _this } else { group _this };
 	if (isNil "dzn_dynai_initialized" || { !dzn_dynai_initialized }) exitWith { 
 		_group spawn {
@@ -361,10 +371,20 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 };
 
 dzn_fnc_dynai_addUnitBehavior = {
-	// [@Unit, @Behavior] call dzn_fnc_dynai_addUnitBehavior
-	// @Unit		-- Unit or Vehicle with crew 
-	// "Indoor" 		-- behavior for units inside the buildings/sentries
-	// "Vehicle Hold" 	-- vehicle/turret behaviour (rotation)
+	/*
+	 * [@Unit, @Behavior] call dzn_fnc_dynai_addUnitBehavior
+	 * Adds behavior script to unit.
+	 *      "Indoor" -- behavior for units inside the buildings/sentries;
+	 *      "Vehicle Hold" 	-- vehicle/turret behaviour (rotation);
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Unit to add behavior
+	 * 1: STRING - Behavior type (e.g. "indoor", "vehicle hold")
+	 * OUTPUT: NULL
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
 	params ["_unit", "_behaviour"];
 	switch toLower(_behaviour) do {
 		case "indoor": {
@@ -429,11 +449,20 @@ dzn_fnc_dynai_processUnitBehaviours = {
 dzn_fnc_dynai_moveGroups = {
 	/*
 	 * [@Zone, [@Pos3d], @Type] call dzn_fnc_dynai_moveGroups
-	 * Remove all WPs and move zone's group throug given waypoints
-	 * Type: 
-	 * 		"PATROL" - random order of poses; 
-	 *		"SAD" - move through given poses and SAD on last one
-	 *		"RANDOM SAD" - SAD on random poses
+	 * Moves all zone's groups through given list of positions (or random points).
+	 *      Type:
+	 *      "PATROL" - random order of poses; 
+	 *      "SAD" - move through given poses and SAD on last one
+	 *      "RANDOM SAD" - SAD on random poses
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * 1: ARRAY - List of Pos3d. If [] - random points inside zone's area will be used.
+	 * 2: STRING - Type of the movement ("PATROL","SAD","RANDOM SAD")
+	 * OUTPUT: NULL
+	 * 
+	 * EXAMPLES:
+	 *      
 	 */
 	 
 	params["_zone","_poses",["_type", "PATROL"]];
@@ -481,11 +510,19 @@ dzn_fnc_dynai_moveGroups = {
 dzn_fnc_dynai_setGroupsMode = {
 	/*
 	 * [@Zone, @Template or [@Behaviour, @Combat, @Speed]] call dzn_fnc_dynai_setGroupsMode
-	 * Change's group behavior settings
-	 * Templates:
-	 *		"SAFE" - move with limited speed, weapons down. Do not wait for enemy;
-	 *		"AWARE" - move with limited speed, weapons down, wait for enemy;
-	 *		"COMBAT" - move normal speed, weapon up, wait for enemy;
+	 * Changes group behavior settings.
+	 *      Templates:
+	 *      "SAFE" - move with limited speed, weapons down. Do not wait for enemy;
+	 *      "AWARE" - move with limited speed, weapons down, wait for enemy;
+	 *      "COMBAT" - move normal speed, weapon up, wait for enemy;
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's Game Logic
+	 * 1: STRING or ARRAY - Name of the template or array of [Behavior, Combat mode, Speed mode]
+	 * OUTPUT: NULL
+	 * 
+	 * EXAMPLES:
+	 *      
 	 */
 	 
 	params["_zone", "_template"];
