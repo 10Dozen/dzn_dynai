@@ -399,17 +399,23 @@ dzn_fnc_dynai_createZone = {
 // ================================================
 
 dzn_fnc_dynai_addNewZone = {
-	// @ZonePropertyInput spawn dzn_fnc_dynai_addNewZone
 	/*
-		@ZonePropertyInput::
-		0	@Name, 
-		1	@Side, 
-		2	@IsActive, 
-		3	@ArrayOfLocations or Triggers or [Center, X, Y, DIR, IsSquare], 
-		4	@ArrayOfPos3d or "randomize"
-		5	@References,
-		6	@Behavior		
-	*/
+	 * [@Name, @Side, @IsActive, @Area, @Keypoints, @Tamplates, @Behaviour] spawn dzn_fnc_dynai_addNewZone 
+	 * Creates new DynAI zone according to passed parameters.
+	 * 
+	 * INPUT:
+	 * 0: STRING - Zone's name
+	 * 1: STRING - Zone's side (e.g. "WEST", "EAST", "INDEP", "CIV")
+	 * 2: BOOLEAN - true - active, false - inactive on creation
+	 * 3: ARRAY - List of Locations or Triggers or [Pos3d, WidthX, WidthY, Direction, IsSquare(true/false)]
+	 * 4: ARRAY or STRING - Keypoints (array of Pos3ds) or "randomize" to generate waypoints from zone's area
+	 * 5: ARRAY - Groups templates for zone
+	 * 6: ARRAY - Behavior settings in format [Speed mode, Behavior, Combat mode, Formation]
+	 * OUTPUT: NULL
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
 	private ["_zP","_zoneObject","_l","_loc"];
 	_zP = _this;
 	
