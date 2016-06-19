@@ -19,7 +19,7 @@ dzn_dynai_allowVehicleHoldBehavior		= true;
 
 // Group Responses
 dzn_dynai_allowGroupResponse			= true;
-dzn_dynai_forceGroupResponse			= true; // Include all mission units to participate in Group Responses
+dzn_dynai_forceGroupResponse			= false; // Include all mission units to participate in Group Responses
 dzn_dynai_responseDistance			= 800; // meters
 dzn_dynai_responseCheckTimer			= 30; // seconds
 
