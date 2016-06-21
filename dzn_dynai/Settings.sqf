@@ -9,10 +9,10 @@ dzn_dynai_allowVehicleHoldBehavior		= true;
 
 /*	
 	Skill:
-	if dzn_dynai_complexSkill == true:  dzn_dynai_overallSkillLevel is used do determine skill.
+	if dzn_dynai_UseSimpleSkill == true:  dzn_dynai_overallSkillLevel is used do determine skill.
 	If false -- complex skills are used. More info about complex skills https://community.bistudio.com/wiki/AI_Sub-skills
 */
-dzn_dynai_complexSkill				=	false;
+dzn_dynai_UseSimpleSkill			=	true;
 dzn_dynai_overallSkillLevel			=	0.95;
 dzn_dynai_complexSkillLevel			=	[
 	["general", 0.5]
