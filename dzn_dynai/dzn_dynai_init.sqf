@@ -13,47 +13,16 @@ if (hasInterface && !isServer) exitWith {}; // If a player - exits script
 // **************************
 //	SETTINGS
 // **************************
+call compile preProcessFileLineNumbers "dzn_dynai\Settings.sqf";
 
-// Behavior settings
-dzn_dynai_allowVehicleHoldBehavior		= true;
-
-// Group Responses
-dzn_dynai_allowGroupResponse			= true;
-dzn_dynai_forceGroupResponse			= false; // Include all mission units to participate in Group Responses
-dzn_dynai_responseDistance			= 800; // meters
-dzn_dynai_responseCheckTimer			= 30; // seconds
-
-// Default simple skill of units
-dzn_dynai_complexSkill				=	false;
-dzn_dynai_skill = if (dzn_dynai_complexSkill) then {
-	/*	
-	Or detailed skill (comment skills that shouldn't be changed)
-	More info about skills https://community.bistudio.com/wiki/AI_Sub-skills
-	*/
-	[
-		["general", 0.5]
-		,["aimingAccuracy", 0.5],["aimingShake", 0.5],["aimingSpeed", 0.5],["reloadSpeed", 0.5]
-		,["spotDistance", 0.5],["spotTime", 0.5],["commanding", 0.5]
-		,["endurance", 0.5],["courage", 0.5]
-	]
-} else {
-	/* 	Simple Skill Level */
-	0.95	
-};
-dzn_dynai_complexSkill = [ dzn_dynai_complexSkill, dzn_dynai_skill ];
-
-// Building list
-dzn_dynai_allowedHouses				= ["House"];
-
-// Caching Settings
-dzn_dynai_enableCaching				= true;
-dzn_dynai_cachingTimeout			= 20; // seconds
-dzn_dynai_cacheCheckTimer			= 15; // seconds
-
-dzn_dynai_cacheDistance				= 800; // meters
-
-
-
+dzn_dynai_complexSkill = [ 
+	dzn_dynai_UseSimpleSkill
+	, if (dzn_dynai_UseSimpleSkill) then {
+		dzn_dynai_overallSkillLevel	
+	} else {
+		dzn_dynai_complexSkillLevel			
+	}
+];
 
 // **************************
 //	INIT CONDITIONS
