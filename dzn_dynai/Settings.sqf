@@ -1,3 +1,7 @@
+// Delay before and after zones initializations
+dzn_dynai_preInitTimeout			=	3;
+dzn_dynai_afterInitTimeout			=	3;
+
 // Group Responses
 dzn_dynai_allowGroupResponse			= true;
 dzn_dynai_forceGroupResponse			= false; // Include all mission units to participate in Group Responses
