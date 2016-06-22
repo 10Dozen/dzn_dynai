@@ -16,7 +16,7 @@ if (hasInterface && !isServer) exitWith {}; // If a player - exits script
 call compile preProcessFileLineNumbers "dzn_dynai\Settings.sqf";
 
 dzn_dynai_complexSkill = [ 
-	dzn_dynai_UseSimpleSkill
+	!dzn_dynai_UseSimpleSkill
 	, if (dzn_dynai_UseSimpleSkill) then {
 		dzn_dynai_overallSkillLevel	
 	} else {
@@ -30,12 +30,6 @@ dzn_dynai_complexSkill = [
 
 // Condition of initialization
 #define	dzn_dynai_CONDITION_BEFORE_INIT	true
-
-// Delay before and after zones initializations
-dzn_dynai_preInitTimeout			=	3;
-dzn_dynai_afterInitTimeout			=	3;
-
-
 
 // **************************
 //	INITIALIZATION
