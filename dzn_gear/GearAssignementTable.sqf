@@ -42,10 +42,10 @@ A "Platoon Leader"			TO "kit_sec_pl"	 KIT
 , A "1'3 Командир отделения"		TO "kit_sec_sl"	 KIT
 , A "Наводчик-оператор"			TO "kit_sec_crew"	 KIT
 , A "Механик-водитель"			TO "kit_sec_crew"	 KIT
-, A "Пулеметчик"		TO "kit_sec_ss"	 KIT
+, A "Пулеметчик"		TO "kit_sec_mg"	 KIT
 , A "Стрелок-Гранатометчик"		TO "kit_sec_at"	 KIT
 , A "Стрелок, помощник гранатометчика"	TO "kit_sec_aat"	 KIT
-, A "BLUE - Старший стрелок"			TO "kit_sec_ar"	 KIT
+, A "BLUE - Старший стрелок"			TO "kit_sec_ss"	 KIT
 , A "Стрелок"				TO "kit_sec_r"	 KIT
 , A "Стрелок"				TO "kit_sec_r"	 KIT
 
@@ -60,5 +60,5 @@ A "Platoon Leader"			TO "kit_sec_pl"	 KIT
 , A "Стрелок, помощник гранатометчика"	TO "kit_sec_aat"	 KIT
 , A "BLUE - Старший стрелок"		TO "kit_sec_ss"	 KIT
 , A "Стрелок (ГП)"			TO "kit_sec_gr"	 KIT
-, A "Снайпер"				TO "kit_sec_r"	 KIT
+, A "Снайпер"				TO "kit_sec_mm"	 KIT
 
