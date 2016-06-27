@@ -17,20 +17,7 @@ Dynamic AI with Blackjack and Whores
 
 ## Step By Step
 
-1. Place GameLogic object named "dzn_dynai_core"
-2. Place GameLogic object of DynAI zone. Set name to something like "myZone". Synchronize it with "dzn_dynai_core" object.
-3. Place trigger which will represent the area of spawn zone. You may place several triggers to set a specific area to spawn. Synchronize all triggers with "myZone" game object. 
-4. By default, spawned units will get several random waypoints inside given area. [only 2d editor] If you want to set specific waypoints (e.g. to make units 'advance' to given position) - add waypoints to zone's game logic.
-5. In "Zones.sqf" specify your zones with structured zone info. To create structured zone info use "xmlDynai.html" generator from Tools folder.
-  - Use the same name for Game Logic and zone (e.g. "myZone")
-  - Set zone's side
-  - Mark is zone is active at the start
-  - Set groups and group units, assign gear kits to units
-  - Set Speed Mode, Behavior, Combat Mode and Formation of the groups (**note:** do not use Careless mode!)
-Copy generated structured info inside Zone.sqf file (separate each zone with comma).
-
-## Creation of Zone Properties
-Use xmlDynai.html to set zone properties.
+See [Getting Started Wiki](https://github.com/10Dozen/dzn_dynai/wiki/Getting-Started)
 
 ## Control Zone
 If zone is not active by default and *before* it activated you can use some functions to control zones:
