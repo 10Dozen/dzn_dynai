@@ -11,6 +11,9 @@
 //	SETTINGS
 // **************************
 
+// Enable or disable a synchronization of unit's identity (face, voice) from applied kit (in multiplayer)
+dzn_gear_enableIdentitySync			= false;
+
 // Plugins
 dzn_gear_enableGearAssignementTable		= true;
 dzn_gear_enableGearNotes			= true;
