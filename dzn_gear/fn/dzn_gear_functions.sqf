@@ -39,6 +39,11 @@ dzn_fnc_gear_assignKit = {
 // ******************************
 //    SET GEAR functions 
 // ******************************
+	#define SET_CAT(CIDX)				_ctg = _gear select CIDX
+	#define cItem(IDX)				(_ctg select IDX)
+	#define IsItem(ITEM)				(typename (ITEM) == "STRING")
+	#define getItem(ITEM)				if IsItem(ITEM) then {ITEM} else {ITEM call BIS_fnc_selectRandom}
+	
 dzn_fnc_gear_assignGear = {
 	// [@Unit, @GearSet] spawn dzn_fnc_gear_assignGear;
 	private["_ctg","_unit","_gear","_magClasses","_r","_act","_item"];
@@ -58,12 +63,7 @@ dzn_fnc_gear_assignGear = {
 	removeAllAssignedItems _unit;
 	removeAllWeapons _unit;
 	waitUntil { (items _unit) isEqualTo [] };	
-	
-	#define SET_CAT(CIDX)				_ctg = _gear select CIDX
-	#define cItem(IDX)				(_ctg select IDX)
-	#define IsItem(ITEM)				(typename (ITEM) == "STRING")
-	#define getItem(ITEM)				if IsItem(ITEM) then {ITEM} else {ITEM call BIS_fnc_selectRandom}
-	
+
 	// ADD WEAPONS
 	// Backpack to add first mag for all weapons
 	_unit addBackpack dzn_gear_defaultBackpack;
@@ -155,7 +155,38 @@ dzn_fnc_gear_assignGear = {
 	};
 	_unit setVariable ["dzn_gear_done", true, true];
 	
+	// ADD IDENTITY
+	if (!isNil {_gear select 8}) then {
+		[_unit, _gear select 8, "init"] call dzn_fnc_gear_assignIdentity;
+	};
+	
 	[] spawn { sleep 3; enableSentences true; };
+};
+
+dzn_fnc_gear_assignIdentity = {
+	params["_unit","_identity",["_mode","apply"]];
+	
+	private _face = getItem( _identity select 1 );
+	if (_face != "") then { _unit setFace _face; };
+	
+	private _voice = getItem( _identity select 2 );
+	if (_voice != "") then { _unit setSpeaker _voice; };
+	
+	private _name = getItem( _identity select 3 );
+	if (_name != "") then {
+		if (count (_name splitString " ") < 2) then { _name = format ["%1 %1", _name]; };		
+		_unit setName [
+			_name splitString " " joinString " "
+			, (_name splitString " ") select 0
+			, (_name splitString " ") select 1
+		];
+	};
+	
+	if (toLower(_mode) == "init") then {
+		_unit setVariable ["dzn_gear_identity", ["Identity", _face, _voice, _name], true];		
+	} else {
+		_unit setVariable ["dzn_gear_identitySet", true];
+	};	
 };
 
 dzn_fnc_gear_assignCargoGear = {
@@ -396,6 +427,30 @@ dzn_fnc_gear_setPreciseGear = {
 // **************************
 // INITIALIZING FUNCTIONS
 // **************************
+dzn_fnc_gear_startLocalIdentityLoop = {
+	dzn_gear_applyLocalIdentity = true;
+
+	["dzn_gear_localIdentityLoop", "onEachFrame", {	
+		if !(dzn_gear_applyLocalIdentity) exitWith {};
+		
+		[] spawn {
+			{
+				if (!isNil {_x getVariable "dzn_gear_identity"} && !(_x getVariable ["dzn_gear_identitySet",false])) then {				
+					[
+						_x
+						, _x getVariable "dzn_gear_identity"
+					] call dzn_fnc_gear_assignIdentity;							
+				};
+				sleep .1;
+			} forEach allUnits;	
+			
+			dzn_gear_applyLocalIdentity = false;
+			sleep 10;
+			dzn_gear_applyLocalIdentity = true;
+		};
+	}] call BIS_fnc_addStackedEventHandler;
+};
+
 
 dzn_fnc_gear_initialize = {
 	// Wait until player initialized in multiplayer
@@ -454,4 +509,11 @@ dzn_fnc_gear_initialize = {
 	
 	dzn_gear_initDone = true;
 	if (isServer) then { dzn_gear_serverInitDone = true; publicVariable "dzn_gear_serverInitDone"; };
+	
+	if (hasInterface && dzn_gear_enableIdentitySync) then {
+		[] spawn {
+			waitUntil { time > 5 };
+			call dzn_fnc_gear_startLocalIdentityLoop;
+		};
+	};
 };

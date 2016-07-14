@@ -9,7 +9,7 @@
 dzn_fnc_gear_editMode_showKeybinding = {
 	hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
 		<br /><br /><t size='1.45' color='#3793F0' underline='true'>Keybinding:</t>
-		<br /><br /><t %1>[H]</t><t %2> - Show keybinding</t>
+		<br /><br /><t %1>[F1]</t><t %2> - Show keybinding</t>
 		<br />
 		<br /><t %1>[SPACE]</t><t %2> - Open Arsenal</t>  
 		<br /><t %1>[CTRL + SPACE]</t><t %2> - Copy gear of player or cursorTarget and add it to action list</t>
@@ -21,11 +21,12 @@ dzn_fnc_gear_editMode_showKeybinding = {
 		<br /><t %1>[ALT + {1...6}]</t><t %2> - Clear item list</t>
 		<br /><t align='left' size='0.8'>where
 		<br />1 -- Primary weapon and magazine 
-		<br />2 -- Uniform
-		<br />3 -- Headgear
-		<br />4 -- Goggles
-		<br />5 -- Vest
-		<br />6 -- Backpack
+		<br />2 or U -- Uniform
+		<br />3 or H -- Headgear
+		<br />4 or G -- Goggles
+		<br />5 or V -- Vest
+		<br />6 or B -- Backpack
+		<br /><t %1>CTRL + I</t><t %2> - copy unit/player identity settings</t>
 		"
 		, "align='left' color='#3793F0' size='0.9'"
 		, "align='right' size='0.8'"
@@ -52,8 +53,8 @@ dzn_fnc_gear_editMode_onKeyPress = {
 	
 	
 	switch _key do {
-		// H button
-		case 35: {
+		// F1 button
+		case 59: {
 			SET_KEYDOWN;
 			call dzn_fnc_gear_editMode_showKeybinding;
 			SET_HANDLED;
@@ -63,7 +64,13 @@ dzn_fnc_gear_editMode_onKeyPress = {
 			SET_KEYDOWN;			
 			if (_ctrl) then {		true call dzn_fnc_gear_editMode_createKit; };
 			if (_shift) then {		false call dzn_fnc_gear_editMode_createKit; };
-			if !(_ctrl || _alt || _shift) then { [] spawn {sleep 0.3; ["Open", true] call BIS_fnc_arsenal;}; };
+			if !(_ctrl || _alt || _shift) then { 
+				[] spawn {
+					["#(argb,8,8,3)color(0,0,0,1)",false,nil,0.1,[0,0.5]] spawn bis_fnc_textTiles;
+					sleep 0.3; 
+					["Open", true] call BIS_fnc_arsenal;
+				}; 
+			};
 			SET_HANDLED;
 		};
 		// 1 button - Primary weapon
@@ -75,36 +82,49 @@ dzn_fnc_gear_editMode_onKeyPress = {
 			if !(_ctrl || _alt || _shift) then {	"NONE" call dzn_fnc_gear_editMode_getCurrentPrimaryWeapon;};
 			SET_HANDLED;
 		};
-		// 2 button - Uniform
+		// 2 or U button - Uniform
+		case 22;
 		case 3: {
 			SET_KEYDOWN;
 			GET_EQUIP_CALL("UNIFORM");
 			SET_HANDLED;
 		};
-		// 3 button - Headgear
+		// 3 or H button - Headgear
+		case 35;
 		case 4: {
 			SET_KEYDOWN;
 			GET_EQUIP_CALL("HEADGEAR");
 			SET_HANDLED;
 		};
-		// 4 -- Goggles
+		// 4 or G -- Goggles
+		case 34;
 		case 5: {
 			SET_KEYDOWN;
 			GET_EQUIP_CALL("GOGGLES");
 			SET_HANDLED;
 		};
-		// 5 -- Vest
+		// 5 or V -- Vest
+		case 47;
 		case 6: {
 			SET_KEYDOWN;
 			GET_EQUIP_CALL("VEST");
 			SET_HANDLED;
 		};
-		// 6 -- Backpack
+		// 6 or B -- Backpack
+		case 48;
 		case 7: {
 			SET_KEYDOWN;
 			GET_EQUIP_CALL("BACKPACK");
 			SET_HANDLED;
-		};		
+		};
+		// I
+		case 23: {
+			SET_KEYDOWN;
+			if (_ctrl) then { 
+				call dzn_fnc_gear_editMode_getCurrentIdentity;				
+			};
+			SET_HANDLED;
+		};
 	};
 	
 	[] spawn { sleep 1; dzn_gear_editMode_keyIsDown = false; };
@@ -232,6 +252,24 @@ dzn_fnc_gear_editMode_getCurrentPrimaryWeapon = {
 	false
 };
 
+dzn_fnc_gear_editMode_getCurrentIdentity = {	
+	private _owner = if (!isNull cursorTarget && {cursorTarget isKindOf "CAManBase"}) then { "Unit" } else { "Player" };
+
+	private _unit = if (_owner == "Unit") then { cursorTarget } else { player };
+	private _face = face _unit;
+	private _voice = speaker _unit;
+	private _name = name _unit;	
+	
+	hint parseText format [
+		"<t color='#6090EE' size='1.1'>%1 Identity was copied to clipboard</t><br />Face: %2<br />Speaker: %3<br />Name: %4"
+		, _owner
+		, _face
+		, _voice
+		, _name		
+	];
+	copyToClipboard format[',["<IDENTITY >>", "%1", "%2", ""]', _face, _voice, _name];
+};
+
 
 dzn_fnc_gear_editMode_createKit = {
 	// @Add action? call dzn_fnc_gear_editMode_createKit
@@ -249,6 +287,14 @@ dzn_fnc_gear_editMode_createKit = {
 			,_this select 0
 			,_this select 1			
 		];
+		
+		[
+			parseText format [ 
+				"<t align='right' font='PuristaBold' size='1.1'><t color='%2'>%1</t> kit copied</t>"
+				,_this select 0
+				,_this select 1	
+			]
+		, true, nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;		
 	};
 	
 	_addKitAction = {
@@ -300,13 +346,13 @@ dzn_fnc_gear_editMode_createKit = {
 		// Player
 		_kit = player call dzn_fnc_gear_getGear;
 		if (_this) then { [_colorString, _kit] call _addKitAction; };
-		["Player", _colorString] call _showHint;
+		["Player's", _colorString] call _showHint;
 	} else {
 		if (cursorTarget isKindOf "CAManBase") then {
 			// Unit
 			_kit = cursorTarget call dzn_fnc_gear_getGear;
 			if (_this) then { [_colorString, _kit] call _addKitAction; };
-			["Unit", _colorString] call _showHint;
+			["Unit's", _colorString] call _showHint;
 		} else {
 			// Vehicle
 			_kit = cursorTarget call dzn_fnc_gear_getCargoGear;
@@ -408,7 +454,13 @@ dzn_fnc_gear_editMode_showGearTotals = {
 			];		
 		};		
 	} forEach _items;	
+	
+	
 	hintSilent (composeText _stringsToShow);
+	[
+		composeText _stringsToShow
+		, dzn_gear_editMode_notif_pos, nil, 7, 0, 0
+	] spawn BIS_fnc_textTiles;
 };
 
 
@@ -488,10 +540,13 @@ dzn_gear_editMode_vestList = SET_GEAR_IF_EMPTY(vest);
 dzn_gear_editMode_backpackList = SET_GEAR_IF_EMPTY(backpack);
 
 dzn_gear_editMode_arsenalOpened = false;
-dzn_gear_editMode_arsenalTimerPause = 2;
+dzn_gear_editMode_arsenalTimerPause = 5;
 dzn_gear_editMode_arsenalTimer = time + dzn_gear_editMode_arsenalTimerPause;
+dzn_gear_editMode_notif_pos = [.9,0,.4,1];
+dzn_gear_editMode_lastInventory = [];
 
-["Open", false] call BIS_fnc_arsenal;
+bis_fnc_arsenal_fullArsenal = true;
+["Preload"] call BIS_fnc_arsenal; 
 hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
 	<br /><br /><t size='1.35' color='#3793F0' underline='true'>EDIT MODE</t>	
 	<br /><t %1>This is an Edit mode where you can create gear kits for dzn_gear.</t>	
@@ -504,6 +559,9 @@ hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
 ];
 
 [] spawn {
+	
+
+
 	waitUntil { isNull ( uinamespace getvariable "RSCDisplayArsenal") };
 	["arsenal", "onEachFrame", {
 		private["_inv"];
@@ -513,9 +571,8 @@ hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
 			};
 			
 			if (time > dzn_gear_editMode_arsenalTimer) then {
-				dzn_gear_editMode_arsenalTimer = time + dzn_gear_editMode_arsenalTimerPause;
+				dzn_gear_editMode_arsenalTimer = time + dzn_gear_editMode_arsenalTimerPause;				
 				call dzn_fnc_gear_editMode_showGearTotals;
-				//(((player call BIS_fnc_saveInventory) call dzn_fnc_convertInventoryToLine) call BIS_fnc_consolidateArray) call dzn_fnc_gear_editMode_showGearTotals;
 			};
 		} else {
 			if (dzn_gear_editMode_arsenalOpened) then {
@@ -524,5 +581,4 @@ hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
 		};
 	}] call BIS_fnc_addStackedEventHandler;
 };
-
 
