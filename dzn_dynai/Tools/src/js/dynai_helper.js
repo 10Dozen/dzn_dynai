@@ -571,7 +571,8 @@ var UnitItem = function (id, classname, kit, mode, restrictedHouses, vehicleId, 
 			+ '<option>Patrol</option>'
 			+ '<option>Indoors</option>'
 			+ '<option>In vehicle</option>'
-		+ '</select><div class="btn-short inline remove-unit">✖</div><div class="btn-short inline copy-unit">C</div></div>'
+		+ '</select><div class="btn-short inline remove-unit" title="Remove unit">✖</div>'
+		+ '<div class="btn-short inline copy-unit" title="Copy unit">C</div></div>'
 	);
 
 	this.switchMode = function (mode) {
@@ -731,7 +732,8 @@ var VehicleItem = function (id, classname, kit, mode) {
 			+ '<option>Patrol</option>'
 			+ '<option>Hold</option>'
 			+ '<option>Advance</option>'
-		+ '</select><div class="btn-short inline remove-unit">✖</div><div class="btn-short inline copy-unit">C</div></div>'
+		+ '</select><div class="btn-short inline remove-unit" title="Remove vehicle">✖</div>'
+        + '<div class="btn-short inline copy-unit" title="Copy vehicle">C</div></div>'
 	);
 
 	this.switchMode = function (mode) {
