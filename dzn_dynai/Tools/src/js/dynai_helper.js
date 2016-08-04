@@ -1,4 +1,4 @@
-﻿var Zone;
+var Zone;
 
 var GROUP_MODE_MAPPING = {
 	"combatMode": [
@@ -407,7 +407,7 @@ var GroupEdit = function () {
 	};
 	this.display = function () {
 		this.$form = '<div class="group-popup">'
-                     		+ '<div class="xpopup-header"><span style="padding: 2px 20px">Group</span></div>'
+                     		+ '<div class="xpopup-header"><span style="padding: 2px 20px">Edit Group</span></div>'
                      		+ '<div class="unit-wrapper"></div>'
                      		+ '<div class="xpopup-wrapper">'
                      		+ '<select class="input-select group-unit-type">'
@@ -453,36 +453,23 @@ var GroupEdit = function () {
     		//	{ "type":"unit", "classname":"", "kit":"", "behavior":"", "setting":["vehicleId", "vehicleRole"]/["restricted"] }
     		//	{ "type":""vehicle", "classname":"", "kit":"", "type":""}
     		// ]
-    		if (this.group.units.length == 0) { console.log('EDIT GROUP: No units to populate'); return; };
-    		console.log('EDIT GROUP: Populating form');
-    		for (var i=0; i < this.group.units.length; i++) {
-    			var unitSettings = this.group.units[i];
+		if (this.group.units.length == 0) { console.log('EDIT GROUP: No units to populate'); return; };
+		console.log('EDIT GROUP: Populating form');
+		for (var i=0; i < this.group.units.length; i++) {
+			var unitSettings = this.group.units[i];
 
-
-				var unit;
-    			if (unitSettings.type == "Infantry")  {
-					unit = new UnitItem(
-						unitSettings.id
-						, unitSettings.classname
-						, unitSettings.kit
-						, unitSettings.mode
-						, unitSettings.restrictedHouses
-						, unitSettings.vehicleId
-						, unitSettings.vehicleRole
-					);
-    			} else {
-					unit = new VehicleItem(
-						unitSettings.id
-						, unitSettings.classname
-						, unitSettings.kit
-						, unitSettings.mode
-					);
-    			};
-
-    			this.editedUnits.push(unit);
-                this.editedUnitsCounter++;
-    		};
+			this.createEntity(
+				unitSettings.type
+				, unitSettings.id
+				, unitSettings.classname
+				, unitSettings.kit
+				, unitSettings.mode
+				, unitSettings.restrictedHouses
+				, unitSettings.vehicleId
+				, unitSettings.vehicleRole
+			);
     	};
+    };
 	this.save = function () {
 		var unitsList = [];
 		for (var i=0; i<this.editedUnits.length; i++) {
@@ -535,6 +522,31 @@ var GroupEdit = function () {
 		this.editedUnits.push(unit);
 		this.editedUnitsCounter++;
 	};
+
+	this.createEntity = function (type, id, classname, kit, mode, restrictedHouses, vehicleId, vehicleRole) {
+		var unit;
+		if (type == "Infantry")  {
+			unit = new UnitItem(
+				id
+				, classname
+				, kit
+				, mode
+				, restrictedHouses
+				, vehicleId
+				, vehicleRole
+			);
+		} else {
+			unit = new VehicleItem(
+				id
+				, classname
+				, kit
+				, mode
+			);
+		};
+
+		this.editedUnits.push(unit);
+		this.editedUnitsCounter++;
+	};
 };
 
 var UnitItem = function (id, classname, kit, mode, restrictedHouses, vehicleId, vehicleRole) {
@@ -559,7 +571,7 @@ var UnitItem = function (id, classname, kit, mode, restrictedHouses, vehicleId, 
 			+ '<option>Patrol</option>'
 			+ '<option>Indoors</option>'
 			+ '<option>In vehicle</option>'
-		+ '</select><div class="btn-short inline remove-unit">✖</div></div>'
+		+ '</select><div class="btn-short inline remove-unit">✖</div><div class="btn-short inline copy-unit">C</div></div>'
 	);
 
 	this.switchMode = function (mode) {
@@ -613,6 +625,7 @@ var UnitItem = function (id, classname, kit, mode, restrictedHouses, vehicleId, 
                 break;
 		};
 	};
+
 	this.getSettings = function () {
 		this.classname =  $('#group-units-' + this.id).find('.unit-classname').val();
 		this.kit = $('#group-units-' + this.id).find('.unit-kit').val();
@@ -645,6 +658,20 @@ var UnitItem = function (id, classname, kit, mode, restrictedHouses, vehicleId, 
 			,"vehicleRole": this.vehicleRole
 		}
 	};
+
+	this.copyUnit = function () {
+		this.getSettings();
+		GroupEditWindow.createEntity(
+			this.type
+			, GroupEditWindow.editedUnitsCounter
+			, this.classname
+			, this.kit
+			, this.mode
+			, this.restrictedHouses
+			, this.vehicleId
+			, this.vehicleRole
+		);
+	};
 	this.hide = function () {
 		$('#group-units-' + this.id).find('select').off();
 		$('#group-units-' + this.id).find('.btn-short').off();
@@ -665,12 +692,18 @@ var UnitItem = function (id, classname, kit, mode, restrictedHouses, vehicleId, 
 			unit.switchMode();
 		});
 
-		$('#group-units-' + this.id).find('.btn-short').on('click', function () {
+		$('#group-units-' + this.id).find('.remove-unit').on('click', function () {
 			console.log('Unit removed');
 			var id = parseInt( $(this).parent().attr('unitId') );
 			var unit = GroupEditWindow.getUnitById(id);
 			unit.hide();
 			GroupEditWindow.removeUnit(id);
+		});
+
+		$('#group-units-' + this.id).find('.copy-unit').on('click', function () {
+			console.log('Unit copied');
+			var id = parseInt( $(this).parent().attr('unitId') );
+			var unit = GroupEditWindow.getUnitById(id).copyUnit();
 		});
 	};
 	this.init = function () {
@@ -698,7 +731,7 @@ var VehicleItem = function (id, classname, kit, mode) {
 			+ '<option>Patrol</option>'
 			+ '<option>Hold</option>'
 			+ '<option>Advance</option>'
-		+ '</select><div class="btn-short inline remove-unit">✖</div></div>'
+		+ '</select><div class="btn-short inline remove-unit">✖</div><div class="btn-short inline copy-unit">C</div></div>'
 	);
 
 	this.switchMode = function (mode) {
@@ -725,6 +758,16 @@ var VehicleItem = function (id, classname, kit, mode) {
 			,"mode": this.mode
 		}
 	};
+	this.copyUnit = function () {
+    		this.getSettings();
+    		GroupEditWindow.createEntity(
+    			this.type
+    			, GroupEditWindow.editedUnitsCounter
+    			, this.classname
+    			, this.kit
+    			, this.mode
+    		);
+    	};
 	this.hide = function () {
 		$('#group-units-' + this.id).find('select').off();
 		$('#group-units-' + this.id).find('.btn-short').off();
@@ -744,12 +787,18 @@ var VehicleItem = function (id, classname, kit, mode) {
 			veh.switchMode();
 		});
 
-		$('#group-units-' + this.id).find('.btn-short').on('click', function () {
+		$('#group-units-' + this.id).find('.remove-unit').on('click', function () {
 			console.log('Vehicle removed');
 			var id = parseInt( $(this).parent().attr('unitId') );
 			var veh = GroupEditWindow.getUnitById(id);
 			veh.hide();
 			GroupEditWindow.removeUnit(id);
+		});
+
+		$('#group-units-' + this.id).find('.copy-unit').on('click', function () {
+			console.log('Vehicle copied');
+			var id = parseInt( $(this).parent().attr('unitId') );
+			var unit = GroupEditWindow.getUnitById(id).copyUnit();
 		});
 	};
 	this.init = function () {
