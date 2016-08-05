@@ -32,15 +32,6 @@ var GROUP_MODE_MAPPING = {
 		[ "Stealth", 'STEALTH' ]
 	]
 };
-var ZoneCounter = 0;
-
-var GroupList = [];
-
-function generateGUID() {
-	var guid = "";
-	for (var i = 0; i < 6; i++) {guid = guid + Math.round(Math.random(9)*10);}
-	return (ZoneCounter + "-" + guid)
-};
 
 /*
  *	Zone
@@ -48,7 +39,7 @@ function generateGUID() {
  */
 var ZoneItem = function () {
 	this.name =  "Zone";
-	this.id = "zone-" + generateGUID();
+	this.id = "zone";
 	this.active = true;
 	this.side = "west";
 	this.groupMode = {
@@ -143,6 +134,16 @@ var ZoneItem = function () {
 		this.groups.push(group);
 		this.groupCounter = this.groupCounter + 1;
 	};
+	this.removeGroup = function (id) {
+		var index = -1;
+  		for (var i=0; i<this.groups.length; i++) {
+  			if (this.groups[i].id == id) {
+  				index = i;
+  			};
+  		};
+
+  		this.groups.splice(index, 1);
+	};
 	this.getGroupById = function (id) {
     	var grp = {};
     	for (var i = 0; i < Zone.groups.length; i++) {
@@ -151,6 +152,36 @@ var ZoneItem = function () {
     	return grp
     };
 
+	this.reset = function () {
+		this.name = "Zone";
+		$(this.$form).find('.zone-name').val(this.name);
+		this.active = false;
+		this.toggleActive();
+		this.setSide("west");
+
+		var groupModeSettings = [
+       	    [".zone-speedmode", "SAFE"]
+       	    , [".zone-formationmode", "WEDGE"]
+       	    , [".zone-combatmode", "YELLOW"]
+       	    , [".zone-behaviourmode", "LIMITED"]
+       	];
+		this.groupMode = {
+       		"behaviourMode": 	groupModeSettings[0][1]
+       		,"formationMode": 	groupModeSettings[1][1]
+       		,"combatMode": 	    groupModeSettings[2][1]
+	        ,"speedMode":   	groupModeSettings[3][1]
+       	};
+		groupModeSettings.forEach(function(item) {
+			$( this.$form ).find( item[0] ).val( item[1] );
+		});
+
+		while (this.groups.length > 0) {
+			this.groups[0].remove();
+		};
+
+		this.groupCounter =	0;
+		this.draw();
+	};
 	this.initEvents = function () {
 		$(this.$form).find('.zone-name-input').on('blur', function () {
 			Zone.setName();
@@ -290,7 +321,7 @@ var ZoneItem = function () {
  */
 var Group = function (id) {
 	this.desc = "Empty group";
-	this.id = "group-" + id + '-' + generateGUID();
+	this.id = id;
 	this.number = 1;
 	this.units = [];
 	this.$form = $(
@@ -306,7 +337,7 @@ var Group = function (id) {
 		$(this.$form).find('.group-remove-btn').off();
 		$(this.$form).find('.group-edit-btn').off();
 		$(this.$form).find('input').off();
-		(Zone.groups).splice( GroupList.indexOf(this), 1 );
+		Zone.removeGroup(this.id);
 		(this.$form).remove();
 	};
 
@@ -379,7 +410,6 @@ var Group = function (id) {
 		this.initEvents();
 		this.setCount();
 		this.setDesc();
-		GroupList.push(this);
 	};
 
 	this.init();
@@ -511,8 +541,8 @@ var GroupEdit = function () {
 		};
 
 		this.editedUnitsCounter--;
-
 	};
+
 	this.addEntity = function () {
 		var type = $('.group-unit-type').val();
 
@@ -958,6 +988,10 @@ $(document).ready(function () {
 
 	$('.btn-get-sqf').on('click', function () {
 		ExportPopup.display();
+	});
+
+	$('.btn-clear-form').on('click', function () {
+		Zone.reset();
 	});
 	
 	$( '.splash' ).css('display', 'none');
