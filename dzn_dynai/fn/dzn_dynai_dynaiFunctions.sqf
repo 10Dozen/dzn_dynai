@@ -1,14 +1,27 @@
 // #define DEBUG			true
 #define DEBUG		false
 
+dzn_fnc_dynai_initValidate = {
+	if (isNil "dzn_dynai_core") exitWith { 
+		["dzn_dynai :: There is no 'dzn_dynai_core' placed on the map!"] call BIS_fnc_error; 
+		false
+	};
+	
+	if ((synchronizedObjects dzn_dynai_core) isEqualTo []) exitWith { 
+		["dzn_dynai :: There is no DynAI zones synchronized with 'dzn_dynai_core' object!"] call BIS_fnc_error;
+		false
+	};
+	
+	true
+};
+
 dzn_fnc_dynai_initZones = {
 	/*
 		Initialize zones and start their's create sequence
 		INPUT: 		NULL
 		OUTPUT: 	NULL
 	*/
-	if (isNil "dzn_dynai_core") exitWith { ["dzn_dynai :: There is no 'dzn_dynai_core' placed on the map!"] call BIS_fnc_error; };
-	if ((synchronizedObjects dzn_dynai_core) isEqualTo []) exitWith { ["dzn_dynai :: There is no DynAI zones synchronized with 'dzn_dynai_core' object!"] call BIS_fnc_error; };
+	if !(call dzn_fnc_dynai_initValidate) exitWith {};
 	
 	private ["_modules", "_zone", "_properties","_syncObj", "_locations","_synced", "_wps", "_keypoints","_locationBuildings","_locBuildings","_locPos"];
 	
@@ -86,6 +99,7 @@ dzn_fnc_dynai_initZones = {
 };
 
 dzn_fnc_dynai_getZoneVar = {
+	
 	/*
 	 * @Property = [@Zone, @PropertyName] call dzn_fnc_dynai_getZoneVar
 	 * Returns value of the given property.
@@ -123,6 +137,7 @@ dzn_fnc_dynai_getZoneVar = {
 };
 
 dzn_fnc_dynai_getGroupVar = {
+	
 	/*
 	 * @Property = [@Group, @PropertyName] call dzn_fnc_dynai_getGroupVar
 	 * Returns value of the given property.
@@ -164,7 +179,10 @@ dzn_fnc_dynai_startZones = {
 		Start all zones
 		INPUT: 	NULL
 		OUTPUT: 	NULL
-	*/	
+	*/
+	
+	if !(call dzn_fnc_dynai_initValidate) exitWith {};
+	
 	private ["_modules"];
 	
 	_modules = synchronizedObjects dzn_dynai_core;
