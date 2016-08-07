@@ -15,7 +15,7 @@ _veh = _this select 1;
 moveOut _unit;
 unassignVehicle _unit;
 
-switch (_this select 2) do {
+switch (toLower(_this select 2)) do {
 	case "driver": {
 		_unit assignAsDriver _veh;
 		_unit moveInDriver _veh;

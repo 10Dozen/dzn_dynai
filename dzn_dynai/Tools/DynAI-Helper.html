@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="us">
+	<head>
+		<meta charset="utf-8">
+		<title>dzn Dynai Helper</title>
+		
+		<link rel="stylesheet" href="src/css/dynai_helper.css">
+		<script src="src/js/jquery.min.js"></script>
+		<script src="src/js/dynai_helper.js"></script>
+	</head>
+	<body>
+	
+		<div class="header">
+			<div class="header-title">
+				<span>dzn</span> Dynai Helper
+			</div>
+			<div class="header-status">
+				<button class="header-btn btn-get-sqf">Get SQF</button>
+				<button class="header-btn btn-show-defaults">Defaults</button>
+				<button class="header-btn btn-clear-form">Clear</button>
+			</div>
+		</div>
+		
+		
+		<div class='defaults-wrapper'></div>
+		<div class='edit-group-wrapper'></div>
+		<div class='splash'></div>
+		
+		
+		<!--
+		<div class="group-popup">			
+			<div class="xpopup-header"><span style="padding: 2px 20px">Group</span></div>
+			<div class="unit-wrapper"></div>
+			<div class="xpopup-wrapper">				
+				<select class='input-select group-unit-type'>
+					<option>Unit</option>
+					<option>Vehicle</option>
+				</select>
+				<div class='btn-short inline group-add-unit'>+</div>
+				<span  style="float:right"><div class='btn inline group-save'>✓ OK</div><div class='btn inline group-cancel'>CANCEL</div></span>
+			</div>
+			
+		</div>
+		-->
+		<!--
+		<div class="group-popup">
+			<div class="xpopup-header"><span style="padding: 2px 20px">Group</span></div>
+			<div class="unit-wrapper">			
+				<div class="xpopup-wrapper group-unit">				
+					<div class="col-4">Unit #1</div>
+					<div class="col-4"><input placeholder="Classname"/></div>
+					<div class="col-4"><input placeholder="Kit name"/></div>
+					<select class='input-select'>
+						<option>Patrol</option>
+						<option>Indoors</option>
+						<option>In vehicle</option>
+					</select>
+					<div class="btn-short inline">✖</div>				
+				</div>
+				
+				<div class="xpopup-wrapper group-unit">				
+					<div class="col-4">Unit #2</div>
+					<div class="col-4"><input placeholder="Classname"/></div>
+					<div class="col-4"><input placeholder="Kit name"/></div>
+					<select class='input-select'>
+						<option>Patrol</option>
+						<option>Indoors</option>
+						<option>In vehicle</option>
+					</select>
+					<div class="btn-short inline">✖</div>					
+					<div class="unit-additional-fields">
+						<br />
+						<div class="col-4"></div>
+						<div class="col-4"><input placeholder="Restricted houses"/></div>
+					</div>
+				</div>
+				
+				<div class="xpopup-wrapper group-unit">				
+					<div class="col-4">Unit #3</div>
+					<div class="col-4"><input placeholder="Classname"/></div>
+					<div class="col-4"><input placeholder="Kit name"/></div>
+					<select class='input-select'>
+						<option>Patrol</option>
+						<option>Indoors</option>
+						<option>In vehicle</option>
+					</select>
+					<div class="btn-short inline">✖</div>
+					<div class="unit-invehicle-fields">
+						<br />
+						<div class="col-4"></div>
+						<div class="col-4"><input placeholder="Vehicle Id"/></div>
+						<select class='input-select'>
+							<option>Driver</option>
+							<option>Gunner</option>
+							<option>Commander</option>
+							<option>Cargo</option>
+						</select>
+					</div>
+				</div>
+				
+				<div class="xpopup-wrapper group-unit">				
+					<div class="col-4">Vehicle #4</div>
+					<div class="col-4"><input placeholder="Classname"/></div>
+					<div class="col-4"><input placeholder="Kit name"/></div>
+					<select class='input-select'>
+						<option>Patrol</option>
+						<option>Hold</option>
+					</select>
+					<div class="btn-short inline">✖</div>				
+				</div>
+			</div>
+			<div class="xpopup-wrapper">				
+				<select class='input-select'>
+					<option>Unit</option>
+					<option>Vehicle</option>
+				</select>
+				<div class='btn-short inline'>+</div>
+				<span  style="float:right"><div class='btn inline defaults-save'>✓ OK</div><div class='btn inline defaults-cancel'>CANCEL</div></span>
+			</div>
+		</div>
+		-->
+		
+		
+		<div id="zones-wrapper">	
+		<!--
+		<div class="zone-item" id="zone-0">				
+				<div class="zone-form">
+					<ul>
+						<li>
+							<div class="col-4">Name</div>							
+							<div class="col-4"><input></input></div>
+						</li>
+						<li>
+							<div class="col-4">Side</div>
+							<div class="col-2">
+								<div class="side-switch-on">WEST</div>
+								<div class="side-switch-off">EAST</div>
+								<div class="side-switch-off">INDEP</div>
+								<div class="side-switch-off">CIV</div>
+							</div>
+						</li>
+						<li>
+							<div class="col-4">Activate on start</div>
+							<div class="col-4">
+								<div class="toggle-switch"><span class="toggle-switch-on">|</span><label>YES</label></div>
+							</div>
+						</li>
+						<br /><hr /><br /><div> Group Behaviour </div>
+						<li>
+							<div class="col-4-inline">Speed mode</div>
+							<div class="col-4-inline">
+								<select>
+									<option>Limited</option>
+									<option>Normal</option>
+									<option>Full</option>
+								</select>
+							</div>
+							<div class="col-4-inline">Formation</div>
+							<div class="col-4-inline">
+								<select>
+									<option>Wedge</option>
+									<option>Column</option>
+									<option>Staggered Column</option>
+									<option>Echelon Left</option>
+									<option>Echelon Right</option>
+									<option>Vee</option>
+									<option>Line</option>
+									<option>Delta</option>
+									<option>Column (compact)</option>
+								</select>
+							</div>
+						</li>
+						<li>
+							<div class="col-4-inline">Combat mode</div>
+							<div class="col-4-inline">
+								<select>
+									<option>Blue</option>
+									<option>Green</option>
+									<option>White</option>
+									<option>Yellow</option>
+									<option>Red</option>
+								</select>
+							</div>
+							<div class="col-4-inline">Behaviour</div>
+							<div class="col-4-inline">
+								<select>
+									<option>Careless</option>
+									<option>Safe</option>
+									<option>Aware</option>
+									<option>Combat</option>
+									<option>Stealth</option>
+								</select>
+							</div>
+						</li>
+						<br /><hr /><br /><div class="col-4"> Group Templates </div>						
+						<li>
+							<br />
+							
+							
+							
+							
+							
+							
+							<div class="group-wrapper">
+							
+								<div class="group-0-332441 group-item" style="border: 1px solid black;">
+									<div class="group-left">
+										#1
+									</div>
+									<div class="group-right">
+										<div class="col-2 col-inline-block">Number of groups</div>							
+										<div class="col-2 col-inline-block"><input></input></div>
+										<div class="btn">Configure</div>
+									</div>
+									<div class="group-right-desc">
+										<b>Patrol of the Garmsar</b><br />
+										Infanty (Patrol), Infanty (Patrol), 1x Vehicle (Patrol), Infantry (In Vehicle)
+										Infanty (Patrol), Infanty (Patrol), 1x Vehicle (Patrol), Infantry (In Vehicle)
+										Infanty (Patrol), Infanty (Patrol), 1x Vehicle (Patrol), Infantry (In Vehicle)
+									</div>							
+								</div>	
+
+								<div class="group-0-332441 group-item" style="border: 1px solid black;">
+									<div class="group-left">
+										#1
+									</div>
+									<div class="group-right">
+										<div class="col-2 col-inline-block">Number of groups</div>							
+										<div class="col-2 col-inline-block"><input></input></div>
+										<div class="btn">Configure</div>
+									</div>
+									<div class="group-right-desc">
+										<b>Patrol of the Garmsar</b><br />
+										Infanty (Patrol), Infanty (Patrol), 1x Vehicle (Patrol), Infantry (In Vehicle)
+										Infanty (Patrol), Infanty (Patrol), 1x Vehicle (Patrol), Infantry (In Vehicle)
+										Infanty (Patrol), Infanty (Patrol), 1x Vehicle (Patrol), Infantry (In Vehicle)
+									</div>							
+								</div>	
+							</div>
+							
+							
+							
+							
+							
+							
+							
+							
+							<div class="btn">Add Group</div>
+						</li>						
+					</ul>
+				</div>
+			</div>	
+				-->
+		</div>
+		
+	</body>
+</html>

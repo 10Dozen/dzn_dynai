@@ -25,7 +25,7 @@ A "Platoon Leader"			TO "kit_sec_pl"	 KIT
 /*
  *	UK 4-4
  */
- A "1'1 Section Leader"			TO "kit_sec_sl"	 KIT
+, A "1'1 Section Leader"			TO "kit_sec_sl"	 KIT
 , A "1'2 Section Leader"			TO "kit_sec_sl"	 KIT
 , A "1'3 Section Leader"			TO "kit_sec_sl"	 KIT
 , A "BLUE - 2IC"				TO "kit_sec_ftl"	 KIT

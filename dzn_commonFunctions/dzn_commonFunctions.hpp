@@ -27,6 +27,7 @@ class CfgFunctions
 			class getMissionParametes {};
 			class getValueByKey {};			
 			class setValueByKey {};	
+			class setVars {};
 
 			class assignInVehicle {};
 			class createVehicle  {};
