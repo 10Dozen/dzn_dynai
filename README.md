@@ -25,6 +25,7 @@ If zone is not active by default and *before* it activated you can use some func
   - <tt>[dzn_zone1, [200,200,0], 90] call dzn_fnc_dynai_moveZone</tt> - moves and rotates given zone. Parameters: gamelogic object, pos3d, direction (optional);
   - <tt>dzn_zone1 call dzn_fnc_dynai_getZoneKeypoints</tt> - return all zone's keypoints (array of pos3ds);
   - <tt>[dzn_zone1, [ [200,200,0], [300,300,0], [400,400,0] ]] call dzn_fnc_dynai_setZoneKeypoints</tt> - set new keypoints for zone. Parameters: zone's GameLogic, array of pos3ds
+
 <br />Get more at [API wiki](https://github.com/10Dozen/dzn_dynai/wiki/API).
 
 ### Vehicle Behavior
