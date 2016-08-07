@@ -1,5 +1,5 @@
 // **************************
-// 	DZN DYNAI v0.5
+// 	DZN DYNAI v0.6
 //
 //	Initialized when:
 //	{ !isNil "dzn_dynai_initialized" }
