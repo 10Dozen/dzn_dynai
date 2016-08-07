@@ -34,7 +34,7 @@ Use different second value in vehicle array ( ["B_G_Offroad_01_armed_F","Vehicle
 
 ### Groups Reaction
 If <tt>dzn_dynai_allowGroupResponse</tt> variable is <tt>true</tt> - group reactions will be used. That means, that group which met many hostiles or suffer great loses will call for help. Then nearby allied group will move to caller position to provide support.
-You can add Editor-placed units/groups to Group Reaction system (check [wili for details](https://github.com/10Dozen/dzn_dynai/wiki/Groups-Reaction)).
+You can add Editor-placed units/groups to Group Reaction system (check [wiki for details](https://github.com/10Dozen/dzn_dynai/wiki/Groups-Reaction)).
 
 ### Caching
 If <tt>dzn_dynai_enableCaching</tt> variable is <tt>true</tt> - units, which are placed far from the players become 'cached' and will not affect on performance. Cached unit will be hidden, excluded from simulation (no physics, no AI, no graphics). Anyway group leaders will not be cached, so AI groups will patrol areas (using single unit per group) and when players come closer - rest of the squad will be uncached at the current position of group leader.
