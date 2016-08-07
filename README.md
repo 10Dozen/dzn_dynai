@@ -28,8 +28,8 @@ If zone is not active by default and *before* it activated you can use some func
 
 ### Vehicle Behavior
 Use different second value in vehicle array ( ["B_G_Offroad_01_armed_F","Vehicle",""] ) to get different behavior:
-<br /><tt>Vehicle</tt>, <tt>Vehicle Patrol</tt> - vehicle group will patrol throu keypoints or random points in cycle.
-<br /><tt>Vehicle Advance</tt> - vehicle group will move throu keypoints or several random points and will hold on the last checkpoint.
+<br /><tt>Vehicle</tt>, <tt>Vehicle Patrol</tt> - vehicle group will patrol through keypoints or random points in cycle.
+<br /><tt>Vehicle Advance</tt> - vehicle group will move through keypoints or several random points and will hold on the last checkpoint.
 <br /><tt>Vehicle Hold</tt> - vehicle group will hold therir position (static, AAA, defensive position)
 
 ### Groups Reaction
