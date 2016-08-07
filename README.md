@@ -3,7 +3,7 @@
 Dynamic AI with Blackjack and Whores
 
 #### Dependencies (included)
-- dzn_commonFunctions v0.65(https://github.com/10Dozen/dzn_commonFunctions)
+- dzn_commonFunctions v0.65 (https://github.com/10Dozen/dzn_commonFunctions)
 - dzn_gear v2.2 (https://github.com/10Dozen/dzn_gear)
 
 ## How To
