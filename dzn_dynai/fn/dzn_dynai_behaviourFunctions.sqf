@@ -7,7 +7,7 @@ dzn_fnc_dynai_isIndoorGroup = {
 	
 	_r = false;
 	{
-		if (_x getVariable "dzn_dynai_isIndoor") exitWith { _r = true };
+		if (_x getVariable "dzn_dynai_isIndoor") exitWith { _r = true; };
 	} forEach (units _this);
 	
 	_r
@@ -20,7 +20,7 @@ dzn_fnc_dynai_unassignReinforcement = {
 	
 	_pos = _requester getVariable "dzn_dynai_requestingReinfocementPosition";
 	
-	waitUntil { (leader _provider) distance2d _pos < 300 };
+	waitUntil { (leader _provider) distance2D _pos < 300 };
 	_timer = time + 60*5; // 5 minutes
 	
 	waitUntil { time > _timer };
@@ -53,7 +53,7 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 	_isCritical = false;
 	{
 		_tgt = _x select 1;
-		if (_tgt isKindOf "CAManBase" && {_tgt distance (leader _this) < 400}) then {
+		if (_tgt isKindOf "CAManBase" && {_tgt distance (leader _this) < 500}) then {
 			_targetList pushBack _x;
 			if ( (count _targetList > 4) || (count _targetList > floor(count units _this * 1.5)) ) exitWith { 
 				_isCritical = true;
@@ -62,7 +62,7 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 		} else {
 			if ( 
 				!((crew _tgt) isEqualTo []) 
-				&& { _tgt call dzn_fnc_dynai_isVehicleDanger && _tgt distance (leader _this) < 900	} 
+				&& { _tgt call dzn_fnc_dynai_isVehicleDanger && _tgt distance (leader _this) < 1000	}
 			) exitWith { 
 				_isCritical = true;
 				_this setVariable ["dzn_dynai_requestingReinfocementPosition", getPosASL _tgt];
@@ -71,45 +71,6 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 	} forEach _targets;
 
 	_isCritical
-	
-	// As gunner
-	/* 
-	[
-		1,
-		B Alpha 1-1:1 (10Dozen) (BIS_fnc_objectVar_obj1),
-		CIV,
-		"B_G_Offroad_01_armed_F",
-		[6080.66,5647.97],-4.65]
-	]
-
-	// unit and car
-	[
-		[
-			1,
-			46514100# 163963: offroad_01_hmg_f.p3d,
-			CIV,
-			"B_G_Offroad_01_armed_F",
-			[6080.66,5647.97],-1.378]
-		// ,[
-			1,
-			BIS_fnc_objectVar_obj1,
-			WEST,
-			"B_Soldier_F",
-			[6071.09,5642.01],-0.981
-		]
-	// ]
-
-	// Driver
-	// [
-		1,
-		B Alpha 1-1:1 (10Dozen) (BIS_fnc_objectVar_obj1),
-		WEST,
-		"B_G_Offroad_01_armed_F",
-		[6080.66,5647.97],
-		-1
-	]
-	
-	*/
 };
 
 dzn_fnc_dynai_initResponseGroup = {
@@ -350,7 +311,7 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 			_this call dzn_fnc_dynai_addGroupAsSupporter;
 		};
 	}; 
-	_group setVariable ["dzn_dynai_units", units _group];	
+	_group setVariable ["dzn_dynai_units", units _group];
 	
 	// Get nearest zone	
 	private _pos = getPosATL ((units _group) select 0);
@@ -365,8 +326,7 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 	
 	private _nearestZoneGroups = [_nearestZone, "groups"] call dzn_fnc_dynai_getZoneVar;
 	_nearestZoneGroups pushBack _group;
-	
-	
+
 	_group call dzn_fnc_dynai_initResponseGroup;
 };
 
