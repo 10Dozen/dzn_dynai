@@ -17,13 +17,13 @@ dzn_dynai_allowVehicleHoldBehavior		= true;
 	if dzn_dynai_UseSimpleSkill == true:  dzn_dynai_overallSkillLevel is used do determine skill.
 	If false -- complex skills are used. More info about complex skills https://community.bistudio.com/wiki/AI_Sub-skills
 */
-dzn_dynai_UseSimpleSkill			=	true;
+dzn_dynai_UseSimpleSkill			=	false;
 dzn_dynai_overallSkillLevel			=	0.95;
 dzn_dynai_complexSkillLevel			=	[
-	["general", 0.5]
-	,["aimingAccuracy", 0.5],["aimingShake", 0.5],["aimingSpeed", 0.5],["reloadSpeed", 0.5]
-	,["spotDistance", 0.5],["spotTime", 0.5],["commanding", 0.5]
-	,["endurance", 0.5],["courage", 0.5]
+	["general", 0.95]
+	,["aimingAccuracy", 0.8],["aimingShake", 0.8],["aimingSpeed", 0.9],["reloadSpeed", 0.7]
+	,["spotDistance", 0.9],["spotTime", 0.95],["commanding", 0.95]
+	,["endurance", 0.95],["courage", 0.6]
 ];
 
 // Building list

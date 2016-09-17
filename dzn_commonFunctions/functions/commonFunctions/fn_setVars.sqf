@@ -1,5 +1,5 @@
 /*
- * [ @Object, [ [@Varname, @Value, @Global], ... ], @Override ] call dzn_fnc_setVars dzn_fnc_setVars
+ * [ @Object, [ [@Varname, @Value, @Global], ... ], @Override ] call dzn_fnc_setVars
  * Apply a list of variables to given object. If @Override = false - doesn't update existing variables.
  * 
  * INPUT:
