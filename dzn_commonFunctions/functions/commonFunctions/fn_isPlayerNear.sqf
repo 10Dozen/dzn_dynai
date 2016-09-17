@@ -4,17 +4,19 @@
 
 	0 (OBJECT or ARRAY) - position to check, object or pos3d
 	1 (NUMBER) Optional - distance from position to check, 1000 by default
+	2 (STRING) - mode ("bool" and "player")
 	OUTPUT: Boolean (true - if there are players near)
 */
 
-private["_pos","_dist","_r"];
+params["_pos", ["_dist", 1000], ["_mode", "bool"]];
 
 _pos = if (typename (_this select 0) == "ARRAY") then { _this select 0 } else { getPosASL (_this select 0) };
-_dist = if (isNil {_this select 1}) then { 1000 } else { _this select 1 };
 
-_r = false;
+private _r = if (toLower(_mode) == "bool") then { false } else { objNull };
 {
-	if ((getPosASL _x) distance _pos <= _dist) exitWith { _r = true };
+	if ((getPosASL _x) distance _pos <= _dist) exitWith {
+		_r = if (toLower(_mode) == "bool") then { true } else { _x };
+	};
 } forEach (call BIS_fnc_listPlayers);
 
 _r
