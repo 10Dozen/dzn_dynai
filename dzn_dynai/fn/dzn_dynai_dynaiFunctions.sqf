@@ -27,10 +27,25 @@ dzn_fnc_dynai_getMultiplier = {
 			case 6: { 1.50 };
 			case 7: { 1.75 };
 			case 8: { 2.00 };
+			case 9: { selectRandom [1.00, 1.25, 1.50] };
+			case 10: { selectRandom [1.00, 1.25, 1.50, 1.75, 2.00] };
 		};
 	};
 	
 	dzn_dynai_amountMultiplier
+};
+
+dzn_fnc_dynai_initZoneKeypoints = {
+	// @Keypoints = @Zone call dzn_fnc_dynai_initZoneKeypoints;	
+	private _keypoints = [];
+	{
+		if (_x isKindOf "LocationArea_F") then {
+			private _pos = getPosASL _x;
+			_keypoints pushBack [_pos select 0, _pos select 1, 0];
+		};
+	} forEach (synchronizedObjects _x);
+	
+	_keypoints
 };
 
 dzn_fnc_dynai_initZones = {
@@ -59,7 +74,6 @@ dzn_fnc_dynai_initZones = {
 		if (_properties isEqualTo []) exitWith { ["dzn_dynai :: There is no properties for DynAI zone '%1'", str(_x)] call BIS_fnc_error; };
 
 		_locations = [];
-		_keypoints = "randomize";
 		
 		// Get triggers and convert them into locations
 		_syncObj = synchronizedObjects _x;
@@ -90,15 +104,12 @@ dzn_fnc_dynai_initZones = {
 			};
 		} forEach _locations;
 
-		_wps = waypoints _x;
-		if (count _wps > 1) then {
-			_keypoints = [];
-			_wps = _wps - [_wps select 0];
-			{
-				_keypoints = _keypoints + [ waypointPosition _x ];					
-			} forEach _wps;
+		// Keypoints
+		_keypoints = _x call dzn_fnc_dynai_initZoneKeypoints;
+		if (_keypoints isEqualTo []) then {			
+			_keypoints = "randomize";
 		};
-		
+				
 		sleep 1;
 		
 		_zone setPosASL _locPos;
