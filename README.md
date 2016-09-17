@@ -1,10 +1,10 @@
 # dzn_dynai
-##### Version: 0.6
+##### Version: 0.7
 Dynamic AI with Blackjack and Whores
 
 #### Dependencies (included)
-- dzn_commonFunctions v0.65 (https://github.com/10Dozen/dzn_commonFunctions)
-- dzn_gear v2.2 (https://github.com/10Dozen/dzn_gear)
+- dzn_commonFunctions v0.7 (https://github.com/10Dozen/dzn_commonFunctions)
+- dzn_gear v2.3 (https://github.com/10Dozen/dzn_gear)
 
 ## How To
 * [Step By Step](https://github.com/10Dozen/dzn_dynai#step-by-step)

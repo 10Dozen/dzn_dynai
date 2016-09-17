@@ -4,10 +4,12 @@ dzn_dynai_afterInitTimeout			=	3;
 
 // Group Responses
 dzn_dynai_allowGroupResponse			= true;
-dzn_dynai_responseGroupsPerRequest		= 1;
-dzn_dynai_forceGroupResponse			= false; // Include all mission units to participate in Group Responses
-dzn_dynai_responseDistance			= 800; // meters
-dzn_dynai_responseCheckTimer			= 30; // seconds
+dzn_dynai_responseGroupsPerRequest		= 2;		// Number of groups that can reinforce each request
+dzn_dynai_forceGroupResponse			= false; 	// Include all mission units to participate in Group Responses
+dzn_dynai_responseDistance			= 800; 	// meters
+dzn_dynai_responseCheckTimer			= 20; 	// seconds
+dzn_dynai_makeZoneAlertOnRequest		= true;	// Change behavior of all groups once Reinforcement Request was sent
+
 
 // Behavior settings
 dzn_dynai_allowVehicleHoldBehavior		= true;
@@ -22,8 +24,8 @@ dzn_dynai_overallSkillLevel			=	0.95;
 dzn_dynai_complexSkillLevel			=	[
 	["general", 0.95]
 	,["aimingAccuracy", 0.8],["aimingShake", 0.8],["aimingSpeed", 0.9],["reloadSpeed", 0.7]
-	,["spotDistance", 0.9],["spotTime", 0.95],["commanding", 0.95]
-	,["endurance", 0.95],["courage", 0.6]
+	,["spotDistance", 1],["spotTime", 1],["commanding", 1]
+	,["endurance", 0.95],["courage", 0.7]
 ];
 
 // Building list

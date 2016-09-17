@@ -16,17 +16,21 @@ dzn_fnc_dynai_initValidate = {
 };
 
 dzn_fnc_dynai_getMultiplier = {
-	switch ("par_dynai_amountMultiplier" call BIS_fnc_getParamValue) do {
-		case 0: { 1.00 };
-		case 1: { 0.25 };
-		case 2: { 0.50 };
-		case 3: { 0.75 };
-		case 4: { 1.00 };
-		case 5: { 1.25 };
-		case 6: { 1.50 };
-		case 7: { 1.75 };
-		case 8: { 2.00 };
-	}	
+	if (isNil "dzn_dynai_amountMultiplier") then {
+		dzn_dynai_amountMultiplier = switch ("par_dynai_amountMultiplier" call BIS_fnc_getParamValue) do {
+			case 0: { 1.00 };
+			case 1: { 0.25 };
+			case 2: { 0.50 };
+			case 3: { 0.75 };
+			case 4: { 1.00 };
+			case 5: { 1.25 };
+			case 6: { 1.50 };
+			case 7: { 1.75 };
+			case 8: { 2.00 };
+		};
+	};
+	
+	dzn_dynai_amountMultiplier
 };
 
 dzn_fnc_dynai_initZones = {
@@ -419,10 +423,13 @@ dzn_fnc_dynai_createZone = {
 		};
 	} forEach _refUnits;
 	
-	
+	if (dzn_dynai_allowGroupResponse && dzn_dynai_makeZoneAlertOnRequest) then {
+		(call compile _name) setVariable ["dzn_dynai_isZoneAlerted", false];
+	};
 	
 	(call compile _name) setVariable ["dzn_dynai_groups", _groups];	
-	dzn_dynai_activatedZones pushBack (call compile _name);	
+	dzn_dynai_activatedZones pushBack (call compile _name);
+	
 	if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: Zone Created", _name]; };
 };
 

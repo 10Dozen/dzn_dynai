@@ -1,11 +1,16 @@
 // #define	DEBUG		true
 #define	DEBUG		false
+#define	GRPRES_DEBUG	false
+
+#define	CRIT_LOSES_LEVEL		floor (count (_this getVariable "dzn_dynai_units") * 0.66)
+#define 	CRIT_HOSTILE_AMOUNT	floor(count units _this * 1) 
+#define	CRIT_INF_DISTANCE		500
+#define	CRIT_VEH_DISTANCE		1200
+
 
 dzn_fnc_dynai_isIndoorGroup = {
 	// @Boolean = @Grp call dzn_fnc_dynai_isIndoorGroup
-	private ["_r"];
-	
-	_r = false;
+	private _r = false;
 	{
 		if (_x getVariable "dzn_dynai_isIndoor") exitWith { _r = true; };
 	} forEach (units _this);
@@ -44,8 +49,6 @@ dzn_fnc_dynai_updateActiveGroups = {
 
 dzn_fnc_dynai_callReinfocements = {
 	// @Zone spawn dzn_fnc_dynai_getSquadsForRequestsReinforcement
-	private["_grps"];
-	
 	{
 		if (
 			(_x call dzn_fnc_dynai_checkSquadCriticalLosses
@@ -92,7 +95,11 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 	} forEach _grps;
 	
 	{
-		if (_readyToProvide isEqualTo []) exitWith {};
+		if (_readyToProvide isEqualTo []) exitWith {
+			if (DEBUG) then {
+				player sideChat format ["dzn_dynai :: GrpRsp :: No Providers available!"];
+			};
+		};
 	
 		_pos = _x getVariable "dzn_dynai_requestingReinfocementPosition";
 		_side = side _x;
@@ -102,10 +109,15 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 		] call BIS_fnc_conditionalSelect;
 		
 		if !(_nearestGroups isEqualTo []) then {
-			_grp = _nearestGroups call BIS_fnc_selectRandom;
-			_readyToProvide = _readyToProvide - [_grp];
+			for "_i" from 1 to dzn_dynai_responseGroupsPerRequest do {
+				_grp = selectRandom _nearestGroups;
+				
+				if !(isNil "_grp") then {
+					_readyToProvide = _readyToProvide - [_grp];
+					[_grp, _x] spawn dzn_fnc_dynai_provideReinforcement;
+				};
+			};
 			
-			[_grp, _x] spawn dzn_fnc_dynai_provideReinforcement
 		};
 	} forEach _requesters;
 };
@@ -120,8 +132,11 @@ dzn_fnc_dynai_checkSquadCriticalLosses = {
 	_r = false;
 	_leader = leader _this;
 	
-	if ({alive _x} count (units group (_leader)) < round (count (_this getVariable "dzn_dynai_units") / 2)) then {
+	if ( {alive _x} count (units group (_leader)) <= CRIT_LOSES_LEVEL ) then {
 		_r = true;
+		if (GRPRES_DEBUG) then {
+			player sideChat format ["Dynai: GrpRsp: %1 cause critical loses (%2)", _this, {alive _x} count (units group (_leader))];
+		};
 	};
 
 	_r
@@ -130,28 +145,38 @@ dzn_fnc_dynai_checkSquadCriticalLosses = {
 dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 	// @Boolean = @SquadGrp call dzn_fnc_dynai_checkSquadKnownEnemiesCritical
 	
-	_targets = (leader _this) targetsQuery [objNull, sideEnemy, "", [], 0];
-	_targetList = [];
-	_isCritical = false;
+	private _targets = (leader _this) targetsQuery [objNull, sideEnemy, "", [], 0];
+	private _targetList = [];
+	private _isCritical = false;
 	{
-		_tgt = _x select 1;
-		if (_tgt isKindOf "CAManBase" && {_tgt distance (leader _this) < 500}) then {
+		private _tgt = _x select 1;
+		private _tgtSide = _x select 2;
+		if (_tgt isKindOf "CAManBase" && (_tgtSide != side _this) && {_tgt distance (leader _this) < CRIT_INF_DISTANCE}) then {
 			_targetList pushBack _x;
-			if ( (count _targetList > 4) || (count _targetList > floor(count units _this * 1.5)) ) exitWith { 
+			if ( (count _targetList > 4) || (count _targetList >= CRIT_HOSTILE_AMOUNT) ) exitWith { 
 				_isCritical = true;
 				_this setVariable ["dzn_dynai_requestingReinfocementPosition", getPosASL _tgt];
 			};
 		} else {
 			if ( 
 				!((crew _tgt) isEqualTo []) 
-				&& { _tgt call dzn_fnc_dynai_isVehicleDanger && _tgt distance (leader _this) < 1000 }
+				&& { _tgt call dzn_fnc_dynai_isVehicleDanger && _tgt distance (leader _this) < CRIT_VEH_DISTANCE }
 			) exitWith { 
 				_isCritical = true;
 				_this setVariable ["dzn_dynai_requestingReinfocementPosition", getPosASL _tgt];
 			};
 		};
 	} forEach _targets;
-
+	
+	if (_isCritical && GRPRES_DEBUG) then {
+		player sideChat format ["Dynai: GrpRsp: %1 met superior enemy (Cap %2 vs Actual %3) ; %4"
+			, _this
+			, CRIT_HOSTILE_AMOUNT
+			, count _targetList
+			, _targetList
+		];
+	};
+	
 	_isCritical
 };
 
@@ -181,7 +206,7 @@ dzn_fnc_dynai_isRequestingReinforcement = {
 	
 	if (
 		_this getVariable ["dzn_dynai_isRequestingReinfocement", false]
-		&& isNull (_this getVariable ["dzn_dynai_reinforcementProvider", grpNull])
+		&& (count (_this getVariable ["dzn_dynai_reinforcementProviders", []]) < dzn_dynai_responseGroupsPerRequest)
 	) then {
 		true
 	} else {
@@ -202,6 +227,10 @@ dzn_fnc_dynai_requestReinforcement = {
 	// If no pos assigned yet - means that no targets known, so position is position of squad
 	if ((_this getVariable "dzn_dynai_requestingReinfocementPosition") isEqualTo [0,0,0]) then {
 		_this setVariable ["dzn_dynai_requestingReinfocementPosition", getPosASL (leader _this)];
+	};
+	
+	if (dzn_dynai_makeZoneAlertOnRequest) then {
+		(_this getVariable "dzn_dynai_homeZone") call dzn_fnc_dynai_alertZone;		
 	};	
 	
 	if (DEBUG) then {
@@ -216,18 +245,25 @@ dzn_fnc_dynai_requestReinforcement = {
 dzn_fnc_dynai_provideReinforcement = {
 	// [@SquadGrp, @Requster] spawn dzn_fnc_dynai_provideReinforcement
 	params ["_squad","_requester"];
-	private ["_wp"];
 	
 	_squad setVariable ["dzn_dynai_isProvidingReinforcement", true];
 	_squad setVariable ["dzn_dynai_reinforcementRequester", _requester];
-	_requester setVariable ["dzn_dynai_reinforcementProvider", _squad];
+	
+	private _listOfProviders = _requester getVariable "dzn_dynai_reinforcementProviders";
+	_listOfProviders pushBack _squad;
+	
+	/*
+	_requester setVariable ["dzn_dynai_reinforcementProviders", 
+		(_requester getVariable "dzn_dynai_reinforcementProviders") pushBack _squad	
+	];
+	*/
 	// _requester setVariable ["dzn_dynai_isRequestingReinfocement", false];
 	
 	// Give new way
 	while {(count (waypoints _squad)) > 0} do {
 		deleteWaypoint ((waypoints _squad) select 0);
 	};	
-	_wp = _squad addWaypoint [
+	private _wp = _squad addWaypoint [
 		_requester getVariable "dzn_dynai_requestingReinfocementPosition"
 		, 200
 	];
@@ -285,7 +321,7 @@ dzn_fnc_dynai_initResponseGroup = {
 		["dzn_dynai_isRequestingReinfocement", false]
 		,["dzn_dynai_isProvidingReinforcement", false]
 		,["dzn_dynai_requestingReinfocementPosition", [0,0,0]]
-		,["dzn_dynai_reinforcementProvider", "grpNull"]		
+		,["dzn_dynai_reinforcementProviders", []]		
 		,["dzn_dynai_reinforcementRequester", "grpNull"]
 		,["dzn_dynai_canSupport", true]
 	], false] call dzn_fnc_setVars;	
@@ -469,7 +505,7 @@ dzn_fnc_dynai_moveGroups = {
 
 dzn_fnc_dynai_setGroupsMode = {
 	/*
-	 * [@Zone, @Template or [@Behaviour, @Combat, @Speed]] call dzn_fnc_dynai_setGroupsMode
+	 * [@Zone, @Template or [@Behaviour, @Combat, @Speed], @SleepTimePerGroup(opt)] spawn dzn_fnc_dynai_setGroupsMode
 	 * Changes group behavior settings.
 	 *      Templates:
 	 *      "SAFE" - move with limited speed, weapons down. Do not wait for enemy;
@@ -479,13 +515,14 @@ dzn_fnc_dynai_setGroupsMode = {
 	 * INPUT:
 	 * 0: OBJECT - Zone's Game Logic
 	 * 1: STRING or ARRAY - Name of the template or array of [Behavior, Combat mode, Speed mode]
+	 * 2: NUMBER - max sleep time between changing mode of each group
 	 * OUTPUT: NULL
 	 * 
 	 * EXAMPLES:
 	 *      
 	 */
 	 
-	params["_zone", "_template"];
+	params["_zone", "_template", ["_sleep", 0]];
 	
 	private _grps = [_zone, "groups"] call dzn_fnc_dynai_getZoneVar;
 	private _modeSettings = [];
@@ -500,10 +537,25 @@ dzn_fnc_dynai_setGroupsMode = {
 	};
 	
 	{
+		sleep (random _sleep);
+		
 		_x setBehaviour (_modeSettings select 0);
 		_x setCombatMode (_modeSettings select 1);
 		_x setSpeedMode (_modeSettings select 2);
 	} forEach _grps;
 	
 	true
+};
+
+// 0.7: Zone Alert
+dzn_fnc_dynai_alertZone = {
+	// @Zone call dzn_fnc_dynai_alertZone
+	params["_zone"];
+	
+	if (_zone getVariable ["dzn_dynai_isZoneAlerted", false]) exitWith {};
+	
+	_this setVariable ["dzn_dynai_isZoneAlerted", true];
+	[_this, [], "RANDOM SAD"] call dzn_fnc_dynai_moveGroups;
+	[_this, "COMBAT", 5] spawn dzn_fnc_dynai_setGroupsMode;
+	
 };

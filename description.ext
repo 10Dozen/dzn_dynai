@@ -2,7 +2,8 @@
 #include "dzn_commonFunctions\ui\baseDialogs.hpp"
 #include "dzn_commonFunctions\ui\copyPasteDialog.hpp"
 #include "dzn_commonFunctions\ui\dynamicDialog.hpp"
-enableDebugConsole = 2;
+
+
 
 class Params
 {  
