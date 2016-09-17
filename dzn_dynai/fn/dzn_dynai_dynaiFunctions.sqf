@@ -382,8 +382,10 @@ dzn_fnc_dynai_createZone = {
 					// Vehicle type
 					switch (true) do {						
 						case (["Vehicle Hold", _assigned, false] call BIS_fnc_inString): {
-							_grp setVariable ["dzn_dynai_wpSet", true];
+							_grp setVariable ["dzn_dynai_wpSet", true];							
 							(waypoints _grp select 0) setWaypointType "Sentry";
+							
+							_unit setVariable ["dzn_dynai_vehicleHold", true];
 							if (dzn_dynai_allowVehicleHoldBehavior) then { 								
 								[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
 							};

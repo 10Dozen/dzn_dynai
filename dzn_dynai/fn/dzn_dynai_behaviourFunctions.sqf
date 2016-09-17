@@ -1,6 +1,6 @@
 // #define	DEBUG		true
 #define	DEBUG		false
-#define	GRPRES_DEBUG	false
+#define	GRPRES_DEBUG	true
 
 #define	CRIT_LOSES_LEVEL		floor (count (_this getVariable "dzn_dynai_units") * 0.66)
 #define 	CRIT_HOSTILE_AMOUNT	floor(count units _this * 1) 
@@ -160,7 +160,11 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 		} else {
 			if ( 
 				!((crew _tgt) isEqualTo []) 
-				&& { _tgt call dzn_fnc_dynai_isVehicleDanger && _tgt distance (leader _this) < CRIT_VEH_DISTANCE }
+				&& { 
+					_tgtSide != side _this
+					&&  _tgt call dzn_fnc_dynai_isVehicleDanger 
+					&& _tgt distance (leader _this) < CRIT_VEH_DISTANCE				
+				}
 			) exitWith { 
 				_isCritical = true;
 				_this setVariable ["dzn_dynai_requestingReinfocementPosition", getPosASL _tgt];
@@ -444,7 +448,7 @@ dzn_fnc_dynai_processUnitBehaviours = {
 // 0.51: Group Controls
 dzn_fnc_dynai_moveGroups = {
 	/*
-	 * [@Zone, [@Pos3d], @Type] call dzn_fnc_dynai_moveGroups
+	 * [@Zone, [@Pos3d], @Type, @IncludeStatic] call dzn_fnc_dynai_moveGroups
 	 * Moves all zone's groups through given list of positions (or random points).
 	 *      Type:
 	 *      "PATROL" - random order of poses; 
@@ -455,13 +459,14 @@ dzn_fnc_dynai_moveGroups = {
 	 * 0: OBJECT - Zone's GameLogic
 	 * 1: ARRAY - List of Pos3d. If [] - random points inside zone's area will be used.
 	 * 2: STRING - Type of the movement ("PATROL","SAD","RANDOM SAD")
+	 * 3: BOOL - include static units (Indoors or Vehicle Hold)
 	 * OUTPUT: NULL
 	 * 
 	 * EXAMPLES:
 	 *      
 	 */
 	 
-	params["_zone","_poses",["_type", "PATROL"]];
+	params["_zone","_poses",["_type", "PATROL"], ["_includeStatics", false]];
 	
 	private _grps = [_zone, "groups"] call dzn_fnc_dynai_getZoneVar;
 	if (_poses isEqualTo []) then {
@@ -476,28 +481,31 @@ dzn_fnc_dynai_moveGroups = {
 	
 	{
 		private _squad = _x;
-		while {(count (waypoints _squad)) > 0} do {
-			deleteWaypoint ((waypoints _squad) select 0);
-		};
 		
-		switch (toUpper(_type)) do {
-			case "SAD": {
-				{
-					private _wp = _squad addWaypoint [_x, 200];
-					ASSIGN_WP("SAD","RED","AWARE","NORMAL")
-				} forEach _poses;
+		if (_includeStatics || { !(_squad call dzn_fnc_dynai_checkIsStatic) }) then {		
+			while {(count (waypoints _squad)) > 0} do {
+				deleteWaypoint ((waypoints _squad) select 0);
 			};
-			case "RANDOM SAD": {
-				private _randomPoses = _poses call BIS_fnc_arrayShuffle;
-				{
-					private _wp = _squad addWaypoint [_x, 200];
-					ASSIGN_WP("SAD","RED","AWARE","NORMAL")
-				} forEach _randomPoses;				
+			
+			switch (toUpper(_type)) do {
+				case "SAD": {
+					{
+						private _wp = _squad addWaypoint [_x, 200];
+						ASSIGN_WP("SAD","RED","AWARE","NORMAL")
+					} forEach _poses;
+				};
+				case "RANDOM SAD": {
+					private _randomPoses = _poses call BIS_fnc_arrayShuffle;
+					{
+						private _wp = _squad addWaypoint [_x, 200];
+						ASSIGN_WP("SAD","RED","AWARE","NORMAL")
+					} forEach _randomPoses;				
+				};
+				default {
+					[_squad, _poses call BIS_fnc_arrayShuffle] call dzn_fnc_createPathFromKeypoints;				
+				};
 			};
-			default {
-				[_squad, _poses call BIS_fnc_arrayShuffle] call dzn_fnc_createPathFromKeypoints;				
-			};
-		};	
+		};
 	} forEach _grps;
 	
 	true
@@ -505,7 +513,7 @@ dzn_fnc_dynai_moveGroups = {
 
 dzn_fnc_dynai_setGroupsMode = {
 	/*
-	 * [@Zone, @Template or [@Behaviour, @Combat, @Speed], @SleepTimePerGroup(opt)] spawn dzn_fnc_dynai_setGroupsMode
+	 * [@Zone, @Template or [@Behaviour, @Combat, @Speed], @IncludeStatic, @SleepTimePerGroup(opt)] spawn dzn_fnc_dynai_setGroupsMode
 	 * Changes group behavior settings.
 	 *      Templates:
 	 *      "SAFE" - move with limited speed, weapons down. Do not wait for enemy;
@@ -515,14 +523,15 @@ dzn_fnc_dynai_setGroupsMode = {
 	 * INPUT:
 	 * 0: OBJECT - Zone's Game Logic
 	 * 1: STRING or ARRAY - Name of the template or array of [Behavior, Combat mode, Speed mode]
-	 * 2: NUMBER - max sleep time between changing mode of each group
+	 * 2: BOOL - include static units (Indoors or Vehicle Hold)
+	 * 3: NUMBER - max sleep time between changing mode of each group
 	 * OUTPUT: NULL
 	 * 
 	 * EXAMPLES:
 	 *      
 	 */
 	 
-	params["_zone", "_template", ["_sleep", 0]];
+	params["_zone", "_template", ["_includeStatics", false], ["_sleep", 0]];
 	
 	private _grps = [_zone, "groups"] call dzn_fnc_dynai_getZoneVar;
 	private _modeSettings = [];
@@ -537,15 +546,33 @@ dzn_fnc_dynai_setGroupsMode = {
 	};
 	
 	{
-		sleep (random _sleep);
-		
-		_x setBehaviour (_modeSettings select 0);
-		_x setCombatMode (_modeSettings select 1);
-		_x setSpeedMode (_modeSettings select 2);
+		if (_includeStatics || { !(_squad call dzn_fnc_dynai_checkIsStatic) }) then {
+			sleep (random _sleep);
+			
+			_x setBehaviour (_modeSettings select 0);
+			_x setCombatMode (_modeSettings select 1);
+			_x setSpeedMode (_modeSettings select 2);
+		};
 	} forEach _grps;
 	
 	true
 };
+
+dzn_fnc_dynai_checkIsStatic = {
+	// @IsStatic = @Grp call dzn_fnc_dynai_checkIsStatic	
+	private _isStatic = false;
+	{
+		if (
+			(vehicle _x) getVariable ["dzn_dynai_isIndoor", false]
+			|| (vehicle _x) getVariable ["dzn_dynai_vehicleHold", false]
+		) exitWith {
+			_isStatic = true;
+		};
+	} forEach (units _this);
+	
+	_isStatic
+};
+
 
 // 0.7: Zone Alert
 dzn_fnc_dynai_alertZone = {
@@ -556,6 +583,6 @@ dzn_fnc_dynai_alertZone = {
 	
 	_this setVariable ["dzn_dynai_isZoneAlerted", true];
 	[_this, [], "RANDOM SAD"] call dzn_fnc_dynai_moveGroups;
-	[_this, "COMBAT", 5] spawn dzn_fnc_dynai_setGroupsMode;
+	[_this, "COMBAT", false, 5] spawn dzn_fnc_dynai_setGroupsMode;
 	
 };
