@@ -26,6 +26,7 @@ dzn_fnc_gear_editMode_showKeybinding = {
 		<br />4 or G -- Goggles
 		<br />5 or V -- Vest
 		<br />6 or B -- Backpack
+		<br />7 or P -- Pistol and magazine
 		<br /><t %1>CTRL + I</t><t %2> - copy unit/player identity settings</t>
 		"
 		, "align='left' color='#3793F0' size='0.9'"
@@ -53,6 +54,7 @@ dzn_fnc_gear_editMode_onKeyPress = {
 	
 	
 	switch _key do {
+		// See for key codes -- https://community.bistudio.com/wiki/DIK_KeyCodes
 		// F1 button
 		case 59: {
 			SET_KEYDOWN;
@@ -80,6 +82,16 @@ dzn_fnc_gear_editMode_onKeyPress = {
 			if (_ctrl) then {		"CTRL" call dzn_fnc_gear_editMode_getCurrentPrimaryWeapon;};
 			if (_shift) then {		"SHIFT" call dzn_fnc_gear_editMode_getCurrentPrimaryWeapon;};
 			if !(_ctrl || _alt || _shift) then {	"NONE" call dzn_fnc_gear_editMode_getCurrentPrimaryWeapon;};
+			SET_HANDLED;
+		};
+		// 7 or P button - Pistol
+		case 8;
+		case 25: {
+			SET_KEYDOWN;
+			if (_alt) then {			"ALT" call dzn_fnc_gear_editMode_getCurrentHandgun;};
+			if (_ctrl) then {		"CTRL" call dzn_fnc_gear_editMode_getCurrentHandgun;};
+			if (_shift) then {		"SHIFT" call dzn_fnc_gear_editMode_getCurrentHandgun;};
+			if !(_ctrl || _alt || _shift) then {	"NONE" call dzn_fnc_gear_editMode_getCurrentHandgun;};
 			SET_HANDLED;
 		};
 		// 2 or U button - Uniform
@@ -252,6 +264,60 @@ dzn_fnc_gear_editMode_getCurrentPrimaryWeapon = {
 	false
 };
 
+dzn_fnc_gear_editMode_getCurrentHandgun = {
+	// @Option call dzn_fnc_gear_editMode_getCurrentHandgun
+	// @Option :: 	"NONE", "ALT", "CTRL", "SHIFT"
+	private["_ownerUnit","_owner","_weapon","_magazine","_getWeaponAndMags"];
+
+	_getWeaponAndMags = {
+		if (count dzn_gear_editMode_handgunList > 1) then {
+			[ dzn_gear_editMode_handgunList , dzn_gear_editMode_handgunMagList];
+		} else {
+			[ dzn_gear_editMode_handgunList select 0 , dzn_gear_editMode_handgunMagList select 0];
+		};
+	};
+
+	_ownerUnit = if (isNull cursorTarget) then { player } else { driver cursorTarget };
+	_owner = if (isNull cursorTarget) then { "Player" } else { "Unit" };
+	_weapon = handgunWeapon _ownerUnit;
+	_magazine = (handgunMagazine _ownerUnit) select 0;
+
+	switch (_this) do {
+		case "SHIFT": {
+			// Set
+			hint parseText format ["<t color='#6090EE' size='1.1'>Handgun of %1 is COPIED</t><br />%2", _owner,_weapon];
+			dzn_gear_editMode_handgunList = [_weapon];
+			copyToClipboard str(call _getPrimaryWeaponAndMags);
+		};
+		case "CTRL": {
+			// Add
+			hint parseText format ["<t color='#6090EE' size='1.1'>Handgun of %1 is ADDED to list</t><br />%2", _owner, _weapon];
+			if !(_weapon in dzn_gear_editMode_handgunList) then {
+				dzn_gear_editMode_handgunList pushBack _weapon;
+				dzn_gear_editMode_handgunMagList pushBack _magazine;
+			};
+			copyToClipboard str(call _getPrimaryWeaponAndMags);
+		};
+		case "ALT": {
+			// Clear
+			hint parseText "<t color='#6090EE' size='1.1'>Handgun is CLEARED</t>";
+			dzn_gear_editMode_handgunList = [];
+			dzn_gear_editMode_handgunMagList = [];
+		};
+		default {
+			// Show
+			hint parseText format [
+				"<t color='#6090EE' size='1.1'>Handung list:</t><br /><t size='0.6' color='#FFD000'>Weapon</t><br />%1<br /><t size='0.6' color='#FFD000'>Magazines</t><br />%2"
+				, [((call _getWeaponAndMags) select 0), true] call dzn_fnc_gear_editMode_showAsStructuredList
+				, [((call _getWeaponAndMags) select 1), true]call dzn_fnc_gear_editMode_showAsStructuredList
+			];
+			copyToClipboard str(call _getWeaponAndMags);
+		};
+	};
+
+	false
+};
+
 dzn_fnc_gear_editMode_getCurrentIdentity = {	
 	private _owner = if (!isNull cursorTarget && {cursorTarget isKindOf "CAManBase"}) then { "Unit" } else { "Player" };
 
@@ -399,11 +465,12 @@ dzn_fnc_convertInventoryToLine = {
 dzn_fnc_gear_editMode_showGearTotals = {
 	// @ArrayOfTotals call dzn_fnc_gear_editMode_showGearTotals	
 	private["_inv","_items","_stringsToShow","_itemName","_headlineItems","_haedlines"];
+	
 	_inv = player call BIS_fnc_saveInventory;
 	_items = (_inv call dzn_fnc_convertInventoryToLine) call BIS_fnc_consolidateArray;
 	
 	_stringsToShow = [
-		parseText "<t color='#FFD000' size='1.4' align='center'>GEAR TOTALS</t>"
+		parseText "<t color='#FFD000' size='1' align='center'>GEAR TOTALS</t>"
 	];
 	
 	_headlineItems = [
@@ -430,37 +497,35 @@ dzn_fnc_gear_editMode_showGearTotals = {
 	
 	{
 		_stringsToShow = _stringsToShow + [
-			lineBreak
-			,parseText (format [
-				"<t color='%2' align='left'>%1</t><t align='right' size='0.9'>%3</t>"
-				, _x select 0
+			parseText (format [
+				"<t color='%2' align='left' size='0.8'>%1</t><t align='right' size='0.8'>%3</t>"
+				, toUpper(_x select 0)
 				, _x select 1
 				, if ((_headlineItems select _forEachIndex) == "") then {"-no-"} else {_headlineItems select _forEachIndex}
 			])		
-		];
+		];		
 	} forEach _haedlines;	
-	_stringsToShow pushBack lineBreak;
+	
 	{
 		
 		_itemName = (_x select 0) call dzn_fnc_gear_editMode_getItemName;
 		if !(_itemName in _headlineItems) then {
 			_stringsToShow = _stringsToShow + [
-				lineBreak
-				, if (_x select 1 > 1) then {
-					parseText (format ["<t color='#AAAAAA' align='left' size='0.9'>x%1 %2</t>", _x select 1, _itemName])
+				if (_x select 1 > 1) then {
+					parseText (format ["<t color='#AAAAAA' align='left' size='0.8'>x%1 %2</t>", _x select 1, _itemName])
 				} else {
-					parseText (format ["<t color='#AAAAAA' align='left' size='0.9'>%1</t>", _itemName])
+					parseText (format ["<t color='#AAAAAA' align='left' size='0.8'>%1</t>", _itemName])
 				}
-			];		
+			];
 		};		
-	} forEach _items;	
-	
-	
-	hintSilent (composeText _stringsToShow);
+	} forEach _items;
+
 	[
-		composeText _stringsToShow
-		, dzn_gear_editMode_notif_pos, nil, 7, 0, 0
-	] spawn BIS_fnc_textTiles;
+		_stringsToShow
+		, [35.2,-7.1, 35, 0.03]
+		, dzn_gear_GearTotalsBG_RGBA
+		, dzn_gear_editMode_arsenalTimerPause
+	] call dzn_fnc_ShowMessage;
 };
 
 
@@ -533,6 +598,9 @@ dzn_gear_editMode_keyIsDown = false;
 dzn_gear_editMode_primaryWeaponList = SET_GEAR_IF_EMPTY(primaryWeapon);
 dzn_gear_editMode_primaryWeaponMagList = primaryWeaponMagazine player;
 
+dzn_gear_editMode_handgunList  = SET_GEAR_IF_EMPTY(handgunWeapon);
+dzn_gear_editMode_handgunMagList = handgunMagazine player;
+
 dzn_gear_editMode_uniformList = SET_GEAR_IF_EMPTY(uniform);
 dzn_gear_editMode_headgearList = SET_GEAR_IF_EMPTY(headgear);
 dzn_gear_editMode_gogglesList = SET_GEAR_IF_EMPTY(goggles);
@@ -541,7 +609,13 @@ dzn_gear_editMode_backpackList = SET_GEAR_IF_EMPTY(backpack);
 
 dzn_gear_editMode_arsenalOpened = false;
 dzn_gear_editMode_arsenalTimerPause = 5;
-dzn_gear_editMode_arsenalTimer = time + dzn_gear_editMode_arsenalTimerPause;
+dzn_gear_editMode_canCheck_ArsenalDiff = true;
+dzn_gear_editMode_waitToCheck_ArsenalDiff = {
+	dzn_gear_editMode_canCheck_ArsenalDiff = false;
+	sleep dzn_gear_editMode_arsenalTimerPause;
+	dzn_gear_editMode_canCheck_ArsenalDiff = true;
+};
+
 dzn_gear_editMode_notif_pos = [.9,0,.4,1];
 dzn_gear_editMode_lastInventory = [];
 
@@ -559,8 +633,7 @@ hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
 ];
 
 [] spawn {
-	
-
+	if (!dzn_gear_ShowGearTotals || isNil "dzn_fnc_ShowMessage") exitWith {};
 
 	waitUntil { isNull ( uinamespace getvariable "RSCDisplayArsenal") };
 	["arsenal", "onEachFrame", {
@@ -569,9 +642,9 @@ hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
 			if !(dzn_gear_editMode_arsenalOpened) then {
 				dzn_gear_editMode_arsenalOpened = true;
 			};
-			
-			if (time > dzn_gear_editMode_arsenalTimer) then {
-				dzn_gear_editMode_arsenalTimer = time + dzn_gear_editMode_arsenalTimerPause;				
+
+			if (dzn_gear_editMode_canCheck_ArsenalDiff) then {
+				[] spawn dzn_gear_editMode_waitToCheck_ArsenalDiff;
 				call dzn_fnc_gear_editMode_showGearTotals;
 			};
 		} else {

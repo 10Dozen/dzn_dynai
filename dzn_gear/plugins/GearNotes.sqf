@@ -3,9 +3,6 @@
 //
 // ******************** Settings **********************
 
-dzn_gear_gnotes_showMyGear = true;
-dzn_gear_gnotes_showSquadGear = true;
-
 /*
 	RIFLEMAN
 	- AK-74 (PK-A, DTK-1)

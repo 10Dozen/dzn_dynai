@@ -1,7 +1,7 @@
 /*
 	[ 
 		@Text(lines in array, can be raw (not parsed) StructuredText)
-		, @Position_Template or [@Array of XY, @DialogWidth(Chars)]
+		, @Position_Template or [@X, @Y, @DialogWidth(Chars), @LineHeight]
 		, @BG_Color
 		, @Duration or @ConditionToHide
 	] call dzn_fnc_ShowMessage
@@ -38,6 +38,7 @@ if (typename _paramText == "STRING") then { _paramText = [_paramText]; };
 private _displayOffsetX = 1;
 private _displayOffsetY = 1;
 private _displayCharWidth = 74;
+private _displayLineHeight = 0.04;
 if (typename _paramType == "STRING") then {
 	_dialogPosition = switch (toUpper(_paramType)) do {		
 		case "TOP": {
@@ -65,6 +66,7 @@ if (typename _paramType == "STRING") then {
 	_displayOffsetX = _paramType select 0;
 	_displayOffsetY = _paramType select 1;
 	_displayCharWidth = _paramType select 2;
+	_displayLineHeight = _paramType select 3;
 };
 private _displayWidth = ceil( ( 38.5 / 74 ) * _displayCharWidth );
 
@@ -79,7 +81,7 @@ switch (typename _paramTC) do {
 #define GUI_GRID_X		(0)
 #define GUI_GRID_Y		(0)
 #define GUI_GRID_W		(0.025)
-#define GUI_GRID_H		(0.04)
+#define GUI_GRID_H		(_displayLineHeight)
 #define GUI_GRID_WAbs		(1)
 #define GUI_GRID_HAbs		(1)
 
