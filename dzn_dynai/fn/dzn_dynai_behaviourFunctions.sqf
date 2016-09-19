@@ -1,9 +1,9 @@
 // #define	DEBUG		true
 #define	DEBUG		false
-#define	GRPRES_DEBUG	true
+#define	GRPRES_DEBUG	false
 
 #define	CRIT_LOSES_LEVEL		floor (count (_this getVariable "dzn_dynai_units") * 0.66)
-#define 	CRIT_HOSTILE_AMOUNT	floor(count units _this * 1) 
+#define 	CRIT_HOSTILE_AMOUNT	(count units _this * 1)
 #define	CRIT_INF_DISTANCE		500
 #define	CRIT_VEH_DISTANCE		1200
 
@@ -145,15 +145,30 @@ dzn_fnc_dynai_checkSquadCriticalLosses = {
 dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 	// @Boolean = @SquadGrp call dzn_fnc_dynai_checkSquadKnownEnemiesCritical
 	
+	private _isArmedVehicleGroupMultiplier = if (_this call dzn_fnc_dynai_isArmedVehicleGroup) then {
+		4
+	} else { 
+		1
+	};
+	
 	private _targets = (leader _this) targetsQuery [objNull, sideEnemy, "", [], 0];
 	private _targetList = [];
 	private _isCritical = false;
 	{
 		private _tgt = _x select 1;
 		private _tgtSide = _x select 2;
-		if (_tgt isKindOf "CAManBase" && (_tgtSide != side _this) && {_tgt distance (leader _this) < CRIT_INF_DISTANCE}) then {
+		private _tgtKnowledge = _x select 0;
+		if (
+			_tgt isKindOf "CAManBase" 
+			&& (_tgtKnowledge > 0.2) 
+			&& (_tgtSide != side _this) 
+			&& {_tgt distance (leader _this) < CRIT_INF_DISTANCE}
+		) then {
 			_targetList pushBack _x;
-			if ( (count _targetList > 4) || (count _targetList >= CRIT_HOSTILE_AMOUNT) ) exitWith { 
+			if ( 
+				(count _targetList > 4) 
+				|| (count _targetList >= floor(CRIT_HOSTILE_AMOUNT * _isArmedVehicleGroupMultiplier)) 
+			) exitWith { 
 				_isCritical = true;
 				_this setVariable ["dzn_dynai_requestingReinfocementPosition", getPosASL _tgt];
 			};
@@ -191,7 +206,8 @@ dzn_fnc_dynai_isVehicleDanger = {
 	if (_this isKindOf "CAManBase") exitWith { false };
 	_type = getText(configFile >> "cfgVehicles" >> typeOf _this >> "vehicleClass");
 	_weaps = (getArray(configFile >> "cfgVehicles" >> typeOf _this >> "weapons"))
-		+ (getArray(configFile >> "cfgVehicles" >> typeOf _this >> "Turrets" >> "MainTurret" >> "weapons"));
+		+ (getArray(configFile >> "cfgVehicles" >> typeOf _this >> "Turrets" >> "MainTurret" >> "weapons"))
+		+ weapons _this;
 
 	_fWeaps = [];
 	{
@@ -202,6 +218,23 @@ dzn_fnc_dynai_isVehicleDanger = {
 	
 	if (_type in  ["Armored"] || !(_fWeaps isEqualTo [])) then { true } else { false };
 };
+
+
+dzn_fnc_dynai_isArmedVehicleGroup = {
+	// @Bool = @Grp call dzn_fnc_dynai_isArmedVehicleGroup
+	// Return True if group has armed vehicles
+	private _grp = _this;
+	private _result = false;
+	private _groupVehicles = _grp getVariable "dzn_dynai_vehicles";
+	
+	if (_groupVehicles isEqualTo []) exitWith { _result };
+	
+	{
+		if (_x call dzn_fnc_dynai_isVehicleDanger) exitWith { _result = true; };
+	} forEach _groupVehicles;
+	
+	_result
+};	
 
 dzn_fnc_dynai_isRequestingReinforcement = {
 	// @SquadGrp call dzn_fnc_dynai_isRequestingReinforcement
@@ -471,9 +504,15 @@ dzn_fnc_dynai_moveGroups = {
 	private _grps = [_zone, "groups"] call dzn_fnc_dynai_getZoneVar;
 	if (_poses isEqualTo []) then {
 		// If no poses given -- new random waypoint will be created inside current zone
-		private _zoneLocations = [_zone, "area"] call dzn_fnc_dynai_getZoneVar;
-		for "_i" from 0 to 5 do {
-			_poses pushBack (_zoneLocations call dzn_fnc_getRandomPointInZone);
+		if (typename ([_zone, "keypoints"] call dzn_fnc_dynai_getZoneVar) == "STRING") then {
+			// Zone has no keypoints - select random poses inside the zone
+			private _zoneLocations = [_zone, "area"] call dzn_fnc_dynai_getZoneVar;
+			for "_i" from 0 to 5 do {
+				_poses pushBack (_zoneLocations call dzn_fnc_getRandomPointInZone);
+			};
+		} else {
+			// Zone has keypoints - select random keypoints
+			_poses = [_zone, "keypoints"] call dzn_fnc_dynai_getZoneVar;
 		};
 	};
 	
@@ -546,7 +585,7 @@ dzn_fnc_dynai_setGroupsMode = {
 	};
 	
 	{
-		if (_includeStatics || { !(_squad call dzn_fnc_dynai_checkIsStatic) }) then {
+		if (_includeStatics || { !(_x call dzn_fnc_dynai_checkIsStatic) }) then {
 			sleep (random _sleep);
 			
 			_x setBehaviour (_modeSettings select 0);
@@ -565,6 +604,7 @@ dzn_fnc_dynai_checkIsStatic = {
 		if (
 			(vehicle _x) getVariable ["dzn_dynai_isIndoor", false]
 			|| (vehicle _x) getVariable ["dzn_dynai_vehicleHold", false]
+			|| (vehicle _x) getVariable ["dzn_dynai_isStatic", false]
 		) exitWith {
 			_isStatic = true;
 		};
@@ -583,6 +623,6 @@ dzn_fnc_dynai_alertZone = {
 	
 	_this setVariable ["dzn_dynai_isZoneAlerted", true];
 	[_this, [], "RANDOM SAD"] call dzn_fnc_dynai_moveGroups;
-	[_this, "COMBAT", false, 5] spawn dzn_fnc_dynai_setGroupsMode;
+	[_this, "COMBAT", true, 5] spawn dzn_fnc_dynai_setGroupsMode;
 	
 };

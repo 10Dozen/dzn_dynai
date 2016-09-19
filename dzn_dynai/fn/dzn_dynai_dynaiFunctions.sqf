@@ -245,7 +245,7 @@ dzn_fnc_dynai_createZone = {
 		,"_groups","_grp","_groupPos","_grpLogic"
 		,"_classname","_assigned","_gear","_unit"
 		,"_vehPos","_vehPosEmpty"
-		,"_zoneBuildings"		
+		,"_zoneBuildings","_zoneRoads"	
 	];
 
 	_name = _this select 0;
@@ -255,6 +255,7 @@ dzn_fnc_dynai_createZone = {
 	_refUnits = _this select 5;
 	_behavior = _this select 6;
 	_zoneBuildings = _this select 7;
+	_zoneRoads = _area call dzn_fnc_getLocationRoads;
 	
 	_zoneUsedBuildings = [];
 	_groups = [];
@@ -294,6 +295,7 @@ dzn_fnc_dynai_createZone = {
 			_groups pushBack _grp;
 			_grp setVariable ["dzn_dynai_homeZone", call compile _name];
 			_grp setVariable ["dzn_dynai_wpSet",false];
+			private _cycleWaypoints = true;
 		 
 			// Creates GameLogic for group control
 			//_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];			
@@ -382,20 +384,57 @@ dzn_fnc_dynai_createZone = {
 					// Vehicle type
 					switch (true) do {						
 						case (["Vehicle Hold", _assigned, false] call BIS_fnc_inString): {
-							_grp setVariable ["dzn_dynai_wpSet", true];							
-							(waypoints _grp select 0) setWaypointType "Sentry";
+							_grp setVariable ["dzn_dynai_wpSet", true];
+							(waypoints _grp select 0) setWaypointType "Hold";
 							
 							_unit setVariable ["dzn_dynai_vehicleHold", true];
 							if (dzn_dynai_allowVehicleHoldBehavior) then { 								
 								[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
 							};
-						};		
+						};
 						case (["Vehicle Advance", _assigned, false] call BIS_fnc_inString): {
+							_cycleWaypoints = false;
+							_unit setVariable ["dzn_dynai_isStatic",true];
 							_grp spawn {
-								waitUntil {!isNil { _this getVariable "dzn_dynai_wpSet" }};															
-								(waypoints _this select ( count (waypoints _this) - 1 )) setWaypointType "Sentry";							
+								waitUntil {_this getVariable ["dzn_dynai_wpSet", false]};
+								
+								private _lastWp = (waypoints _this) select (count (waypoints _this) - 1);
+								_lastWp setWaypointType "Hold";
+								
+								waitUntil { sleep 15; (_lastWp select 1) == currentWaypoint _this };
+								[vehicle (leader _this), "vehicle hold"] call dzn_fnc_dynai_addUnitBehavior;
 							};
-						};	
+						};						
+						case (["Vehicle Road Patrol", _assigned, false] call BIS_fnc_inString): {
+							_grp setVariable ["dzn_dynai_wpSet", true];
+							_unit setVariable ["dzn_dynai_isStatic",true];
+							
+							private _road = selectRandom _zoneRoads;
+							_unit setPos (_road modelToWorld [7 * selectRandom [1,-1], 0, 0]);							
+							_unit setDir (random 360);
+							
+							[_grp,_zoneRoads] spawn {
+								params["_grp","_zoneRoads"];
+								
+								waitUntil { sleep 5; !((units _grp) isEqualTo []) };
+								[_grp, _zoneRoads] call dzn_fnc_createPathFromRoads;
+							};
+						};
+						case (["Vehicle Road Hold", _assigned, false] call BIS_fnc_inString): {
+							_grp setVariable ["dzn_dynai_wpSet", true];
+							private _road = selectRandom _zoneRoads;
+							
+							(waypoints _grp select 0) setWaypointPosition [getPosASL _road, 10];
+							(waypoints _grp select 0) setWaypointType "Hold";
+							
+							_unit setPos (_road modelToWorld [7 * selectRandom [1,-1], 0, 0]);							
+							_unit setDir (random 360);
+							
+							_unit setVariable ["dzn_dynai_vehicleHold", true];
+							if (dzn_dynai_allowVehicleHoldBehavior) then { 								
+								[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+							};
+						};						
 						case (["Vehicle Patrol", _assigned, false] call BIS_fnc_inString);
 						case (["Vehicle", _assigned, false] call BIS_fnc_inString): {};
 					};
@@ -424,10 +463,10 @@ dzn_fnc_dynai_createZone = {
 			if !(_grp getVariable "dzn_dynai_wpSet") then {				
 				if (typename _wps == "ARRAY") then {
 					if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: || Spawning group %2 -- Waypoint creation: Keypoint", _name, str(_i)]; };
-					[_grp, _wps] call dzn_fnc_createPathFromKeypoints;
+					[_grp, _wps, 3 + round(random 3),_cycleWaypoints] call dzn_fnc_createPathFromKeypoints;
 				} else {
 					if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: || Spawning group %2 -- Waypoint creation: Random", _name, str(_i)]; };
-					[_grp, _area] call dzn_fnc_createPathFromRandom;
+					[_grp, _area, 3 + round(random 3),_cycleWaypoints] call dzn_fnc_createPathFromRandom;
 				};
 				_grp setVariable ["dzn_dynai_wpSet",true];
 			};

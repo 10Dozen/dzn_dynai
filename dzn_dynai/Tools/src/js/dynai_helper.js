@@ -33,6 +33,14 @@ var GROUP_MODE_MAPPING = {
 	]
 };
 
+var VEHICLE_BEHAVIOUR = [
+	["Patrol", '"Vehicle Patrol"']
+	, ["Hold", '"Vehicle Hold"']
+	, ["Advance", '"Vehicle Advance"']
+	, ["Road Patrol", '"Vehicle Road Patrol"']
+	, ["Road Hold", '"Vehicle Road Hold"']
+];
+
 /*
  *	Zone
  *
@@ -236,6 +244,35 @@ var ZoneItem = function () {
 		document.getElementById( this.id ).scrollIntoView();
 	};
 
+	
+	this.getUnitMode = function (unit, modeName) {
+		var mode = '[]';
+		
+		if (unit.type == "Infantry") {
+			switch (modeName) {
+				case "Indoors":
+					if (unit.restrictedHouses == "") {
+						mode = '["indoors"]';
+					} else {
+						mode = '["indoors", [' + unit.restrictedHouses + ']]';
+					};
+					break;
+				case "In vehicle":
+					mode = '[' + unit.vehicleId + ',"' + unit.vehicleRole + '"]';
+					break;
+			};
+		} else {
+			for (var i = 0; i < VEHICLE_BEHAVIOUR.length; i++) {				
+				if (modeName == VEHICLE_BEHAVIOUR[i][0]) {				
+					mode = VEHICLE_BEHAVIOUR[i][1];
+					break;
+				};
+			};
+		}
+		
+		return mode;
+	};
+	
 	this.getConfig = function () {
 		var spc = "&nbsp;&nbsp;&nbsp;&nbsp;";
 
@@ -256,32 +293,7 @@ var ZoneItem = function () {
 				var separatorPerUnit = (j > 0) ? "," : "";
 				var unit = grp.units[j];
 
-				unitOptions = "";
-				switch (unit.mode) {
-					case "Patrol":
-						if (unit.type == "Infantry") {
-							unitOptions = "[]";
-						} else {
-							unitOptions = '"Vehicle"';
-						};
-						break;
-					case "Indoors":
-						if (unit.restrictedHouses == "") {
-							unitOptions = '["indoors"]';
-						} else {
-							unitOptions = '["indoors", [' + unit.restrictedHouses + ']]';
-						};
-						break;
-					case "In vehicle":
-						unitOptions = '[' + unit.vehicleId + ',"' + unit.vehicleRole + '"]';
-						break;
-					case "Hold":
-						unitOptions = '"Vehicle Hold"';
-						break;
-					case "Advance":
-						unitOptions = '"Vehicle Advance"';
-						break;
-				};
+				unitOptions = this.getUnitMode(unit, unit.mode);
 
 				units = units
 					+ '<br />' + spc + spc + spc + spc + separatorPerUnit
@@ -753,15 +765,22 @@ var VehicleItem = function (id, classname, kit, mode) {
 	this.kit = (kit == undefined) ? DefaultsSettings.vehicleKit : kit;
 	this.mode = (mode == undefined) ? "Patrol" : mode;
 
+	this.generateOptions = function () {
+		var list = VEHICLE_BEHAVIOUR;
+		var result = "";
+		for (var i=0; i< list.length; i++) {
+			result = result + '<option>' + list[i][0] + '</option>';
+		};
+		return result
+	};
+	
 	this.$form = $('<div class="xpopup-wrapper group-unit" id="group-units-' + this.id
 		+ '" unitId="' + this.id
 		+ '"><div class="col-4">Vehicle #' + this.id + '</div>'
         + '<div class="col-4"><input placeholder="Classname" class="unit-classname" value="' + this.classname + '"/></div>'
         + '<div class="col-4"><input placeholder="Kit name" class="unit-kit" value="' + this.kit + '"/></div>'
         + '<select class="input-select unit-mode">'
-			+ '<option>Patrol</option>'
-			+ '<option>Hold</option>'
-			+ '<option>Advance</option>'
+			+ this.generateOptions()
 		+ '</select><div class="btn-short inline remove-unit" title="Remove vehicle">✖</div>'
         + '<div class="btn-short inline copy-unit" title="Copy vehicle">C</div></div>'
 	);

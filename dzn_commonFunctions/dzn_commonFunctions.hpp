@@ -28,6 +28,7 @@ class CfgFunctions
 			class getValueByKey {};			
 			class setValueByKey {};	
 			class setVars {};
+			class selectAndRemove {};
 
 			class assignInVehicle {};
 			class createVehicle  {};
@@ -56,7 +57,8 @@ class CfgFunctions
 			class getRandomPointInZone {};
 			class getZonePosition {};
 			class createPathFromKeypoints {};
-			class createPathFromRandom {};	
+			class createPathFromRandom {};
+			class createPathFromRoads {};
 			
 			class getHousesNear {};	
 			class getHousePositions {};	
