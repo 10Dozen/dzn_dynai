@@ -157,7 +157,7 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 	{
 		private _tgt = _x select 1;
 		private _tgtSide = _x select 2;
-		private _tgtKnowledge = _x select 0;
+		private _tgtKnowledge = _x select 0;		
 		if (
 			_tgt isKindOf "CAManBase" 
 			&& (_tgtKnowledge > 0.2) 
@@ -225,12 +225,14 @@ dzn_fnc_dynai_isArmedVehicleGroup = {
 	// Return True if group has armed vehicles
 	private _grp = _this;
 	private _result = false;
-	private _groupVehicles = _grp getVariable "dzn_dynai_vehicles";
+	private _groupVehicles = _grp getVariable ["dzn_dynai_vehicles", []];
 	
 	if (_groupVehicles isEqualTo []) exitWith { _result };
 	
 	{
-		if (_x call dzn_fnc_dynai_isVehicleDanger) exitWith { _result = true; };
+		if (typename _x != "STRING") then {
+			if (_x call dzn_fnc_dynai_isVehicleDanger) exitWith { _result = true; };
+		};		
 	} forEach _groupVehicles;
 	
 	_result
