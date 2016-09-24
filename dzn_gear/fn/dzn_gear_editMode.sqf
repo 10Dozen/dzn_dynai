@@ -620,7 +620,8 @@ dzn_gear_editMode_notif_pos = [.9,0,.4,1];
 dzn_gear_editMode_lastInventory = [];
 
 bis_fnc_arsenal_fullArsenal = true;
-["Preload"] call BIS_fnc_arsenal; 
+//["Preload"] call BIS_fnc_arsenal; 
+
 hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
 	<br /><br /><t size='1.35' color='#3793F0' underline='true'>EDIT MODE</t>	
 	<br /><t %1>This is an Edit mode where you can create gear kits for dzn_gear.</t>	
