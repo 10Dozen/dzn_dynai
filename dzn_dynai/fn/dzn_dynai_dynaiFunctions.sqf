@@ -20,18 +20,16 @@ dzn_fnc_dynai_getSkillFromParameters = {
 	switch ("par_dynai_overrideSkill" call BIS_fnc_getParamValue) do {
 		case 1: {
 			dzn_dynai_complexSkill = [false, GET_SKILL("par_dynai_skillGeneral")];
-			break;
 		};
 		case 2: {
 			dzn_dynai_complexSkill = [
 				true
-				, (dzn_dynai_complexSkillLevel select 1) + [
-					GET_SKILL("par_dynai_skillGeneral")
-					, GET_SKILL("par_dynai_skillAccuracy")
-					, GET_SKILL("par_dynai_skillAimSpeed")
+				, dzn_dynai_complexSkillLevel + [
+					["general", GET_SKILL("par_dynai_skillGeneral")]
+					, ["aimingAccuracy", GET_SKILL("par_dynai_skillAccuracy")]
+					, ["aimingSpeed", GET_SKILL("par_dynai_skillAimSpeed")]
 				]
 			];
-			break;
 		};
 	};
 };
@@ -574,8 +572,4 @@ dzn_fnc_dynai_addNewZone = {
 	
 	_zP spawn dzn_fnc_dynai_createZone;
 };
-
-
-
-
 
