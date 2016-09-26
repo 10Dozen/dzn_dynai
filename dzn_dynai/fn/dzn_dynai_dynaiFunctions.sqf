@@ -15,6 +15,28 @@ dzn_fnc_dynai_initValidate = {
 	true
 };
 
+dzn_fnc_dynai_getSkillFromParameters = {
+	#define GET_SKILL(X)    ((X call BIS_fnc_getParamValue) / 100)
+	switch ("par_dynai_overrideSkill" call BIS_fnc_getParamValue) do {
+		case 1: {
+			dzn_dynai_complexSkill = [false, GET_SKILL("par_dynai_skillGeneral")];
+			break;
+		};
+		case 2: {
+			dzn_dynai_complexSkill = [
+				true
+				, (dzn_dynai_complexSkillLevel select 1) + [
+					GET_SKILL("par_dynai_skillGeneral")
+					, GET_SKILL("par_dynai_skillAccuracy")
+					, GET_SKILL("par_dynai_skillAimSpeed")
+				]
+			];
+			break;
+		};
+	};
+};
+
+
 dzn_fnc_dynai_getMultiplier = {
 	if (isNil "dzn_dynai_amountMultiplier") then {
 		dzn_dynai_amountMultiplier = switch ("par_dynai_amountMultiplier" call BIS_fnc_getParamValue) do {
@@ -57,7 +79,8 @@ dzn_fnc_dynai_initZones = {
 	if !(call dzn_fnc_dynai_initValidate) exitWith {};
 	
 	private ["_modules", "_zone", "_properties","_syncObj", "_locations","_synced", "_wps", "_keypoints","_locationBuildings","_locBuildings","_locPos"];
-	
+
+	call dzn_fnc_dynai_getSkillFromParameters;
 	_modules = synchronizedObjects dzn_dynai_core;
 	
 	{
