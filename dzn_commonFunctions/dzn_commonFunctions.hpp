@@ -41,6 +41,8 @@ class CfgFunctions
 			class setComposition {};
 			
 			class inString {};
+			
+			class addAction {};
 		};
 		#endif
 		
