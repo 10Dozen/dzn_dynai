@@ -9,11 +9,18 @@
 
 params["_area",["_mode", "bool"]];
 
-private _r = if (toLower(_mode) == "bool") then { false } else { objNull };
-{
-	if (_x inArea _area) exitWith {
-		_r = if (toLower(_mode) == "bool") then { true } else { _x };
-	};
-} forEach (call BIS_fnc_listPlayers);
+#define	BOOL_MODE	toLower(_mode) == "bool"
+#define	IN_AREA	_x inArea _area
+private _r = if (BOOL_MODE) then { false } else { objNull };
+
+if (BOOL_MODE) then {
+	_r = { IN_AREA } count (call BIS_fnc_listPlayers) > 0;
+} else {
+	{
+		if (IN_AREA) exitWith {
+			_r = _x;
+		};
+	} forEach (call BIS_fnc_listPlayers);
+};
 
 _r
