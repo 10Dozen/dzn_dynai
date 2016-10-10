@@ -49,6 +49,7 @@ dzn_dynai_zoneProperties = [
 ];
 
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
+call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
 
 //	**************	SERVER OR HEADLESS	*****************
