@@ -137,11 +137,68 @@ dzn_fnc_gear_editMode_onKeyPress = {
 			};
 			SET_HANDLED;
 		};
+		
+		// PGUP
+		case 201: {
+			SET_KEYDOWN;
+			["UseStandardUniformItems"] call dzn_fnc_gear_editMode_setOptions;
+			SET_HANDLED;
+		};
+		
+		// PGDOWN
+		case 209: {
+			SET_KEYDOWN;
+			["UseStandardAssignedItems"] call dzn_fnc_gear_editMode_setOptions;
+			SET_HANDLED;
+		};
 	};
 	
 	[] spawn { sleep 1; dzn_gear_editMode_keyIsDown = false; };
 	_handled
 };
+
+
+dzn_fnc_gear_editMode_setOptions = {
+	/* [@Option] call dzn_fnc_gear_editMode_setOptions
+	 *	Options:	
+	 *		UseStandardUniformItems
+	 *		UseStandardAssignedItems		
+	 */
+	 
+	 private _showNotif = {
+		// [@Text, @ModeText, @Color] call _showNotif	 
+		[
+			parseText format [ 
+				"<t align='right' font='PuristaBold' size='1'>%1 <t color='%3'>%2</t></t>"
+				, _this select 0
+				, _this select 1
+				, _this select 2
+			]
+		, true, nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;	
+	 };
+	 
+	 switch toLower(_this select 0) do {
+		case toLower("UseStandardUniformItems"): {
+			if (dzn_gear_UseStandardUniformItems) then {			
+				dzn_gear_UseStandardUniformItems = false;
+				["Use Standard Uniform Items", "OFF", "#990000"] call  _showNotif;
+			} else {
+				dzn_gear_UseStandardUniformItems = true;
+				["Use Standard Uniform Items", "ON", "#009900"] call  _showNotif;
+			};
+		};
+		case toLower("UseStandardAssignedItems"): {
+			if (dzn_gear_UseStandardAssignedItems) then {			
+				dzn_gear_UseStandardAssignedItems = false;
+				["Use Standard Assigned Items", "OFF", "#990000"] call _showNotif;
+			} else {
+				dzn_gear_UseStandardAssignedItems = true;
+				["Use Standard Assigned Items", "ON", "#009900"] call  _showNotif;
+			};
+		};
+	 };
+};
+
 
 dzn_fnc_gear_editMode_getEquipItems = {
 	// [@ItemType,@Option] call dzn_fnc_gear_editMode_getEquipItems	
@@ -340,13 +397,13 @@ dzn_fnc_gear_editMode_getCurrentIdentity = {
 dzn_fnc_gear_editMode_createKit = {
 	// @Add action? call dzn_fnc_gear_editMode_createKit
 	// RETURN: 	Copy kit to clipboard, Add action in actin menu, Show notification
-	private["_colorString","_addKitAction","_kit","_addKitAction","_addCargoKitAction","_showHint"];
+	private["_colorString","_kit"];
 	#define GetColors ["F","C","B","3","6","9"] call BIS_fnc_selectRandom
 	_colorString = format [
 		"#%1%2%3%4%5%6", GetColors, GetColors, GetColors, GetColors, GetColors, GetColors
 	]; 	
 
-	_showHint = {
+	private _showHint = {
 		// [@UnitType("Player","Cargo","Unit"), @ColorString] call _showHint
 		hintSilent parseText format[      
 			"<t size='1.25' color='%2'>Gear has been copied from <t underline='true'>%1</t> to clipboard</t>"     
@@ -363,7 +420,7 @@ dzn_fnc_gear_editMode_createKit = {
 		, true, nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;		
 	};
 	
-	_addKitAction = {
+	private _addKitAction = {
 		// @ColorString, @Kit call _addKitAction
 		player addAction [
 			format [
@@ -385,7 +442,7 @@ dzn_fnc_gear_editMode_createKit = {
 		];	
 	};
 	
-	_addCargoKitAction = {
+	private _addCargoKitAction = {
 		// @ColorString, @Kit call _addKitAction
 		player addAction [
 			format [
@@ -406,22 +463,77 @@ dzn_fnc_gear_editMode_createKit = {
 			, _this select 1, 0		
 		];
 	};	
+	
+	private _useStandardItems = {
+		// @Kit call _useStandardItems
+		if (dzn_gear_UseStandardUniformItems) then {
+			_this set [5, dzn_gear_StandardUniformItems];				
+		};
+		
+		if (dzn_gear_UseStandardAssignedItems) then {
+			_this set [4, dzn_gear_StandardAssignedItems];
+		};
+		
+		_this
+	};
+	
+	private _formatKit = {
+		/* @Kit call _formatKit
+		 * Format of output
+		 */
+		 
+		private _str = str(_this);
+		private _formatedString = "kit_NewKitName =";
+		private _lastId = 0;	
+		for "_i" from 0 to ((count _str) - 1) do {
+			if (_str select [_i,3] == "[""<") then {		
+				_formatedString = format[
+						"%1
+	%2"
+					, _formatedString
+					, _str select [_lastId, _i - _lastId]
+				];
+				_lastId = _i;
+			};
 
-	_kit = [];
+			if (_i == ((count _str) - 1)) then {
+				_formatedString = format[
+					"%1
+	%2
+];"
+					, _formatedString
+					, _str select [_lastId, _i - _lastId]
+				];
+			};
+		};
+		
+		_formatedString
+	};
+	
+	private _copyUnitKit = {
+		// @Kit call _copyUnitKit		
+		_this call _useStandardItems;
+		copyToClipboard (_this call _formatKit);	
+	};
+
 	if (isNull cursorTarget) then {
 		// Player
-		_kit = player call dzn_fnc_gear_getGear;
+		private _kit = player call dzn_fnc_gear_getGear;
+		_kit call _copyUnitKit;
+		
 		if (_this) then { [_colorString, _kit] call _addKitAction; };
 		["Player's", _colorString] call _showHint;
 	} else {
 		if (cursorTarget isKindOf "CAManBase") then {
 			// Unit
-			_kit = cursorTarget call dzn_fnc_gear_getGear;
+			private _kit = cursorTarget call dzn_fnc_gear_getGear;
+			_kit call _copyUnitKit;
+			
 			if (_this) then { [_colorString, _kit] call _addKitAction; };
 			["Unit's", _colorString] call _showHint;
 		} else {
 			// Vehicle
-			_kit = cursorTarget call dzn_fnc_gear_getCargoGear;
+			private _kit = cursorTarget call dzn_fnc_gear_getCargoGear;
 			if (_this) then { [_colorString, _kit] call _addCargoKitAction; };
 			["Cargo", _colorString] call _showHint;
 		};	
@@ -628,7 +740,7 @@ hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
 	<br /><br /><t size='1.35' color='#3793F0' underline='true'>VIRTUAL ARSENAL</t>	
 	<br /><t %1>Use arsenal to choose your gear. Then Copy it and paste to dzn_gear_kits.sqf file.</t>
 	<br /><br /><t size='1.25' color='#3793F0' underline='true'>KEYBINDING</t>
-	<br /><t %1>Close ARSENAL and check keybinding of EDIT MODE by clicking [H] button.</t>
+	<br /><t %1>Close ARSENAL and check keybinding of EDIT MODE by clicking [F1] button.</t>
 	"
 	, "align='left' size='0.9'"
 ];
@@ -655,4 +767,3 @@ hint parseText format["<t size='2' color='#FFD000' shadow='1'>dzn_gear</t>
 		};
 	}] call BIS_fnc_addStackedEventHandler;
 };
-
