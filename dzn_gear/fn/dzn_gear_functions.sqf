@@ -319,36 +319,6 @@ dzn_fnc_gear_getGear = {
 		,backpackItems _this	
 	];
 	
-	
-	if (dzn_gear_editModeEnabled) then {
-		// Format of output
-		_str = str(_kit);
-		_formatedString = "kit_NewKitName =";
-		_lastId = 0;	
-		for "_i" from 0 to ((count _str) - 1) do {
-			if (_str select [_i,3] == "[""<") then {		
-				_formatedString = format[
-						"%1
-	%2"
-					, _formatedString
-					, _str select [_lastId, _i - _lastId]
-				];
-				_lastId = _i;
-			};
-
-			if (_i == ((count _str) - 1)) then {
-				_formatedString = format[
-					"%1
-	%2
-];"
-					, _formatedString
-					, _str select [_lastId, _i - _lastId]
-				];
-			};
-		};
-		
-		copyToClipboard _formatedString;
-	};
 	_kit
 };
 
