@@ -12,6 +12,20 @@ dzn_fnc_dynai_getMemberRelatedPos = {
 	(_leader worldToModelVisual (getPosATL _this))
 };
 
+dzn_fnc_dynai_checkAndRemoveCachedGroup = {
+	/* Exit: Unit is not cached */
+	if !(_this getVariable ["dzn_dynai_isCached", false]) exitWith {};
+	
+	/* Exit: Unit is indoors */
+	if !(isNil {_x getVariable "dzn_dynai_isIndoor"}) exitWith {};
+	
+	/* Exit: Unit's leader alive and is not cached */
+	private _l = leader (group _this);
+	if (!(_l getVariable ["dzn_dynai_isCached", false]) && alive _l) exitWith {};	
+
+	deleteVehicle _this;
+};
+
 dzn_fnc_dynai_checkForCache = {
 	// Return list of units which must be cached and list of units which must be uncached
 	// INPUT: null
@@ -23,6 +37,8 @@ dzn_fnc_dynai_checkForCache = {
 	
 	// Pick not players, pick leaders not in vehicles and not duplicates OR pick all indoor units
 	{
+		_x call dzn_fnc_dynai_checkAndRemoveCachedGroup;
+		
 		if (!(isPlayer _x) 
 			&& { 
 				(leader group _x == _x 
@@ -70,6 +86,7 @@ dzn_fnc_dynai_cacheSquad = {
 				_rPositions pushBack (_x call dzn_fnc_dynai_getMemberRelatedPos);	
 				
 				_x setPos [0,0,0];
+				_x setVariable ["dzn_dynai_isCached", true];
 			
 				sleep 1;
 			};
@@ -99,6 +116,7 @@ dzn_fnc_dynai_uncacheSquad = {
 		if (isNil { _x getVariable "dzn_dynai_isIndoor" }) then {
 			_pos = (_this modelToWorldVisual (_rPositions select _forEachIndex));
 			_x setPos [_pos select 0, _pos select 1, 0];
+			_x setVariable ["dzn_dynai_isCached", false];
 		};
 		
 		sleep 1;
