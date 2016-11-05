@@ -36,9 +36,11 @@ var GROUP_MODE_MAPPING = {
 var VEHICLE_BEHAVIOUR = [
 	["Patrol", '"Vehicle Patrol"']
 	, ["Hold", '"Vehicle Hold"']
+	, ["Hold (Front)", '"Vehicle Frontal Hold"']
 	, ["Advance", '"Vehicle Advance"']
 	, ["Road Patrol", '"Vehicle Road Patrol"']
 	, ["Road Hold", '"Vehicle Road Hold"']
+	, ["Road Hold (Front)", '"Vehicle Road Frontal Hold"']
 ];
 
 /*

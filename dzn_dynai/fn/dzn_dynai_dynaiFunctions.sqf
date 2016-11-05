@@ -316,13 +316,10 @@ dzn_fnc_dynai_createZone = {
 			_groups pushBack _grp;
 			_grp setVariable ["dzn_dynai_homeZone", call compile _name];
 			_grp setVariable ["dzn_dynai_wpSet",false];
-			private _cycleWaypoints = true;
-		 
-			// Creates GameLogic for group control
-			//_grpLogic = _grp createUnit ["LOGIC", _groupPos, [], 0, "NONE"];			
 			_grp setVariable ["dzn_dynai_units", []];
 			_grp setVariable ["dzn_dynai_vehicles", []];
-	
+			private _cycleWaypoints = true;
+		 
 			// For each unit in group
 			{
 				if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: | Spawning group %2 -- Unit: %3 (%4)", _name, str(_i), str(_forEachIndex), _x select 0]; };
@@ -392,9 +389,9 @@ dzn_fnc_dynai_createZone = {
 					} do {
 						_vehPos = [(_groupPos select 0) + 6*_forEachIndex + 15 +  random(50), (_groupPos select 1) + 6*_forEachIndex + 15 + random(50), 0];
 					};
-					_unit = createVehicle [_classname, _vehPos, [], 0, "NONE"];
-					_unit allowDamage false;
 					
+					_unit = createVehicle [_classname, _vehPos, [], 0, "NONE"];
+					_unit allowDamage false;					
 					_unit setPos _vehPos;
 					_unit setVelocity [0,0,0];					
 					_unit spawn { sleep 5; _this allowDamage true; };
@@ -404,14 +401,28 @@ dzn_fnc_dynai_createZone = {
 			
 					// Vehicle type
 					switch (true) do {						
-						case (["Vehicle Hold", _assigned, false] call BIS_fnc_inString): {
+						case (
+							["Vehicle Hold", _assigned, false] call BIS_fnc_inString 
+							|| ["Vehicle Frontal Hold", _assigned, false] call BIS_fnc_inString
+						): {
 							_grp setVariable ["dzn_dynai_wpSet", true];
 							(waypoints _grp select 0) setWaypointType "Hold";
+							[_unit, _assigned] spawn dzn_fnc_dynai_assignVehcleHoldBehavior;
+						};					
+						case (
+							["Vehicle Road Hold", _assigned, false] call BIS_fnc_inString
+							|| ["Vehicle Road Frontal Hold", _assigned, false] call BIS_fnc_inString
+						): {
+							_grp setVariable ["dzn_dynai_wpSet", true];
+							private _road = selectRandom _zoneRoads;
 							
-							_unit setVariable ["dzn_dynai_vehicleHold", true];
-							if (dzn_dynai_allowVehicleHoldBehavior) then { 								
-								[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
-							};
+							(waypoints _grp select 0) setWaypointPosition [getPosASL _road, 10];
+							(waypoints _grp select 0) setWaypointType "Hold";
+							
+							_unit setPos (_road modelToWorld [7 * selectRandom [1,-1], 0, 0]);							
+							_unit setDir ((getDir _road) + selectRandom [1,-1]*selectRandom[0,15,20,30]);
+							
+							[_unit, _assigned] spawn dzn_fnc_dynai_assignVehcleHoldBehavior;
 						};
 						case (["Vehicle Advance", _assigned, false] call BIS_fnc_inString): {
 							_cycleWaypoints = false;
@@ -441,38 +452,13 @@ dzn_fnc_dynai_createZone = {
 								[_grp, _zoneRoads] call dzn_fnc_createPathFromRoads;
 							};
 						};
-						case (["Vehicle Road Hold", _assigned, false] call BIS_fnc_inString): {
-							_grp setVariable ["dzn_dynai_wpSet", true];
-							private _road = selectRandom _zoneRoads;
-							
-							(waypoints _grp select 0) setWaypointPosition [getPosASL _road, 10];
-							(waypoints _grp select 0) setWaypointType "Hold";
-							
-							_unit setPos (_road modelToWorld [7 * selectRandom [1,-1], 0, 0]);							
-							_unit setDir (random 360);
-							
-							_unit setVariable ["dzn_dynai_vehicleHold", true];
-							if (dzn_dynai_allowVehicleHoldBehavior) then { 								
-								[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
-							};
-						};						
 						case (["Vehicle Patrol", _assigned, false] call BIS_fnc_inString);
 						case (["Vehicle", _assigned, false] call BIS_fnc_inString): {};
 					};
 				};
 				
 				sleep 0.2;
-			} forEach _groupUnits;			
-			
-			/*
-			// Synhronize units with groupLogic			
-			[_grpLogic] joinSilent grpNull;			// Unassign GameLogic from group
-			_grpLogic synchronizeObjectsAdd (units _grp);
-			[_grpLogic] spawn {
-				waitUntil { sleep 30; {alive _x} count (synchronizedObjects (_this select 0)) < 1 };
-				deleteVehicle (_this select 0);
-			};
-			*/
+			} forEach _groupUnits;
 			
 			// Set group behavior
 			if !(_behavior select 0 == "") then { _grp setSpeedMode (_behavior select 0); };
@@ -506,7 +492,16 @@ dzn_fnc_dynai_createZone = {
 	if (DEBUG) then { diag_log format ["dzn_dynai :: %1 :: Zone Created", _name]; };
 };
 
-
+dzn_fnc_dynai_assignVehcleHoldBehavior = {
+	params["_unit","_mode"];
+	sleep 2;
+	
+	_unit setVariable ["dzn_dynai_vehicleHold", true];
+	if (dzn_dynai_allowVehicleHoldBehavior) then { 
+		private _aspectMode = if (["Vehicle Hold", _mode, false] call BIS_fnc_inString) then { "All Aspect" } else { "Full Frontal" };
+		[_unit, _aspectMode, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+	};
+};
 
 
 // ================================================
