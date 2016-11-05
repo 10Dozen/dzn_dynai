@@ -62,3 +62,32 @@ A "Platoon Leader"			TO "kit_sec_pl"	 KIT
 , A "Стрелок (ГП)"			TO "kit_sec_gr"	 KIT
 , A "Снайпер"				TO "kit_sec_mm"	 KIT
 
+/* "Platoon Squad" */
+, A "1'6 Platoon Leader"		TO "kit_sec_pl" 	KIT
+
+/* "Командный отряд" */ 
+, A "1'6 Командир взвода"		TO "kit_sec_pl" 	KIT
+
+/* "NATO 1-2-2-2 Weapon Squad" */
+, A "1'4 Squad Leader"			TO "kit_sec_sl" 	KIT
+, A "Machinegunner"			TO "kit_sec_mg" 	KIT
+, A "Asst. Machinegunner"		TO "kit_sec_amg" 	KIT
+, A "Missile Specialist"		TO "kit_sec_ms" 	KIT
+
+/* "Crew Squad" */
+, A "Crew Commander"			TO "kit_sec_crew" 	KIT
+, A "Crew Gunner"				TO "kit_sec_crew" 	KIT
+, A "Crew Driver"				TO "kit_sec_crew" 	KIT
+
+/* "Экипаж" */
+, A "Командир экипажа"			TO "kit_sec_crew" 	KIT
+, A "Наводчик-оператор"			TO "kit_sec_crew" 	KIT
+, A "Механик-водитель"			TO "kit_sec_crew" 	KIT
+
+/* "Airborne Squad" */
+, A "Pilot"					TO "kit_sec_pilot" 	KIT
+, A "Gunner"				TO "kit_sec_pilot" 	KIT
+
+/* "Пилоты" */
+, A "Пилот"					TO "kit_sec_pilot" 	KIT
+, A "Наводчик-оператор"			TO "kit_sec_pilot" 	KIT
