@@ -28,6 +28,9 @@ dzn_fnc_gear_editMode_showKeybinding = {
 		<br />6 or B -- Backpack
 		<br />7 or P -- Pistol and magazine
 		<br /><t %1>CTRL + I</t><t %2> - copy unit/player identity settings</t>
+		<br />
+		<br /><t %1>PGUP/PGDOWN</t><t %2> - standard uniform/assigned items On/Off</t>
+		<br /><t %1>DEL</t><t %2> - clear current unit's gear</t>
 		"
 		, "align='left' color='#3793F0' size='0.9'"
 		, "align='right' size='0.8'"
@@ -64,8 +67,8 @@ dzn_fnc_gear_editMode_onKeyPress = {
 		// Space
 		case 57: {
 			SET_KEYDOWN;			
-			if (_ctrl) then {		true call dzn_fnc_gear_editMode_createKit; };
-			if (_shift) then {		false call dzn_fnc_gear_editMode_createKit; };
+			if (_ctrl) then {		true spawn dzn_fnc_gear_editMode_createKit; };
+			if (_shift) then {		false spawn dzn_fnc_gear_editMode_createKit; };
 			if !(_ctrl || _alt || _shift) then { 
 				[] spawn {
 					["#(argb,8,8,3)color(0,0,0,1)",false,nil,0.1,[0,0.5]] spawn bis_fnc_textTiles;
@@ -149,6 +152,14 @@ dzn_fnc_gear_editMode_onKeyPress = {
 		case 209: {
 			SET_KEYDOWN;
 			["UseStandardAssignedItems"] call dzn_fnc_gear_editMode_setOptions;
+			SET_HANDLED;
+		};
+		
+		// DELETE
+		case 211: {
+			SET_KEYDOWN;
+			[player, [["","","","","",""],["","","",["","","",""]],["","","",["","","",""]],["","","",["","","",""]],[""],["",[]],["",[]],["",[]]]] call dzn_fnc_gear_assignGear;
+			[parseText "<t align='right' font='PuristaBold' size='1'>Gear was removed</t>", true, nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
 			SET_HANDLED;
 		};
 	};
@@ -475,16 +486,32 @@ dzn_fnc_gear_editMode_createKit = {
 		};
 		
 		_this
-	};
+	};	
 	
-	private _formatKit = {
-		/* @Kit call _formatKit
+	private _formatAndCopyKit = {
+		/* @Kit call _formatAndCopyKit
 		 * Format of output
 		 */
 		 
 		private _str = str(_this);
-		private _formatedString = "kit_NewKitName =";
+		private _formatedString = "%1 =";
 		private _lastId = 0;	
+		
+		private _name = "kit_NewKitName";
+		private _exit = false;
+		if (!isNil "dzn_fnc_ShowChooseDialog") then {
+			disableSerialization;
+			_name = ["dzn Gear", ["Kit name (w/o spaces)", []]] call dzn_fnc_ShowChooseDialog;
+			if (count _name == 0) exitWith { _exit = true; };
+		
+			if (_name select 0 != "") then { 
+				_name = _name select 0
+			};
+		};		
+		if (_exit) exitWith {};
+		
+		_formatedString = format [_formatedString, _name];
+		
 		for "_i" from 0 to ((count _str) - 1) do {
 			if (_str select [_i,3] == "[""<") then {		
 				_formatedString = format[
@@ -507,13 +534,13 @@ dzn_fnc_gear_editMode_createKit = {
 			};
 		};
 		
-		_formatedString
+		copyToClipboard _formatedString
 	};
 	
 	private _copyUnitKit = {
 		// @Kit call _copyUnitKit		
 		_this call _useStandardItems;
-		copyToClipboard (_this call _formatKit);	
+		_this call _formatAndCopyKit;
 	};
 
 	if (isNull cursorTarget) then {
