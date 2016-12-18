@@ -158,8 +158,22 @@ dzn_fnc_gear_editMode_onKeyPress = {
 		// DELETE
 		case 211: {
 			SET_KEYDOWN;
-			[player, [["","","","","",""],["","","",["","","",""]],["","","",["","","",""]],["","","",["","","",""]],[""],["",[]],["",[]],["",[]]]] call dzn_fnc_gear_assignGear;
-			[parseText "<t align='right' font='PuristaBold' size='1'>Gear was removed</t>", true, nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
+			private _infKit = [["","","","","",""],["","","",["","","",""]],["","","",["","","",""]],["","","",["","","",""]],[""],["",[]],["",[]],["",[]]];
+			private _vehKit = [[],[],[],[]];
+			private _infMsg = parseText "<t align='right' font='PuristaBold' size='1'>Gear was removed</t>";
+			
+			if (isNull cursorTarget) then {			
+				[player, _infKit] call dzn_fnc_gear_assignGear;
+				[_infMsg, true, nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
+			} else {
+				if (cursorTarget isKindOf "CAManBase") then {
+					[cursorTarget, _infKit] call dzn_fnc_gear_assignGear;
+					[_infMsg, true, nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
+				} else {
+					[cursorTarget, _vehKit] call dzn_fnc_gear_assignCargoGear;
+					[parseText "<t align='right' font='PuristaBold' size='1'>Vehicle Gear was removed</t>", true, nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
+				};
+			};
 			SET_HANDLED;
 		};
 	};
