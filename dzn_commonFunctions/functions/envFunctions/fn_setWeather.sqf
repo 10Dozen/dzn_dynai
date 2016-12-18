@@ -11,8 +11,10 @@ _weatherSettingsMapping = [
 	0.25,
 	0.5,
 	0.75,
+	1,
 	1
 ];
+
 if (typename _this == "STRING") then {
 	switch (toLower(_this)) do {
 		case "random": { 
