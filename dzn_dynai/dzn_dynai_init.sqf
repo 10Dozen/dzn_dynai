@@ -52,8 +52,8 @@ call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sq
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
 if (dzn_dynai_enableZeusCompatibility) then {
-	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_fnc_dynai_zeusCompatibility.sqf";
-}
+	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_zeusCompatibility.sqf";
+};
 //	**************	SERVER OR HEADLESS	*****************
 if (!isNil "HC") then {if (isServer) exitWith {};};
 
