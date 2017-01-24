@@ -428,12 +428,15 @@ dzn_fnc_dynai_addUnitBehavior = {
 		};
 		case "vehicle hold": {
 			[_unit, "All Aspect", false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+			_unit setVariable ["dzn_dynai_isVehicleHold", true, true];
 		};
 		case "vehicle 45 hold": {
 			[_unit, "Frontal", false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+			_unit setVariable ["dzn_dynai_isVehicleHold", true, true];
 		};
 		case "vehicle 90 hold": {
 			[_unit, "Full Frontal", false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+			_unit setVariable ["dzn_dynai_isVehicleHold", true, true];
 		};
 	};
 };
