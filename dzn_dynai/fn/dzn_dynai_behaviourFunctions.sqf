@@ -421,6 +421,24 @@ dzn_fnc_dynai_addUnitBehavior = {
 	 *      
 	 */
 	params ["_unit", "_behaviour"];
+	
+	// Setting SPOT skills to Maximum
+	_fnc_setSpotSkillRemote = {
+		if (local _this) then {
+			_this setSkill ["spotTime",1];
+			_this setSkill ["spotDistance",1];
+		} else {
+			[_this, ["spotTime",1]] remoteExec ["setSkill",_this];
+			[_this, ["spotDistance",1]] remoteExec ["setSkill",_this];
+		};	
+	};
+	
+	if (_unit isKindOf "CAManBase") then {
+		_unit call _fnc_setSkillRemote;
+	} else {
+		{ _unit call _fnc_setSkillRemote; } forEach (crew _unit);
+	};
+	
 	switch toLower(_behaviour) do {
 		case "indoor": {
 			[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm";
