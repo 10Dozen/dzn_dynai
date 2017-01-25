@@ -87,6 +87,17 @@ dzn_fnc_dynai_zc_applyBehavior = {
 	[format ["Behavior '%1' was applied to units",_behavior] ,"success"] call dzn_fnc_dynai_zc_showNotif;
 };
 
+dzn_fnc_dynai_zc_removeBehavior = {
+	{		
+		if (local _x) then {
+			_x call dzn_fnc_dynai_dropUnitBehavior;
+		} else {
+			_x remoteExec ["dzn_fnc_dynai_dropUnitBehavior",_x];
+		};
+	} forEach (_this);
+	["Units behavior disabled","success"] call dzn_fnc_dynai_zc_showNotif;
+};
+
 dzn_fnc_dynai_zc_applyAsSupporter = {
 	{		
 		_x call dzn_fnc_dynai_addGroupAsSupporter;
@@ -97,14 +108,6 @@ dzn_fnc_dynai_zc_applyAsSupporter = {
 dzn_fnc_dynai_zc_checkUnitBehaviourFree = {
 	(_this getVariable ["dzn_dynai_isIndoor", false]) 
 	&& (_this getVariable ["dzn_dynai_isVehicleHold", false])
-};
-
-dzn_fnc_dynai_zc_removeBehavior = {
-	{		
-		_x call dzn_fnc_dynai_disableBehavior;
-	} forEach (_this);
-	["Units behavior disabled","success"] call dzn_fnc_dynai_zc_showNotif;
-
 };
 
 dzn_fnc_dynai_zc_splitGroup = {
