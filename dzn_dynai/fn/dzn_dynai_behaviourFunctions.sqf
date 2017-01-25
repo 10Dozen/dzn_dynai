@@ -441,6 +441,12 @@ dzn_fnc_dynai_addUnitBehavior = {
 	};
 };
 
+dzn_fnc_dynai_dropUnitBehavior = {
+	_unit setVariable ["dzn_dynai_isIndoor", nil, true];
+	_unit setVariable ["dzn_dynai_isVehicleHold", nil, true];
+};
+
+
 dzn_fnc_dynai_processUnitBehaviours = {
 	// spawn dzn_fnc_dynai_processUnitBehaviours
 	// Process all units with Supporting and Behavior options
