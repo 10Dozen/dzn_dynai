@@ -28,8 +28,11 @@ dzn_fnc_dynai_zc_processMenu = {
 				,"Split to Fireteams (4)"
 				,"Split to Buddy-teams (2)"
 				,"Join All"
+				,"                               --- Behavior --- "
+				,"Make Careless"				
 				,"                               --- Dynai Behavior --- "
-				,"Add As Supporter"				
+				,"Add As Supporter"
+				,"Remove behavior"							
 				,"[inf] Indoor"
 				,"[veh] Hold frontal (45)"
 				,"[veh] Hold frontal wide (90)"
@@ -50,11 +53,18 @@ dzn_fnc_dynai_zc_processMenu = {
 		
 		/* Spacing */
 		, { }
+		
+		/* Make Careless */
+		,{ _groupsSelected call dzn_fnc_dynai_zc_makeCareless; }
+		
+		/* Spacing */
+		, { }
 		/* Supporter */
 		, { _unitsSelected call dzn_fnc_dynai_zc_applyAsSupporter; }
 		
 		/* Behavior */
 		, { systemChat "Indoor"; [_unitsSelected, "indoor"] call dzn_fnc_dynai_zc_applyBehavior; }
+		, { _unitsSelected call dzn_fnc_dynai_zc_removeBehavior; }
 		, { [_unitsSelected, "vehicle 45 hold"] call dzn_fnc_dynai_zc_applyBehavior; }
 		, { [_unitsSelected, "vehicle 90 hold"] call dzn_fnc_dynai_zc_applyBehavior; }
 		, { [_unitsSelected, "vehicle hold"] call dzn_fnc_dynai_zc_applyBehavior; }
@@ -87,6 +97,14 @@ dzn_fnc_dynai_zc_applyAsSupporter = {
 dzn_fnc_dynai_zc_checkUnitBehaviourFree = {
 	(_this getVariable ["dzn_dynai_isIndoor", false]) 
 	&& (_this getVariable ["dzn_dynai_isVehicleHold", false])
+};
+
+dzn_fnc_dynai_zc_removeBehavior = {
+	{		
+		_x call dzn_fnc_dynai_disableBehavior;
+	} forEach (_this);
+	["Units behavior disabled","success"] call dzn_fnc_dynai_zc_showNotif;
+
 };
 
 dzn_fnc_dynai_zc_splitGroup = {
@@ -141,6 +159,21 @@ dzn_fnc_dynai_zc_joinGroups = {
 		,"success"
 	] call dzn_fnc_dynai_zc_showNotif;
 };
+
+dzn_fnc_dynai_zc_makeCareless = {
+	{
+		while {(count (waypoints _squad)) > 0} do {
+			deleteWaypoint ((waypoints _squad) select 0);
+		};
+		_x setBehaviour "CARELESS";		
+	} forEach _this;
+	
+	[format ["%1 groups were set to CARELESS",count(_this)] ,"success"] call dzn_fnc_dynai_zc_showNotif;
+};
+
+
+
+/* Utility functions */
 
 dzn_fnc_dynai_zc_showNotif = {
 	// [@Text, @Success/Fail/Info] call dzn_fnc_gear_zc_showNotif
