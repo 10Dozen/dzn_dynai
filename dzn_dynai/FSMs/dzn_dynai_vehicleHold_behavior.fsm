@@ -1,7 +1,7 @@
-/*%FSM<COMPILE "D:\GMZ\BI Toolz\FSM Editor Personal Edition\scriptedFSM.cfg, dzn_dynai_vehicleHold_behavior">*/
+/*%FSM<COMPILE "D:\Workstation\FSM Editor Personal Edition\scriptedFSM.cfg, dzn_dynai_vehicleHold_behavior">*/
 /*%FSM<HEAD>*/
 /*
-item0[] = {"Start",0,4346,-50.000000,-1350.000000,50.000000,-1300.000000,0.000000,"Start"};
+item0[] = {"Start",0,250,-50.000000,-1350.000000,50.000000,-1300.000000,0.000000,"Start"};
 item1[] = {"Wait",4,218,-50.000000,-1125.000000,50.000000,-1075.000000,0.000000,"Wait"};
 item2[] = {"Wait",2,250,-50.000000,-1050.000000,50.000000,-1000.000000,0.000000,"Wait"};
 item3[] = {"Wait_for_Enemies",4,218,-150.000000,-975.000000,-50.000000,-925.000000,1.000000,"Wait for Enemies"};
@@ -31,8 +31,8 @@ link12[] = {10,11};
 link13[] = {11,1};
 link14[] = {12,13};
 link15[] = {13,9};
-globals[] = {25.000000,1,0,0,16777215,640,480,1,253,6316128,1,-219.386108,259.846893,-982.095337,-1436.960571,649,616,1};
-window[] = {0,-1,-1,-32000,-32000,964,302,1478,203,1,667};
+globals[] = {25.000000,1,0,0,16777215,640,480,1,253,6316128,1,-283.957703,319.904297,-692.654602,-1361.679688,535,616,1};
+window[] = {0,-1,-1,-1,-1,893,586,1567,132,1,553};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -46,39 +46,10 @@ class FSM
       init = /*%FSM<STATEINIT""">*/"private[""_unit"",""_target"",""_targets"",""_dist"",""_debug"",""_g"",""_c"",""_longTimer"",""_timer""];" \n
        "" \n
        "_unit = _this select 0;" \n
-       "_aspectMode = _this select 1;" \n
-       "_debug = _this select 2;" \n
+       "_debug = _this select 1;" \n
        "" \n
        "_longTimer = time + 20;" \n
        "" \n
-       "private _watchDistances	= [100, 250, 500, 750];" \n
-       "private _watchAspects = switch toLower(_aspectMode) do {" \n
-       "	case ""frontal"": {" \n
-       "		 [0, 15, 30, 45]" \n
-       "	};" \n
-       "	case ""full frontal"": {" \n
-       "		[0, 15, 30, 45, 60, 75, 90, 105]" \n
-       "	};" \n
-       "	default {" \n
-       "		/* ""All Aspect"" */" \n
-       "		 [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180]" \n
-       "	};" \n
-       "};" \n
-       "" \n
-       "private _lastAspect		= 0;" \n
-       "private _fnc_getAspect = {" \n
-       " 	private _a = 0;" \n
-       "	while { _a == _lastAspect } do {" \n
-       "		_a = selectRandom [1,-1] * selectRandom _watchAspects;" \n
-       "	};" \n
-       "" \n
-       "	" \n
-       "	_a" \n
-       "};" \n
-       "" \n
-       "/*" \n
-       "		player sideChat format [""Aspect Mode: %1"",_aspectMode];" \n
-       "*/" \n
        "if (_debug) then {" \n
        "	player sideChat format[" \n
        "		""(%1) FSM INIT""," \n
@@ -136,7 +107,8 @@ class FSM
           condition=/*%FSM<CONDITION""">*/"!alive _unit " \n
            "|| ( (crew _unit) isEqualTo [] )" \n
            "|| (isNull (gunner _unit) && isNull (commander _unit))" \n
-           "|| !(_unit call dzn_fnc_isCombatCrewAlive)"/*%FSM</CONDITION""">*/;
+           "|| !(_unit call dzn_fnc_isCombatCrewAlive)" \n
+           "|| _unit getVariable [""dzn_dynai_isVehicleHold"", false]"/*%FSM</CONDITION""">*/;
           action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
         };
         /*%FSM</LINK>*/
@@ -195,33 +167,19 @@ class FSM
     class Turn_around
     {
       name = "Turn_around";
-      init = /*%FSM<STATEINIT""">*/"private _longTimerShift = 10+random(20);" \n
-       "" \n
-       "{" \n
+      init = /*%FSM<STATEINIT""">*/"{" \n
        "	if !(isNull _x) then {" \n
-       "		private _dir = call _fnc_getAspect;	" \n
-       "" \n
-       "		/*" \n
-       "			player sideChat format [""%2 | DIR: %1"", _dir, _x];" \n
-       "		*/" \n
-       "" \n
-       " 		 private _pos = [" \n
+       "		_x doWatch ([" \n
        "			getPos _unit" \n
-       "			, getDir (vehicle _unit) + _dir" \n
-       "			, selectRandom _watchDistances" \n
-       "		] call dzn_fnc_getPosOnGivenDir;" \n
-       "		_pos set [2, 0];" \n
+       "			,getDir _unit + 60*(1 + round(random(5)))" \n
+       "			,350" \n
+       "		] call dzn_fnc_getPosOnGivenDir);" \n
        "" \n
-       "		_x doWatch _pos;" \n
-       "" \n
-       "		[_x,_longTimerShift] spawn { " \n
-       "			sleep (_this select 1);" \n
-       "			(_this select 0) doWatch objNull;" \n
-       "		};" \n
+       "		_x spawn { sleep 8; _this doWatch objNull; };" \n
        "	};" \n
        "} forEach [_g, _c];" \n
        "" \n
-       "_longTimer = time + _longTimerShift;" \n
+       "_longTimer = time + 10 + random(20);" \n
        "" \n
        "if (_debug) then {" \n
        "	player sideChat format[" \n
