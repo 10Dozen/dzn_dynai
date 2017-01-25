@@ -405,6 +405,18 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 	_group call dzn_fnc_dynai_initResponseGroup;
 };
 
+
+
+dzn_fnc_dynai_setSpotSkillRemote = {
+	if (local _this) then {
+		_this setSkill ["spotTime",1];
+		_this setSkill ["spotDistance",1];
+	} else {
+		[_this, ["spotTime",1]] remoteExec ["setSkill",_this];
+		[_this, ["spotDistance",1]] remoteExec ["setSkill",_this];
+	};
+};
+
 dzn_fnc_dynai_addUnitBehavior = {
 	/*
 	 * [@Unit, @Behavior] call dzn_fnc_dynai_addUnitBehavior
@@ -422,21 +434,10 @@ dzn_fnc_dynai_addUnitBehavior = {
 	 */
 	params ["_unit", "_behaviour"];
 	
-	// Setting SPOT skills to Maximum
-	_fnc_setSpotSkillRemote = {
-		if (local _this) then {
-			_this setSkill ["spotTime",1];
-			_this setSkill ["spotDistance",1];
-		} else {
-			[_this, ["spotTime",1]] remoteExec ["setSkill",_this];
-			[_this, ["spotDistance",1]] remoteExec ["setSkill",_this];
-		};	
-	};
-	
 	if (_unit isKindOf "CAManBase") then {
-		_unit call _fnc_setSkillRemote;
+		_unit call dzn_fnc_dynai_setSpotSkillRemote;
 	} else {
-		{ _unit call _fnc_setSkillRemote; } forEach (crew _unit);
+		{ _unit call dzn_fnc_dynai_setSpotSkillRemote; } forEach (crew _unit);
 	};
 	
 	switch toLower(_behaviour) do {
@@ -460,8 +461,8 @@ dzn_fnc_dynai_addUnitBehavior = {
 };
 
 dzn_fnc_dynai_dropUnitBehavior = {
-	_unit setVariable ["dzn_dynai_isIndoor", nil, true];
-	_unit setVariable ["dzn_dynai_isVehicleHold", nil, true];
+	_this setVariable ["dzn_dynai_isIndoor", nil, true];
+	_this setVariable ["dzn_dynai_isVehicleHold", nil, true];
 };
 
 

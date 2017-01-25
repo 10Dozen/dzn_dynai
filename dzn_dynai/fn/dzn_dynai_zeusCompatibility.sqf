@@ -31,12 +31,13 @@ dzn_fnc_dynai_zc_processMenu = {
 				,"                               --- Behavior --- "
 				,"Make Careless"				
 				,"                               --- Dynai Behavior --- "
-				,"Add As Supporter"
-				,"Remove behavior"							
+				,"Remove behavior"	
+				,"Add As Supporter"	
 				,"[inf] Indoor"
 				,"[veh] Hold frontal (45)"
 				,"[veh] Hold frontal wide (90)"
 				,"[veh] Hold 360"
+				, " "
 			]]
 		]
 	] call dzn_fnc_ShowChooseDialog;
@@ -51,20 +52,19 @@ dzn_fnc_dynai_zc_processMenu = {
 		, { [_groupsSelected, 2] call dzn_fnc_dynai_zc_splitGroup; }
 		, { _groupsSelected call dzn_fnc_dynai_zc_joinGroups; }
 		
-		/* Spacing */
+		/* Spacing - Behavior*/
 		, { }
 		
 		/* Make Careless */
-		,{ _groupsSelected call dzn_fnc_dynai_zc_makeCareless; }
+		, { _groupsSelected call dzn_fnc_dynai_zc_makeCareless; }
 		
-		/* Spacing */
-		, { }
-		/* Supporter */
-		, { _unitsSelected call dzn_fnc_dynai_zc_applyAsSupporter; }
+		/* Spacing - Dynai Behavior */
+		, { }		
 		
-		/* Behavior */
-		, { systemChat "Indoor"; [_unitsSelected, "indoor"] call dzn_fnc_dynai_zc_applyBehavior; }
+		/*  Dynai Behavior */
 		, { _unitsSelected call dzn_fnc_dynai_zc_removeBehavior; }
+		, { _unitsSelected call dzn_fnc_dynai_zc_applyAsSupporter; }
+		, { [_unitsSelected, "indoor"] call dzn_fnc_dynai_zc_applyBehavior; }
 		, { [_unitsSelected, "vehicle 45 hold"] call dzn_fnc_dynai_zc_applyBehavior; }
 		, { [_unitsSelected, "vehicle 90 hold"] call dzn_fnc_dynai_zc_applyBehavior; }
 		, { [_unitsSelected, "vehicle hold"] call dzn_fnc_dynai_zc_applyBehavior; }
@@ -165,10 +165,12 @@ dzn_fnc_dynai_zc_joinGroups = {
 
 dzn_fnc_dynai_zc_makeCareless = {
 	{
-		while {(count (waypoints _squad)) > 0} do {
-			deleteWaypoint ((waypoints _squad) select 0);
+		while {(count (waypoints _x)) > 0} do {
+			deleteWaypoint ((waypoints _x) select 0);
 		};
-		_x setBehaviour "CARELESS";		
+		_x setBehaviour "CARELESS";	
+
+		{ _x doMove (getPosASL _x) } count (units _x);
 	} forEach _this;
 	
 	[format ["%1 groups were set to CARELESS",count(_this)] ,"success"] call dzn_fnc_dynai_zc_showNotif;
@@ -208,7 +210,7 @@ dzn_fnc_dynai_zc_onKeyPress = {
 	switch _key do {
 		// See for key codes -- https://community.bistudio.com/wiki/DIK_KeyCodes
 		// G button
-		case 35: {
+		case 20: {
 			dzn_dynai_zc_keyIsDown = true;
 			if !(_ctrl || _alt || _shift) then { [] spawn dzn_fnc_dynai_zc_processMenu; };
 
