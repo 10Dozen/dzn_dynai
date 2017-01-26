@@ -405,6 +405,18 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 	_group call dzn_fnc_dynai_initResponseGroup;
 };
 
+
+
+dzn_fnc_dynai_setSpotSkillRemote = {
+	if (local _this) then {
+		_this setSkill ["spotTime",1];
+		_this setSkill ["spotDistance",1];
+	} else {
+		[_this, ["spotTime",1]] remoteExec ["setSkill",_this];
+		[_this, ["spotDistance",1]] remoteExec ["setSkill",_this];
+	};
+};
+
 dzn_fnc_dynai_addUnitBehavior = {
 	/*
 	 * [@Unit, @Behavior] call dzn_fnc_dynai_addUnitBehavior
@@ -421,6 +433,13 @@ dzn_fnc_dynai_addUnitBehavior = {
 	 *      
 	 */
 	params ["_unit", "_behaviour"];
+	
+	if (_unit isKindOf "CAManBase") then {
+		_unit call dzn_fnc_dynai_setSpotSkillRemote;
+	} else {
+		{ _unit call dzn_fnc_dynai_setSpotSkillRemote; } forEach (crew _unit);
+	};
+	
 	switch toLower(_behaviour) do {
 		case "indoor": {
 			[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm";
@@ -440,6 +459,12 @@ dzn_fnc_dynai_addUnitBehavior = {
 		};
 	};
 };
+
+dzn_fnc_dynai_dropUnitBehavior = {
+	_this setVariable ["dzn_dynai_isIndoor", nil, true];
+	_this setVariable ["dzn_dynai_isVehicleHold", nil, true];
+};
+
 
 dzn_fnc_dynai_processUnitBehaviours = {
 	// spawn dzn_fnc_dynai_processUnitBehaviours

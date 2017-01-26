@@ -368,7 +368,8 @@ dzn_fnc_dynai_createZone = {
 										// Specified houses
 										[_unit, _zoneBuildings, _assigned select 1] spawn dzn_fnc_assignInBuilding;
 									};
-									[_unit, DEBUG] execFSM "dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm";
+									// [_unit, DEBUG] execFSM "dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm";
+									[_unit, "indoor"] call dzn_fnc_dynai_addUnitBehavior;
 									_unit setVariable ["dzn_dynai_isIndoor", true, true]; //dynai_isIndoor
 								};
 							};
@@ -498,8 +499,9 @@ dzn_fnc_dynai_assignVehcleHoldBehavior = {
 	
 	_unit setVariable ["dzn_dynai_vehicleHold", true];
 	if (dzn_dynai_allowVehicleHoldBehavior) then { 
-		private _aspectMode = if (["Vehicle Hold", _mode, false] call BIS_fnc_inString) then { "All Aspect" } else { "Full Frontal" };
-		[_unit, _aspectMode, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+		private _aspectMode = if (["Vehicle Hold", _mode, false] call BIS_fnc_inString) then { "vehicle hold" } else { "vehicle 90 hold" };
+		// [_unit, _aspectMode, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+		[_unit, _aspectMode] call dzn_fnc_dynai_addUnitBehavior;
 	};
 };
 

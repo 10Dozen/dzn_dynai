@@ -28,12 +28,16 @@ dzn_fnc_dynai_zc_processMenu = {
 				,"Split to Fireteams (4)"
 				,"Split to Buddy-teams (2)"
 				,"Join All"
+				,"                               --- Behavior --- "
+				,"Make Careless"				
 				,"                               --- Dynai Behavior --- "
-				,"Add As Supporter"				
+				,"Remove behavior"	
+				,"Add As Supporter"	
 				,"[inf] Indoor"
 				,"[veh] Hold frontal (45)"
 				,"[veh] Hold frontal wide (90)"
 				,"[veh] Hold 360"
+				, " "
 			]]
 		]
 	] call dzn_fnc_ShowChooseDialog;
@@ -48,13 +52,19 @@ dzn_fnc_dynai_zc_processMenu = {
 		, { [_groupsSelected, 2] call dzn_fnc_dynai_zc_splitGroup; }
 		, { _groupsSelected call dzn_fnc_dynai_zc_joinGroups; }
 		
-		/* Spacing */
+		/* Spacing - Behavior*/
 		, { }
-		/* Supporter */
-		, { _unitsSelected call dzn_fnc_dynai_zc_applyAsSupporter; }
 		
-		/* Behavior */
-		, { systemChat "Indoor"; [_unitsSelected, "indoor"] call dzn_fnc_dynai_zc_applyBehavior; }
+		/* Make Careless */
+		, { _groupsSelected call dzn_fnc_dynai_zc_makeCareless; }
+		
+		/* Spacing - Dynai Behavior */
+		, { }		
+		
+		/*  Dynai Behavior */
+		, { _unitsSelected call dzn_fnc_dynai_zc_removeBehavior; }
+		, { _unitsSelected call dzn_fnc_dynai_zc_applyAsSupporter; }
+		, { [_unitsSelected, "indoor"] call dzn_fnc_dynai_zc_applyBehavior; }
 		, { [_unitsSelected, "vehicle 45 hold"] call dzn_fnc_dynai_zc_applyBehavior; }
 		, { [_unitsSelected, "vehicle 90 hold"] call dzn_fnc_dynai_zc_applyBehavior; }
 		, { [_unitsSelected, "vehicle hold"] call dzn_fnc_dynai_zc_applyBehavior; }
@@ -75,6 +85,17 @@ dzn_fnc_dynai_zc_applyBehavior = {
 		};
 	} forEach _units;
 	[format ["Behavior '%1' was applied to units",_behavior] ,"success"] call dzn_fnc_dynai_zc_showNotif;
+};
+
+dzn_fnc_dynai_zc_removeBehavior = {
+	{		
+		if (local _x) then {
+			_x call dzn_fnc_dynai_dropUnitBehavior;
+		} else {
+			_x remoteExec ["dzn_fnc_dynai_dropUnitBehavior",_x];
+		};
+	} forEach (_this);
+	["Units behavior disabled","success"] call dzn_fnc_dynai_zc_showNotif;
 };
 
 dzn_fnc_dynai_zc_applyAsSupporter = {
@@ -142,6 +163,23 @@ dzn_fnc_dynai_zc_joinGroups = {
 	] call dzn_fnc_dynai_zc_showNotif;
 };
 
+dzn_fnc_dynai_zc_makeCareless = {
+	{
+		while {(count (waypoints _x)) > 0} do {
+			deleteWaypoint ((waypoints _x) select 0);
+		};
+		_x setBehaviour "CARELESS";	
+
+		{ _x doMove (getPosASL _x) } count (units _x);
+	} forEach _this;
+	
+	[format ["%1 groups were set to CARELESS",count(_this)] ,"success"] call dzn_fnc_dynai_zc_showNotif;
+};
+
+
+
+/* Utility functions */
+
 dzn_fnc_dynai_zc_showNotif = {
 	// [@Text, @Success/Fail/Info] call dzn_fnc_gear_zc_showNotif
 	params["_text",["_type", "success"]];
@@ -172,7 +210,7 @@ dzn_fnc_dynai_zc_onKeyPress = {
 	switch _key do {
 		// See for key codes -- https://community.bistudio.com/wiki/DIK_KeyCodes
 		// G button
-		case 35: {
+		case 20: {
 			dzn_dynai_zc_keyIsDown = true;
 			if !(_ctrl || _alt || _shift) then { [] spawn dzn_fnc_dynai_zc_processMenu; };
 
