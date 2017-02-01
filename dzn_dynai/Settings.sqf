@@ -1,6 +1,7 @@
 // Delay before and after zones initializations
 dzn_dynai_preInitTimeout			=	3;
 dzn_dynai_afterInitTimeout			=	3;
+dzn_dynai_initCondition			=	{ true };
 
 // Group Responses
 dzn_dynai_allowGroupResponse			= true;
