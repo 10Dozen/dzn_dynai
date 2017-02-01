@@ -1,0 +1,819 @@
+/*%FSM<COMPILE "E:\GMZ\STEAM\SteamApps\common\Arma 3 Tools\FSMEditor\scriptedFSM.cfg, dzn_dynai_createZone">*/
+/*%FSM<HEAD>*/
+/*
+item0[] = {"Start",0,250,-41.043030,-1392.809692,58.956970,-1342.809692,0.000000,"Start"};
+item1[] = {"true",4,218,-35.995148,-1321.959106,54.004852,-1271.959106,0.000000,"true"};
+item2[] = {"Reference__Units",2,250,-36.681702,-1236.763672,53.318314,-1186.763794,0.000000,"Reference " \n "Units" \n "Loop Init"};
+item3[] = {"Not_All_references",4,218,-36.875893,-1145.703369,53.124115,-1095.703247,1.000000,"Not All references" \n "processed"};
+item4[] = {"Init_Reference",2,250,-36.773502,-1059.339233,53.226517,-1009.339417,0.000000,"Init Reference"};
+item5[] = {"Not_All_groups_p",4,218,-37.802986,-970.526978,52.197021,-920.526978,1.000000,"Not All groups" \n "processed"};
+item6[] = {"Create_Group_from",2,250,-38.914703,-882.701843,51.085312,-832.701843,0.000000,"Create Group" \n "from Reference"};
+item7[] = {"Not_All_Units__p",4,218,-38.701393,-790.152893,51.298615,-740.152893,1.000000,"Not All Units " \n "processed"};
+item8[] = {"Init_Unit",2,250,-38.947392,-690.683777,51.052628,-640.683777,0.000000,"Init Unit"};
+item9[] = {"Infantry",4,218,-219.103607,-691.433594,-129.103607,-641.433533,1.000000,"Infantry"};
+item10[] = {"Vehicle",4,218,326.338776,-690.355896,416.338776,-640.355835,0.000000,"Vehicle"};
+item11[] = {"Create_Infantry",2,250,-220.172791,-606.826782,-130.172791,-556.826843,0.000000,"Create Infantry"};
+item12[] = {"Indoor",4,218,-344.526917,-497.471161,-254.526917,-447.471161,3.000000,"Indoor"};
+item13[] = {"Apply_indoor_beh",2,250,-344.922974,-414.815918,-254.922974,-364.815918,0.000000,"Apply indoor" \n "behavior"};
+item14[] = {"In_Vehicle",4,218,-221.239838,-497.894501,-131.239838,-447.894501,2.000000,"In Vehicle"};
+item15[] = {"Assign__in_Vehic",2,250,-221.366180,-415.023712,-131.366150,-365.023712,0.000000,"Assign " \n "in Vehicle"};
+item16[] = {"Patrol",4,218,-101.008362,-497.592438,-11.008362,-447.592438,0.000000,"Patrol"};
+item17[] = {"Assign_Patrol",2,250,-101.890198,-414.647034,-11.890182,-364.647034,0.000000,"Assign Patrol"};
+item18[] = {"Unit_Completed",4,218,7.176041,-297.846344,97.176041,-247.846344,0.000000,"Unit" \n "Completed"};
+item19[] = {"Go_to_Next_Unit",2,250,6.615082,-207.875854,96.615112,-157.875854,0.000000,"Go to Next Unit"};
+item20[] = {"",7,210,-429.761902,-768.762512,-421.761780,-760.762512,0.000000,""};
+item21[] = {"Create_Vehicle",2,250,325.586456,-600.426636,415.586456,-550.426636,0.000000,"Create Vehicle"};
+item22[] = {"",7,210,-429.311218,-186.979370,-421.311218,-178.979370,0.000000,""};
+item23[] = {"Hold",4,218,106.713074,-500.958649,196.713074,-450.958649,1.000000,"Hold"};
+item24[] = {"Advance",4,218,319.912628,-498.509949,409.912628,-448.509888,1.000000,"Advance"};
+item25[] = {"Road_Patrol",4,218,536.347900,-499.399536,626.347900,-449.399536,1.000000,"Road Patrol"};
+item26[] = {"Patrol",4,218,427.756958,-499.824768,517.756958,-449.824768,0.000000,"Patrol"};
+item27[] = {"Road_Hold",4,218,211.605927,-499.077148,301.605927,-449.077118,1.000000,"Road Hold"};
+item28[] = {"Apply_Hold_Behav",2,250,106.215523,-420.749786,196.215530,-370.749786,0.000000,"Apply Hold" \n "Behavior"};
+item29[] = {"Apply__Road_Hold",2,250,211.472992,-422.336212,301.473022,-372.336212,0.000000,"Apply " \n "Road Hold" \n "Behavior"};
+item30[] = {"Apply_Advance_Be",2,250,320.560181,-421.411926,410.560181,-371.411926,0.000000,"Apply Advance" \n "Behavior"};
+item31[] = {"Apply_Patrol_Beh",2,250,427.973724,-420.406281,517.973755,-370.406281,0.000000,"Apply Patrol" \n "Behavior"};
+item32[] = {"Apply__Road_Patrol",2,250,536.946960,-418.193359,626.946960,-368.193359,0.000000,"Apply " \n "Road Patrol" \n "Behavior"};
+item33[] = {"",7,210,-61.421051,-276.969177,-53.421051,-268.969177,0.000000,""};
+item34[] = {"",7,210,-180.351685,-276.969208,-172.351685,-268.969208,0.000000,""};
+item35[] = {"",7,210,-304.729523,-276.969177,-296.729523,-268.969177,0.000000,""};
+item36[] = {"",7,210,147.643173,-276.685760,155.643173,-268.685760,0.000000,""};
+item37[] = {"",7,210,252.225616,-276.854065,260.225616,-268.854065,0.000000,""};
+item38[] = {"",7,210,361.333710,-276.541840,369.333710,-268.541840,0.000000,""};
+item39[] = {"",7,210,469.197205,-275.974976,477.197205,-267.974976,0.000000,""};
+item40[] = {"",7,210,578.852173,-274.529022,586.852173,-266.529022,0.000000,""};
+item41[] = {"All_Units_Proces",4,218,-334.267914,-969.861938,-244.267914,-919.861938,0.000000,"All Units" \n "Processed"};
+item42[] = {"Set_Group__Behavior",2,250,-210.557709,-970.538391,-120.557709,-920.538391,0.000000,"Set Group " \n "Behavior" \n "Properties"};
+item43[] = {"All_groups_proce",4,218,-211.892944,-1059.843140,-121.892937,-1009.843079,0.000000,"All groups" \n "processed"};
+item44[] = {"",7,210,-428.942291,-948.247314,-420.942322,-940.247314,0.000000,""};
+item45[] = {"Switch_to_next_R",2,250,-210.714600,-1145.553955,-120.714600,-1095.553833,0.000000,"Switch to" \n "next Reference"};
+item46[] = {"All_references_p",4,218,-324.299652,-1142.770386,-234.299652,-1092.770386,0.000000,"All references" \n "processed"};
+item47[] = {"Complete_zone",1,250,-460.855103,-1141.295288,-370.854950,-1091.295288,0.000000,"Complete" \n "zone"};
+link0[] = {0,1};
+link1[] = {1,2};
+link2[] = {2,3};
+link3[] = {3,4};
+link4[] = {4,5};
+link5[] = {5,6};
+link6[] = {6,7};
+link7[] = {7,8};
+link8[] = {8,9};
+link9[] = {8,10};
+link10[] = {9,11};
+link11[] = {10,21};
+link12[] = {11,12};
+link13[] = {11,14};
+link14[] = {11,16};
+link15[] = {12,13};
+link16[] = {13,35};
+link17[] = {14,15};
+link18[] = {15,34};
+link19[] = {16,17};
+link20[] = {17,33};
+link21[] = {18,19};
+link22[] = {19,22};
+link23[] = {20,7};
+link24[] = {20,44};
+link25[] = {21,23};
+link26[] = {21,24};
+link27[] = {21,25};
+link28[] = {21,26};
+link29[] = {21,27};
+link30[] = {22,20};
+link31[] = {23,28};
+link32[] = {24,30};
+link33[] = {25,32};
+link34[] = {26,31};
+link35[] = {27,29};
+link36[] = {28,36};
+link37[] = {29,37};
+link38[] = {30,38};
+link39[] = {31,39};
+link40[] = {32,40};
+link41[] = {33,18};
+link42[] = {34,33};
+link43[] = {35,34};
+link44[] = {36,18};
+link45[] = {37,36};
+link46[] = {38,37};
+link47[] = {39,38};
+link48[] = {40,39};
+link49[] = {41,42};
+link50[] = {42,5};
+link51[] = {42,43};
+link52[] = {43,45};
+link53[] = {44,41};
+link54[] = {45,3};
+link55[] = {45,46};
+link56[] = {46,47};
+globals[] = {0.000000,0,0,0,0,640,480,2,309,6316128,1,-866.640198,728.317017,-15.922913,-1262.868530,1132,885,1};
+window[] = {2,-1,-1,-1,-1,958,717,2135,233,3,1150};
+*//*%FSM</HEAD>*/
+class FSM
+{
+        fsmName = "dzn_dynai_createZone";
+        class States
+        {
+                /*%FSM<STATE "Start">*/
+                class Start
+                {
+                        name = "Start";
+                        itemno = 0;
+                        init = /*%FSM<STATEINIT""">*/"params [""_name"", ""_side"", ""_isActive"", ""_area"", ""_wps"", ""_refUnits"", ""_behavior"", ""_zoneBuildings""];" \n
+                         "" \n
+                         "a = _this;" \n
+                         "" \n
+                         "diag_log format[""DZN: %1"", str(_this)];" \n
+                         "diag_log format[""DZN: %1"", _name];" \n
+                         "" \n
+                         "private _zoneRoads = _area call dzn_fnc_getLocationRoads;" \n
+                         "private _zoneUsedBuildings = [];" \n
+                         "private _zonePos = _area call dzn_fnc_getZonePosition; //[CentralPos, xMin, yMin, xMax, yMax]" \n
+                         "" \n
+                         "_groups = [];" \n
+                         "" \n
+                         "// Creating center of side if not exists" \n
+                         "call compile format [""" \n
+                         "	if (isNil { dzn_dynai_center_%1}) then {" \n
+                         "		createCenter %1;" \n
+                         "		dzn_dynai_center_%1 = true;" \n
+                         "	};	" \n
+                         "	""" \n
+                         "	,_side" \n
+                         "];" \n
+                         ""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "true">*/
+                                class true
+                                {
+                                        itemno = 1;
+                                        priority = 0.000000;
+                                        to="Reference__Units";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"true"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Reference__Units">*/
+                class Reference__Units
+                {
+                        name = "Reference__Units";
+                        itemno = 2;
+                        init = /*%FSM<STATEINIT""">*/"private _currentReferenceNumber = 0;" \n
+                         "private _totalReferences = count (_refUnits);"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Not_All_references">*/
+                                class Not_All_references
+                                {
+                                        itemno = 3;
+                                        priority = 1.000000;
+                                        to="Init_Reference";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_currentReferenceNumber < _totalReferences)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Init_Reference">*/
+                class Init_Reference
+                {
+                        name = "Init_Reference";
+                        itemno = 4;
+                        init = /*%FSM<STATEINIT""">*/"private _currentRef = _refUnits select _currentReferenceNumber;" \n
+                         "" \n
+                         "private _totalGrpCount = round( (_currentRef select 0) * (call dzn_fnc_dynai_getMultiplier) );" \n
+                         "private _groupUnits = _currentRef select 1;" \n
+                         "private _groupSkill = if (!isNil {_currentRef select 2}) then { _currentRef select 2 } else { dzn_dynai_complexSkill };" \n
+                         "" \n
+                         "private _currentGrpCount = 0;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Not_All_groups_p">*/
+                                class Not_All_groups_p
+                                {
+                                        itemno = 5;
+                                        priority = 1.000000;
+                                        to="Create_Group_from";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_currentGrpCount < _totalGrpCount)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Create_Group_from">*/
+                class Create_Group_from
+                {
+                        name = "Create_Group_from";
+                        itemno = 6;
+                        init = /*%FSM<STATEINIT""">*/"private _groupPos = _area call dzn_fnc_getRandomPointInZone; // return Pos3D" \n
+                         "private _grp = createGroup (call compile _side);" \n
+                         "_groups pushBack _grp;" \n
+                         "" \n
+                         "[" \n
+                         "	_grp" \n
+                         "	, [" \n
+                         "		[""dzn_dynai_homeZone"", call compile _name, dzn_dynai_pubVars]" \n
+                         "		, [""dzn_dynai_wpSet"",false, dzn_dynai_pubVars]" \n
+                         "		, [""dzn_dynai_units"", []]" \n
+                         "		, [""dzn_dynai_vehicles"", []]" \n
+                         "	]" \n
+                         "	, true" \n
+                         "] call dzn_fnc_setVars;" \n
+                         "" \n
+                         "private _cycleWaypoints = true;" \n
+                         "" \n
+                         "private _totalUnitsCount = count(_groupUnits);" \n
+                         "private _currentUnitsCount = 0;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Not_All_Units__p">*/
+                                class Not_All_Units__p
+                                {
+                                        itemno = 7;
+                                        priority = 1.000000;
+                                        to="Init_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_currentUnitsCount < _totalUnitsCount)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Init_Unit">*/
+                class Init_Unit
+                {
+                        name = "Init_Unit";
+                        itemno = 8;
+                        init = /*%FSM<STATEINIT""">*/"private _classname = (_groupUnits select _currentUnitsCount) select 0;" \n
+                         "private _assigned = (_groupUnits select _currentUnitsCount) select 1;" \n
+                         "private _gear = (_groupUnits select _currentUnitsCount) select 2;" \n
+                         "				" \n
+                         "private _unit = objNull;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Infantry">*/
+                                class Infantry
+                                {
+                                        itemno = 9;
+                                        priority = 1.000000;
+                                        to="Create_Infantry";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(typename _assigned == ""ARRAY"")"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Vehicle">*/
+                                class Vehicle
+                                {
+                                        itemno = 10;
+                                        priority = 0.000000;
+                                        to="Create_Vehicle";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(true)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Create_Infantry">*/
+                class Create_Infantry
+                {
+                        name = "Create_Infantry";
+                        itemno = 11;
+                        init = /*%FSM<STATEINIT""">*/"_unit = _grp createUnit [_classname , _groupPos, [], 0, ""NONE""];" \n
+                         "" \n
+                         "_grp setVariable [""dzn_dynai_units"", (_grp getVariable ""dzn_dynai_units"") + [_unit]];" \n
+                         "_grp setVariable [""dzn_dynai_vehicles"", (_grp getVariable ""dzn_dynai_vehicles"") + [""""]];" \n
+                         "" \n
+                         "if (_groupSkill select 0) then {" \n
+                         "	{ _unit setSkill _x; } forEach (_groupSkill select 1);" \n
+                         "} else {" \n
+                         "	_unit setSkill (_groupSkill select 1);" \n
+                         "};	" \n
+                         "" \n
+                         "if !(typename _gear == ""STRING"" && {_gear == """"} ) then { [_unit, _gear] spawn dzn_fnc_gear_assignKit; };"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Indoor">*/
+                                class Indoor
+                                {
+                                        itemno = 12;
+                                        priority = 3.000000;
+                                        to="Apply_indoor_beh";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"!(_assigned isEqualTo []) " \n
+                                         "&& (" \n
+                                         "	(typename (_assigned select 0) == ""STRING"")" \n
+                                         "	&& { toLower(_assigned select 0) == ""indoors"" }" \n
+                                         ")"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "In_Vehicle">*/
+                                class In_Vehicle
+                                {
+                                        itemno = 14;
+                                        priority = 2.000000;
+                                        to="Assign__in_Vehic";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"!(_assigned isEqualTo []) " \n
+                                         "&& (typename (_assigned select 0) != ""STRING"")"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Patrol">*/
+                                class Patrol
+                                {
+                                        itemno = 16;
+                                        priority = 0.000000;
+                                        to="Assign_Patrol";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"true"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Apply_indoor_beh">*/
+                class Apply_indoor_beh
+                {
+                        name = "Apply_indoor_beh";
+                        itemno = 13;
+                        init = /*%FSM<STATEINIT""">*/"if (isNil {_assigned select 1}) then {										" \n
+                         "	// Default houses" \n
+                         "	[_unit, _zoneBuildings] spawn dzn_fnc_assignInBuilding;" \n
+                         "} else {" \n
+                         "	// Specified houses" \n
+                         "	[_unit, _zoneBuildings, _assigned select 1] spawn dzn_fnc_assignInBuilding;" \n
+                         "};" \n
+                         "" \n
+                         "[_unit, ""indoor""] call dzn_fnc_dynai_addUnitBehavior;" \n
+                         "_unit setVariable [""dzn_dynai_isIndoor"", true, true]; //dynai_isIndoor"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Unit_Completed">*/
+                                class Unit_Completed
+                                {
+                                        itemno = 18;
+                                        priority = 0.000000;
+                                        to="Go_to_Next_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/""/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Assign__in_Vehic">*/
+                class Assign__in_Vehic
+                {
+                        name = "Assign__in_Vehic";
+                        itemno = 15;
+                        init = /*%FSM<STATEINIT""">*/"[" \n
+                         "	_unit" \n
+                         "	, (_grp getVariable ""dzn_dynai_vehicles"") select (_assigned select 0)	// ID of created unit/vehicle" \n
+                         "	, _assigned select 1	// string of assigned role - e.g. driver, gunner" \n
+                         "] call dzn_fnc_assignInVehicle; "/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Unit_Completed">*/
+                                class Unit_Completed
+                                {
+                                        itemno = 18;
+                                        priority = 0.000000;
+                                        to="Go_to_Next_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/""/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Assign_Patrol">*/
+                class Assign_Patrol
+                {
+                        name = "Assign_Patrol";
+                        itemno = 17;
+                        init = /*%FSM<STATEINIT""">*/""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Unit_Completed">*/
+                                class Unit_Completed
+                                {
+                                        itemno = 18;
+                                        priority = 0.000000;
+                                        to="Go_to_Next_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/""/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Go_to_Next_Unit">*/
+                class Go_to_Next_Unit
+                {
+                        name = "Go_to_Next_Unit";
+                        itemno = 19;
+                        init = /*%FSM<STATEINIT""">*/"_currentUnitsCount = _currentUnitsCount + 1;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Not_All_Units__p">*/
+                                class Not_All_Units__p
+                                {
+                                        itemno = 7;
+                                        priority = 1.000000;
+                                        to="Init_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_currentUnitsCount < _totalUnitsCount)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "All_Units_Proces">*/
+                                class All_Units_Proces
+                                {
+                                        itemno = 41;
+                                        priority = 0.000000;
+                                        to="Set_Group__Behavior";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(true)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Create_Vehicle">*/
+                class Create_Vehicle
+                {
+                        name = "Create_Vehicle";
+                        itemno = 21;
+                        init = /*%FSM<STATEINIT""">*/"private _vehPos = [(_groupPos select 0) + 6*_forEachIndex, (_groupPos select 1) + 6*_forEachIndex, 0];" \n
+                         "while {" \n
+                         "	(_vehPos isFlatEmpty [(sizeof _classname) / 5,0,300,(sizeof _classname),0]) select 0 isEqualTo []					" \n
+                         "} do {" \n
+                         "	_vehPos = [(_groupPos select 0) + 6*_forEachIndex + 15 +  random(50), (_groupPos select 1) + 6*_forEachIndex + 15 + random(50), 0];" \n
+                         "};" \n
+                         "					" \n
+                         "_unit = createVehicle [_classname, _vehPos, [], 0, ""NONE""];" \n
+                         "_unit allowDamage false;					" \n
+                         "_unit setPos _vehPos;" \n
+                         "_unit setVelocity [0,0,0];					" \n
+                         "_unit spawn { sleep 5; _this allowDamage true; };" \n
+                         "					" \n
+                         "if !(typename _gear == ""STRING"" && {_gear == """"} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };" \n
+                         "" \n
+                         "_grp setVariable [""dzn_dynai_vehicles"", (_grp getVariable ""dzn_dynai_vehicles"") + [_unit]];" \n
+                         ""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Advance">*/
+                                class Advance
+                                {
+                                        itemno = 24;
+                                        priority = 1.000000;
+                                        to="Apply_Advance_Be";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[""Vehicle Advance"", _assigned, false] call BIS_fnc_inString"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Road_Patrol">*/
+                                class Road_Patrol
+                                {
+                                        itemno = 25;
+                                        priority = 1.000000;
+                                        to="Apply__Road_Patrol";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[""Vehicle Road Patrol"", _assigned, false] call BIS_fnc_inString"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Road_Hold">*/
+                                class Road_Hold
+                                {
+                                        itemno = 27;
+                                        priority = 1.000000;
+                                        to="Apply__Road_Hold";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[""Vehicle Road Hold"", _assigned, false] call BIS_fnc_inString" \n
+                                         "|| [""Vehicle Road Frontal Hold"", _assigned, false] call BIS_fnc_inString"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Hold">*/
+                                class Hold
+                                {
+                                        itemno = 23;
+                                        priority = 1.000000;
+                                        to="Apply_Hold_Behav";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[""Vehicle Hold"", _assigned, false] call BIS_fnc_inString " \n
+                                         "|| [""Vehicle Frontal Hold"", _assigned, false] call BIS_fnc_inString"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Patrol">*/
+                                class Patrol
+                                {
+                                        itemno = 26;
+                                        priority = 0.000000;
+                                        to="Apply_Patrol_Beh";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(true)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Apply_Hold_Behav">*/
+                class Apply_Hold_Behav
+                {
+                        name = "Apply_Hold_Behav";
+                        itemno = 28;
+                        init = /*%FSM<STATEINIT""">*/"_grp setVariable [""dzn_dynai_wpSet"", true];" \n
+                         "" \n
+                         "(waypoints _grp select 0) setWaypointType ""Hold"";" \n
+                         "[_unit, _assigned] spawn dzn_fnc_dynai_assignVehcleHoldBehavior;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Unit_Completed">*/
+                                class Unit_Completed
+                                {
+                                        itemno = 18;
+                                        priority = 0.000000;
+                                        to="Go_to_Next_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/""/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Apply__Road_Hold">*/
+                class Apply__Road_Hold
+                {
+                        name = "Apply__Road_Hold";
+                        itemno = 29;
+                        init = /*%FSM<STATEINIT""">*/"_grp setVariable [""dzn_dynai_wpSet"", true];" \n
+                         "" \n
+                         "private _road = selectRandom _zoneRoads;" \n
+                         "							" \n
+                         "(waypoints _grp select 0) setWaypointPosition [getPosASL _road, 10];" \n
+                         "(waypoints _grp select 0) setWaypointType ""Hold"";" \n
+                         "							" \n
+                         "_unit setPos (_road modelToWorld [7 * selectRandom [1,-1], 0, 0]);							" \n
+                         "_unit setDir ((getDir _road) + selectRandom [1,-1]*selectRandom[0,15,20,30]);" \n
+                         "							" \n
+                         "[_unit, _assigned] spawn dzn_fnc_dynai_assignVehcleHoldBehavior;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Unit_Completed">*/
+                                class Unit_Completed
+                                {
+                                        itemno = 18;
+                                        priority = 0.000000;
+                                        to="Go_to_Next_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/""/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Apply_Advance_Be">*/
+                class Apply_Advance_Be
+                {
+                        name = "Apply_Advance_Be";
+                        itemno = 30;
+                        init = /*%FSM<STATEINIT""">*/"_cycleWaypoints = false;" \n
+                         "" \n
+                         "_unit setVariable [""dzn_dynai_isStatic"",true,true];" \n
+                         "_grp spawn {" \n
+                         "	waitUntil {_this getVariable [""dzn_dynai_wpSet"", false]};" \n
+                         "" \n
+                         "	private _lastWp = (waypoints _this) select (count (waypoints _this) - 1);" \n
+                         "	_lastWp setWaypointType ""Hold"";" \n
+                         "	" \n
+                         "	waitUntil { sleep 15; (_lastWp select 1) == currentWaypoint _this };" \n
+                         "	[vehicle (leader _this), ""vehicle hold""] call dzn_fnc_dynai_addUnitBehavior;" \n
+                         "};"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Unit_Completed">*/
+                                class Unit_Completed
+                                {
+                                        itemno = 18;
+                                        priority = 0.000000;
+                                        to="Go_to_Next_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/""/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Apply_Patrol_Beh">*/
+                class Apply_Patrol_Beh
+                {
+                        name = "Apply_Patrol_Beh";
+                        itemno = 31;
+                        init = /*%FSM<STATEINIT""">*/""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Unit_Completed">*/
+                                class Unit_Completed
+                                {
+                                        itemno = 18;
+                                        priority = 0.000000;
+                                        to="Go_to_Next_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/""/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Apply__Road_Patrol">*/
+                class Apply__Road_Patrol
+                {
+                        name = "Apply__Road_Patrol";
+                        itemno = 32;
+                        init = /*%FSM<STATEINIT""">*/"_grp setVariable [""dzn_dynai_wpSet"", true];" \n
+                         "_unit setVariable [""dzn_dynai_isStatic"",true,true];" \n
+                         "							" \n
+                         "private _road = selectRandom _zoneRoads;" \n
+                         "_unit setPos (_road modelToWorld [7 * selectRandom [1,-1], 0, 0]);							" \n
+                         "_unit setDir (random 360);" \n
+                         "							" \n
+                         "[_grp,_zoneRoads] spawn {" \n
+                         "	params[""_grp"",""_zoneRoads""];" \n
+                         "" \n
+                         "	waitUntil { sleep 5; !((units _grp) isEqualTo []) };" \n
+                         "	[_grp, _zoneRoads] call dzn_fnc_createPathFromRoads;" \n
+                         "};"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Unit_Completed">*/
+                                class Unit_Completed
+                                {
+                                        itemno = 18;
+                                        priority = 0.000000;
+                                        to="Go_to_Next_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/""/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Set_Group__Behavior">*/
+                class Set_Group__Behavior
+                {
+                        name = "Set_Group__Behavior";
+                        itemno = 42;
+                        init = /*%FSM<STATEINIT""">*/"// Set group behavior" \n
+                         "if !(_behavior select 0 == """") then { _grp setSpeedMode (_behavior select 0); };" \n
+                         "if !(_behavior select 1 == """") then { _grp setBehaviour (_behavior select 1); };" \n
+                         "if !(_behavior select 2 == """") then { _grp setCombatMode (_behavior select 2); };" \n
+                         "if !(_behavior select 3 == """") then { _grp setFormation (_behavior select 3); };" \n
+                         "			" \n
+                         "// Assign waypoints" \n
+                         "if !(_grp getVariable ""dzn_dynai_wpSet"") then {				" \n
+                         "	if (typename _wps == ""ARRAY"") then {" \n
+                         "		[_grp, _wps, 3 + round(random 3),_cycleWaypoints] call dzn_fnc_createPathFromKeypoints;" \n
+                         "	} else {" \n
+                         "		[_grp, _area, 3 + round(random 3),_cycleWaypoints] call dzn_fnc_createPathFromRandom;" \n
+                         "	};" \n
+                         "	_grp setVariable [""dzn_dynai_wpSet"",true];" \n
+                         "};" \n
+                         "			" \n
+                         "if (dzn_dynai_allowGroupResponse) then { _grp call dzn_fnc_dynai_initResponseGroup; };" \n
+                         "" \n
+                         "" \n
+                         "_currentGrpCount = _currentGrpCount + 1;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Not_All_groups_p">*/
+                                class Not_All_groups_p
+                                {
+                                        itemno = 5;
+                                        priority = 1.000000;
+                                        to="Create_Group_from";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_currentGrpCount < _totalGrpCount)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "All_groups_proce">*/
+                                class All_groups_proce
+                                {
+                                        itemno = 43;
+                                        priority = 0.000000;
+                                        to="Switch_to_next_R";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(true)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Switch_to_next_R">*/
+                class Switch_to_next_R
+                {
+                        name = "Switch_to_next_R";
+                        itemno = 45;
+                        init = /*%FSM<STATEINIT""">*/"_currentReferenceNumber = _currentReferenceNumber + 1;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Not_All_references">*/
+                                class Not_All_references
+                                {
+                                        itemno = 3;
+                                        priority = 1.000000;
+                                        to="Init_Reference";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_currentReferenceNumber < _totalReferences)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "All_references_p">*/
+                                class All_references_p
+                                {
+                                        itemno = 46;
+                                        priority = 0.000000;
+                                        to="Complete_zone";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(true)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Complete_zone">*/
+                class Complete_zone
+                {
+                        name = "Complete_zone";
+                        itemno = 47;
+                        init = /*%FSM<STATEINIT""">*/"if (dzn_dynai_allowGroupResponse && dzn_dynai_makeZoneAlertOnRequest) then {" \n
+                         "	(call compile _name) setVariable [""dzn_dynai_isZoneAlerted"", false];" \n
+                         "};" \n
+                         "	" \n
+                         "(call compile _name) setVariable [""dzn_dynai_groups"", _groups, dzn_dynai_pubVars];	" \n
+                         "dzn_dynai_activatedZones pushBack (call compile _name);" \n
+                         ""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                        };
+                };
+                /*%FSM</STATE>*/
+        };
+        initState="Start";
+        finalStates[] =
+        {
+                "Complete_zone",
+        };
+};
+/*%FSM</COMPILE>*/
