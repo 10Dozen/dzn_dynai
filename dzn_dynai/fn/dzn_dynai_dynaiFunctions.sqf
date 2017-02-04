@@ -63,7 +63,7 @@ dzn_fnc_dynai_initZoneKeypoints = {
 			private _pos = getPosASL _x;
 			_keypoints pushBack [_pos select 0, _pos select 1, 0];
 		};
-	} forEach (synchronizedObjects _x);
+	} forEach (synchronizedObjects _this);
 	
 	_keypoints
 };
