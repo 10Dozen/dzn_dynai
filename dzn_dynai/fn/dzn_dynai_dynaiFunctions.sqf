@@ -76,16 +76,13 @@ dzn_fnc_dynai_initZones = {
 	*/
 	if !(call dzn_fnc_dynai_initValidate) exitWith {};
 	
-	private ["_modules", "_zone", "_properties","_syncObj", "_locations","_synced", "_wps", "_keypoints","_locationBuildings","_locBuildings","_locPos"];
+	private ["_modules", "_properties","_syncObj", "_locations","_synced", "_wps", "_keypoints","_locationBuildings","_locBuildings","_locPos"];
 
 	call dzn_fnc_dynai_getSkillFromParameters;
 	_modules = synchronizedObjects dzn_dynai_core;
 	
 	{
-		_zone = _x;
-		
-		_zone setVariable ["dzn_dynai_initialized", false];
-		_zoneBuildings = [];
+		private _zone = _x;
 		
 		// Get propertis from configuration arra
 		_properties = [];
@@ -94,60 +91,70 @@ dzn_fnc_dynai_initZones = {
 				_properties = _x;
 			};
 		} forEach dzn_dynai_zoneProperties;
-		if (_properties isEqualTo []) exitWith { ["dzn_dynai :: There is no properties for DynAI zone '%1'", str(_x)] call BIS_fnc_error; };
-
-		// Get triggers and convert them into locations
-		_locations = [];
-		_syncObj = synchronizedObjects _zone;
-		{
-			if (_x isKindOf "EmptyDetector") then {
-				_loc = [_x, true] call dzn_fnc_convertTriggerToLocation;
-				_locations pushBack _loc;
+		
+		if (_properties isEqualTo []) then { 
+			["dzn_dynai :: There is no properties for DynAI zone '%1'", str(_x)] call BIS_fnc_error; 
+		
+		} else {
+			// Start of zone init
+			_zone setVariable ["dzn_dynai_initialized", false];
+			_zoneBuildings = [];
 			
-				_locBuildings = [[_loc]] call dzn_fnc_getLocationBuildings;
-				{ _zoneBuildings pushBack _x; } forEach _locBuildings;
-			};		
-		} forEach _syncObj;
-		
-		if (_locations isEqualTo []) exitWith { ["dzn_dynai :: There is no triggers synchronized with DynAI zone '%1'", str(_x)] call BIS_fnc_error; };
-		
-		// Get area average position and size
-		#define GET_AVERAGE(PAR1,PAR2)		((PAR1) + (PAR2))/2
-		_locPos = [];
-		{
-			_locPos = if (_locPos isEqualTo []) then {
-				locationPosition _x
+			// Get triggers and convert them into locations
+			_locations = [];
+			_syncObj = synchronizedObjects _zone;
+			{
+				if (_x isKindOf "EmptyDetector") then {
+					_loc = [_x, true] call dzn_fnc_convertTriggerToLocation;
+					_locations pushBack _loc;
+				
+					_locBuildings = [[_loc]] call dzn_fnc_getLocationBuildings;
+					{ _zoneBuildings pushBack _x; } forEach _locBuildings;
+				};		
+			} forEach _syncObj;
+			
+			if (_locations isEqualTo []) then {
+				["dzn_dynai :: There is no triggers synchronized with DynAI zone '%1'", str(_x)] call BIS_fnc_error;
+			
 			} else {
-				[
-					GET_AVERAGE(_locPos select 0, (locationPosition _x) select 0), 
-					GET_AVERAGE(_locPos select 1, (locationPosition _x) select 1), 
-					GET_AVERAGE(_locPos select 2, (locationPosition _x) select 2)
-				]
-			};
-		} forEach _locations;
+				// Get area average position and size
+				#define GET_AVERAGE(PAR1,PAR2)		((PAR1) + (PAR2))/2
+				_locPos = [];
+				{
+					_locPos = if (_locPos isEqualTo []) then {
+						locationPosition _x
+					} else {
+						[
+							GET_AVERAGE(_locPos select 0, (locationPosition _x) select 0), 
+							GET_AVERAGE(_locPos select 1, (locationPosition _x) select 1), 
+							GET_AVERAGE(_locPos select 2, (locationPosition _x) select 2)
+						]
+					};
+				} forEach _locations;
 
-		// Get Keypoints
-		_keypoints = _zone call dzn_fnc_dynai_initZoneKeypoints;
-		if (_keypoints isEqualTo []) then {			
-			_keypoints = "randomize";
-		};	
-		sleep 1;
-		
-		_zone setPosASL _locPos;
-		
-		_properties set [3, _locations];
-		_properties set [4, _keypoints];
-		_properties = _properties + [_zoneBuildings];
-		
-		[_zone, [ 
-			["dzn_dynai_area", _locations, dzn_dynai_pubVars]
-			, ["dzn_dynai_keypoints", _keypoints, dzn_dynai_pubVars]
-			, ["dzn_dynai_isActive", _properties select 2, dzn_dynai_pubVars]
-			, ["dzn_dynai_properties", _properties, dzn_dynai_pubVars]
-			, ["dzn_dynai_groups", [], dzn_dynai_pubVars]
-			, ["dzn_dynai_initialized", true, dzn_dynai_pubVars]				
-		], true] call dzn_fnc_setVars;
-		
+				// Get Keypoints
+				_keypoints = _zone call dzn_fnc_dynai_initZoneKeypoints;
+				if (_keypoints isEqualTo []) then {			
+					_keypoints = "randomize";
+				};	
+				sleep 1;
+				
+				_zone setPosASL _locPos;
+				
+				_properties set [3, _locations];
+				_properties set [4, _keypoints];
+				_properties = _properties + [_zoneBuildings];
+				
+				[_zone, [ 
+					["dzn_dynai_area", _locations, dzn_dynai_pubVars]
+					, ["dzn_dynai_keypoints", _keypoints, dzn_dynai_pubVars]
+					, ["dzn_dynai_isActive", _properties select 2, dzn_dynai_pubVars]
+					, ["dzn_dynai_properties", _properties, dzn_dynai_pubVars]
+					, ["dzn_dynai_groups", [], dzn_dynai_pubVars]
+					, ["dzn_dynai_initialized", true, dzn_dynai_pubVars]				
+				], true] call dzn_fnc_setVars;
+			};
+		};		
 	} forEach _modules;
 };
 
@@ -263,12 +270,11 @@ dzn_fnc_dynai_createZone = {
 
 dzn_fnc_dynai_assignVehcleHoldBehavior = {
 	params["_unit","_mode"];
-	sleep 2;
+	sleep 5;
 	
 	_unit setVariable ["dzn_dynai_vehicleHold", true];
 	if (dzn_dynai_allowVehicleHoldBehavior) then { 
 		private _aspectMode = if (["Vehicle Hold", _mode, false] call BIS_fnc_inString) then { "vehicle hold" } else { "vehicle 90 hold" };
-		// [_unit, _aspectMode, false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
 		[_unit, _aspectMode] call dzn_fnc_dynai_addUnitBehavior;
 	};
 };
