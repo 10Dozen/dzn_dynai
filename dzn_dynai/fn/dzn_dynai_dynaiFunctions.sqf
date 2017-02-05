@@ -108,8 +108,10 @@ dzn_fnc_dynai_initZones = {
 					_loc = [_x, true] call dzn_fnc_convertTriggerToLocation;
 					_locations pushBack _loc;
 				
-					_locBuildings = [[_loc]] call dzn_fnc_getLocationBuildings;
-					{ _zoneBuildings pushBack _x; } forEach _locBuildings;
+					_locBuildings = [[_loc], dzn_dynai_allowedBuildingClasses, dzn_dynai_restrictedBuildingClasses] call dzn_fnc_getLocationBuildings;
+					// _zoneBuildings append _locBuildings;
+					
+					{ _zoneBuildings pushBackUnique _x; } forEach _locBuildings;
 				};		
 			} forEach _syncObj;
 			
