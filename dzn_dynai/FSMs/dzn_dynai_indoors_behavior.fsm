@@ -1,19 +1,23 @@
 /*%FSM<COMPILE "E:\GMZ\STEAM\SteamApps\common\Arma 3 Tools\FSMEditor\scriptedFSM.cfg, servicePoint">*/
 /*%FSM<HEAD>*/
 /*
-item0[] = {"Start",0,4346,-50.000000,-1200.000000,50.000000,-1150.000000,0.000000,"Start"};
-item1[] = {"true",4,218,-50.000000,-1125.000000,50.000000,-1075.000000,0.000000,"true"};
-item2[] = {"Stop_and_Wait",2,250,-50.000000,-1050.000000,50.000000,-1000.000000,0.000000,"Stop and Wait"};
-item3[] = {"Wait_for_Enemies",4,218,-50.000000,-975.000000,50.000000,-925.000000,0.000000,"Wait for Enemies"};
-item4[] = {"Target_",2,250,-50.000000,-900.000000,50.000000,-850.000000,0.000000,"Target!"};
-item5[] = {"Near_Target",4,218,-50.000000,-825.000000,50.000000,-775.000000,0.000000,"Near Target"};
-item6[] = {"Long_Target",4,218,-175.000000,-975.000000,-75.000000,-925.000000,0.000000,"Long Target"};
-item7[] = {"Watch_and_Move",2,250,-50.000000,-750.000000,50.000000,-700.000000,0.000000,"Watch and Move"};
-item8[] = {"Timer",4,218,75.000000,-825.000000,175.000000,-775.000000,0.000000,"Timer"};
-item9[] = {"Wait_for_turn",4,218,125.000000,-1050.000000,225.000000,-1000.000000,0.000000,"Wait for turn"};
-item10[] = {"Turn_around",2,250,125.000000,-1125.000000,225.000000,-1075.000000,0.000000,"Turn around"};
-item11[] = {"not_alive",4,218,-250.000000,-1050.000000,-150.000000,-1000.000000,0.000000,"not alive"};
-item12[] = {"End",1,250,-250.000000,-650.000000,-150.000000,-600.000000,0.000000,"End"};
+item0[] = {"Start",0,250,-50.000000,-1300.000000,50.000000,-1250.000000,0.000000,"Start"};
+item1[] = {"true",4,218,-50.000000,-1225.000000,50.000000,-1175.000000,0.000000,"true"};
+item2[] = {"Stop_and_Wait",2,250,-50.000000,-1150.000000,50.000000,-1100.000000,0.000000,"Stop and Wait"};
+item3[] = {"Wait_for_Enemies",4,218,-50.000000,-1050.000000,50.000000,-1000.000000,0.000000,"Wait for Enemies"};
+item4[] = {"Target_",2,250,-50.000000,-950.000000,50.000000,-900.000000,0.000000,"Target!"};
+item5[] = {"Near_Target",4,218,-150.000000,-875.000000,-50.000000,-825.000000,1.000000,"Near Target"};
+item6[] = {"Long_Target",4,218,125.000000,-1050.000000,225.000000,-1000.000000,0.000000,"Long Target"};
+item7[] = {"Watch_and_Move",2,250,50.000000,-800.000000,150.000000,-750.000000,0.000000,"Watch and Move"};
+item8[] = {"Timer",4,218,-50.000000,-725.000000,50.000000,-675.000000,0.000000,"Timer"};
+item9[] = {"Wait_for_turn",4,218,125.000000,-1150.000000,225.000000,-1100.000000,0.000000,"Wait for turn"};
+item10[] = {"Turn_around",2,250,125.000000,-1225.000000,225.000000,-1175.000000,0.000000,"Turn around"};
+item11[] = {"not_alive",4,218,-225.000000,-1150.000000,-125.000000,-1100.000000,0.000000,"not alive"};
+item12[] = {"End",1,250,-225.000000,-1075.000000,-125.000000,-1025.000000,0.000000,"End"};
+item13[] = {"Watch_and_Fire",2,250,-150.000000,-800.000000,-50.000000,-750.000000,0.000000,"Watch and Fire"};
+item14[] = {"Close_Target",4,218,50.000000,-875.000000,150.000000,-825.000000,2.000000,"Close Target"};
+item15[] = {"",7,210,196.000000,-704.000000,204.000000,-696.000000,0.000000,""};
+item16[] = {"",7,210,196.000000,-929.000000,204.000000,-921.000000,0.000000,""};
 link0[] = {0,1};
 link1[] = {1,2};
 link2[] = {2,3};
@@ -22,15 +26,20 @@ link4[] = {2,11};
 link5[] = {3,4};
 link6[] = {4,5};
 link7[] = {4,6};
-link8[] = {5,7};
-link9[] = {6,2};
-link10[] = {7,8};
-link11[] = {8,4};
-link12[] = {9,10};
-link13[] = {10,1};
-link14[] = {11,12};
-globals[] = {0.000000,0,0,0,0,640,480,1,247,6316128,1,-354.820251,340.745056,-634.305786,-1231.058716,952,745,1};
-window[] = {2,-1,-1,-1,-1,1009,1919,3033,248,3,970};
+link8[] = {4,14};
+link9[] = {5,13};
+link10[] = {6,2};
+link11[] = {7,8};
+link12[] = {8,15};
+link13[] = {9,10};
+link14[] = {10,1};
+link15[] = {11,12};
+link16[] = {13,8};
+link17[] = {14,7};
+link18[] = {15,16};
+link19[] = {16,4};
+globals[] = {0.000000,0,0,0,0,640,480,1,251,6316128,1,-567.233276,508.969604,-442.395264,-1442.857056,952,885,1};
+window[] = {2,-1,-1,-1,-1,936,175,1289,175,3,970};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -129,14 +138,14 @@ class FSM
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
-                                /*%FSM<LINK "Long_Target">*/
-                                class Long_Target
+                                /*%FSM<LINK "Close_Target">*/
+                                class Close_Target
                                 {
-                                        itemno = 6;
-                                        priority = 0.000000;
-                                        to="Stop_and_Wait";
+                                        itemno = 14;
+                                        priority = 2.000000;
+                                        to="Watch_and_Move";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
-                                        condition=/*%FSM<CONDITION""">*/"!(_dist < 50)"/*%FSM</CONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"_dist < 25"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
                                 /*%FSM</LINK>*/
@@ -144,10 +153,21 @@ class FSM
                                 class Near_Target
                                 {
                                         itemno = 5;
-                                        priority = 0.000000;
-                                        to="Watch_and_Move";
+                                        priority = 1.000000;
+                                        to="Watch_and_Fire";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
-                                        condition=/*%FSM<CONDITION""">*/"_dist < 50"/*%FSM</CONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"_dist < 70"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Long_Target">*/
+                                class Long_Target
+                                {
+                                        itemno = 6;
+                                        priority = 0.000000;
+                                        to="Stop_and_Wait";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(true)"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
                                 /*%FSM</LINK>*/
@@ -162,8 +182,8 @@ class FSM
                         init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""HEHE FOUND""; };" \n
                          "" \n
                          "_unit doFire _target;" \n
-                         "" \n
                          "_unit doMove (getPosASL _target);" \n
+                         "(group _unit) setCombatMode ""RED"";" \n
                          "" \n
                          "_timer = time + 2;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
@@ -191,7 +211,7 @@ class FSM
                         init = /*%FSM<STATEINIT""">*/"_unit doWatch ([" \n
                          "	getPos _unit, " \n
                          "	getDir _unit + 180, " \n
-                         "	100" \n
+                         "	selectRandom [100,150,200,250,300]" \n
                          "] call dzn_fnc_getPosOnGivenDir);" \n
                          "" \n
                          "_longTimer = time + 10 + random(20);" \n
@@ -224,6 +244,35 @@ class FSM
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Watch_and_Fire">*/
+                class Watch_and_Fire
+                {
+                        name = "Watch_and_Fire";
+                        itemno = 13;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""HEHE FOUND""; };" \n
+                         "" \n
+                         "_unit doFire _target;" \n
+                         "_unit doMove (getPosASL _target);" \n
+                         "(group _unit) setCombatMode ""RED"";" \n
+                         "" \n
+                         "_timer = time + 2;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Timer">*/
+                                class Timer
+                                {
+                                        itemno = 8;
+                                        priority = 0.000000;
+                                        to="Target_";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"time > _timer"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
                         };
                 };
                 /*%FSM</STATE>*/

@@ -1,5 +1,5 @@
 // **************************
-// 	DZN DYNAI v0.8
+// 	DZN DYNAI v0.9 ZC
 //
 //	Initialized when:
 //	{ !isNil "dzn_dynai_initialized" }
@@ -8,7 +8,7 @@
 //	{ !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } }
 //
 // **************************
-if (hasInterface && !isServer) exitWith {}; // If a player - exits script
+
 
 // **************************
 //	SETTINGS
@@ -25,18 +25,22 @@ dzn_dynai_complexSkill = [
 ];
 
 // **************************
-//	INIT CONDITIONS
-// **************************
-
-// Condition of initialization
-#define	dzn_dynai_CONDITION_BEFORE_INIT	true
-
-// **************************
 //	INITIALIZATION
 // **************************
+// If a player and no Zeus needed - exits script
+if (hasInterface && !isServer) exitWith {
+	if (dzn_dynai_enableZeusCompatibility) then {
+		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
+		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
+		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
+		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_zeusCompatibility.sqf";
+	};
+};
 
 dzn_dynai_initialized = false;
-waitUntil { dzn_dynai_CONDITION_BEFORE_INIT };
+waitUntil dzn_dynai_initCondition;
+
+dzn_dynai_pubVars = dzn_dynai_enableZeusCompatibility;
 
 // Initialization of dzn_gear
 waitUntil { !isNil "dzn_gear_serverInitDone" || !isNil "dzn_gear_initDone" };
