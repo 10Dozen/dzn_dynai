@@ -16,7 +16,7 @@ item11[] = {"Create_Infantry",2,250,-300.000000,-500.000000,-200.000000,-450.000
 item12[] = {"Indoor",4,218,-425.000000,-400.000000,-325.000000,-350.000000,3.000000,"Indoor"};
 item13[] = {"Apply_indoor_beh",2,250,-425.000000,-325.000000,-325.000000,-275.000000,0.000000,"Apply indoor" \n "behavior"};
 item14[] = {"In_Vehicle",4,218,-300.000000,-400.000000,-200.000000,-350.000000,2.000000,"In Vehicle"};
-item15[] = {"Assign__in_Vehic",2,250,-300.000000,-325.000000,-200.000000,-275.000000,0.000000,"Assign " \n "in Vehicle"};
+item15[] = {"Assign__in_Vehic",2,4346,-300.000000,-325.000000,-200.000000,-275.000000,0.000000,"Assign " \n "in Vehicle"};
 item16[] = {"Patrol",4,218,-175.000000,-400.000000,-75.000000,-350.000000,0.000000,"Patrol"};
 item17[] = {"Assign_Patrol",2,250,-175.000000,-325.000000,-75.000000,-275.000000,0.000000,"Assign Patrol"};
 item18[] = {"Unit_Completed",4,218,-75.000000,-200.000000,25.000000,-150.000000,0.000000,"Unit" \n "Completed"};
@@ -119,8 +119,8 @@ link60[] = {51,26};
 link61[] = {51,27};
 link62[] = {52,51};
 link63[] = {53,39};
-globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-967.986206,763.072327,-147.861206,-1798.708984,928,885,1};
-window[] = {2,-1,-1,-1,-1,800,75,1493,75,3,946};
+globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-774.942383,721.620361,72.536072,-1354.681763,928,885,1};
+window[] = {2,-1,-1,-1,-1,950,225,1643,225,3,946};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -313,6 +313,7 @@ class FSM
                         name = "Create_Infantry";
                         itemno = 11;
                         init = /*%FSM<STATEINIT""">*/"_unit = _grp createUnit [_classname , _groupPos, [], 0, ""NONE""];" \n
+                         "_unit addRating 10000;" \n
                          "" \n
                          "_grp setVariable [""dzn_dynai_units"", (_grp getVariable ""dzn_dynai_units"") + [_unit]];" \n
                          "_grp setVariable [""dzn_dynai_vehicles"", (_grp getVariable ""dzn_dynai_vehicles"") + [""""]];" \n
@@ -408,7 +409,9 @@ class FSM
                          "	_unit" \n
                          "	, (_grp getVariable ""dzn_dynai_vehicles"") select (_assigned select 0)	// ID of created unit/vehicle" \n
                          "	, _assigned select 1	// string of assigned role - e.g. driver, gunner" \n
-                         "] call dzn_fnc_assignInVehicle; "/*%FSM</STATEINIT""">*/;
+                         "] call dzn_fnc_assignInVehicle; " \n
+                         "" \n
+                         "_unit spawn dzn_fnc_dynai_revealNearbyUnits;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {

@@ -281,6 +281,21 @@ dzn_fnc_dynai_assignVehcleHoldBehavior = {
 	};
 };
 
+dzn_fnc_dynai_revealNearbyUnits = {
+	sleep 10;
+	if (_this != leader (group _this)) exitWith {};
+	
+	private _nearest = nearestObjects [_this,["CAManBase"],300];	
+	private _side = side _this;
+
+	{
+		if (_side == side _x) then {
+			(group _this) reveal _x;		
+			sleep 1;
+		};		
+	} forEach _nearest;
+};
+
 
 // ================================================
 //           DZN DYNAI -- New zone creation
