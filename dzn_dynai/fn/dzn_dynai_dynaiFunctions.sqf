@@ -65,7 +65,19 @@ dzn_fnc_dynai_initZoneKeypoints = {
 		};
 	} forEach (synchronizedObjects _this);
 	
-	_keypoints
+	if (_keypoints isEqualTo []) then { "randomize" } else { _keypoints };
+};
+
+dzn_fnc_dynai_initZoneVehiclePoints = {
+	// @VehiclePoints = @Zone call dzn_fnc_dynai_initZoneVehiclePoints
+	{
+		if (_x isKindOf "LocationArea_F") then {
+			private _pos = getPosASL _x;
+			_vps pushBack [ [_pos select 0, _pos select 1, 0], getDir _x ];
+		};		
+	} forEach (synchronizedObjects _this);
+	
+	if (_vps isEqualTo []) then { "randomize" } else { _vps };	
 };
 
 dzn_fnc_dynai_initZones = {
@@ -136,10 +148,9 @@ dzn_fnc_dynai_initZones = {
 
 				// Get Keypoints
 				_keypoints = _zone call dzn_fnc_dynai_initZoneKeypoints;
-				if (_keypoints isEqualTo []) then {			
-					_keypoints = "randomize";
-				};	
-				sleep 1;
+				_vehiclePoints = _zone call dzn_fnc_dynai_initZoneVehiclePoints;
+				
+				sleep 1;				
 				
 				_zone setPosASL _locPos;
 				
