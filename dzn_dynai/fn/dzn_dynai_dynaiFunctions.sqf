@@ -65,7 +65,20 @@ dzn_fnc_dynai_initZoneKeypoints = {
 		};
 	} forEach (synchronizedObjects _this);
 	
-	_keypoints
+	if (_keypoints isEqualTo []) then { "randomize" } else { _keypoints };
+};
+
+dzn_fnc_dynai_initZoneVehiclePoints = {
+	// @VehiclePoints = @Zone call dzn_fnc_dynai_initZoneVehiclePoints
+	private _vps = [];
+	{
+		if (_x isKindOf "LocationOutpost_F") then {
+			private _pos = getPosASL _x;
+			_vps pushBack [ [_pos select 0, _pos select 1, 0], getDir _x ];
+		};		
+	} forEach (synchronizedObjects _this);
+	
+	_vps
 };
 
 dzn_fnc_dynai_initZones = {
@@ -136,16 +149,15 @@ dzn_fnc_dynai_initZones = {
 
 				// Get Keypoints
 				_keypoints = _zone call dzn_fnc_dynai_initZoneKeypoints;
-				if (_keypoints isEqualTo []) then {			
-					_keypoints = "randomize";
-				};	
-				sleep 1;
+				_vehiclePoints = _zone call dzn_fnc_dynai_initZoneVehiclePoints;
+				
+				sleep 1;				
 				
 				_zone setPosASL _locPos;
 				
 				_properties set [3, _locations];
 				_properties set [4, _keypoints];
-				_properties = _properties + [_zoneBuildings];
+				_properties = _properties + [_zoneBuildings, _vehiclePoints];
 				
 				[_zone, [ 
 					["dzn_dynai_area", _locations, dzn_dynai_pubVars]
@@ -188,6 +200,7 @@ dzn_fnc_dynai_getZoneVar = {
 		case "list": { ["area", ["keypoints","kp","points"], "isActive", ["properties","prop"], ["init","initialized"], "groups"]};
 		case "area": { _z getVariable ["dzn_dynai_area", nil] };
 		case "kp";case "points";case "keypoints": { _z getVariable ["dzn_dynai_keypoints", nil] };
+		case "vp";case "vehiclePoints": { _z getVariable ["dzn_dynai_vehiclePoints",nil] };
 		case "isactive": { _z getVariable ["dzn_dynai_isActive", nil] };
 		case "prop";case "properties": { _z getVariable ["dzn_dynai_properties", nil] };
 		case "init";case "initialized": { _z getVariable ["dzn_dynai_initialized", nil] };
@@ -279,6 +292,21 @@ dzn_fnc_dynai_assignVehcleHoldBehavior = {
 		private _aspectMode = if (["Vehicle Hold", _mode, false] call BIS_fnc_inString) then { "vehicle hold" } else { "vehicle 90 hold" };
 		[_unit, _aspectMode] call dzn_fnc_dynai_addUnitBehavior;
 	};
+};
+
+dzn_fnc_dynai_revealNearbyUnits = {
+	sleep 10;
+	if (_this != leader (group _this)) exitWith {};
+	
+	private _nearest = nearestObjects [_this,["CAManBase"],300];	
+	private _side = side _this;
+
+	{
+		if (_side == side _x) then {
+			(group _this) reveal _x;		
+			sleep 1;
+		};		
+	} forEach _nearest;
 };
 
 

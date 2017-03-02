@@ -30,7 +30,7 @@ item25[] = {"Road_Patrol",4,218,450.000000,-400.000000,550.000000,-350.000000,3.
 item26[] = {"Patrol",4,218,325.000000,-400.000000,425.000000,-350.000000,0.000000,"Patrol"};
 item27[] = {"Road_Hold",4,218,575.000000,-400.000000,675.000000,-350.000000,4.000000,"Road Hold"};
 item28[] = {"Apply_Hold_Behav",2,250,75.000000,-325.000000,175.000000,-275.000000,0.000000,"Apply Hold" \n "Behavior"};
-item29[] = {"Apply__Road_Hold",2,250,575.000000,-325.000000,675.000000,-275.000000,0.000000,"Apply " \n "Road Hold" \n "Behavior"};
+item29[] = {"Apply__Road_Hold",2,4346,575.000000,-325.000000,675.000000,-275.000000,0.000000,"Apply " \n "Road Hold" \n "Behavior"};
 item30[] = {"Apply_Advance_Be",2,250,200.000000,-325.000000,300.000000,-275.000000,0.000000,"Apply Advance" \n "Behavior"};
 item31[] = {"Apply_Patrol_Beh",2,250,325.000000,-325.000000,425.000000,-275.000000,0.000000,"Apply Patrol" \n "Behavior"};
 item32[] = {"Apply__Road_Patrol",2,250,450.000000,-325.000000,550.000000,-275.000000,0.000000,"Apply " \n "Road Patrol" \n "Behavior"};
@@ -119,8 +119,8 @@ link60[] = {51,26};
 link61[] = {51,27};
 link62[] = {52,51};
 link63[] = {53,39};
-globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-967.986206,763.072327,-147.861206,-1798.708984,928,885,1};
-window[] = {2,-1,-1,-1,-1,800,75,1493,75,3,946};
+globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-360.580536,746.798828,-238.201843,-1294.265991,928,885,1};
+window[] = {2,-1,-1,-1,-1,975,250,1668,250,3,946};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -132,12 +132,7 @@ class FSM
                 {
                         name = "Start";
                         itemno = 0;
-                        init = /*%FSM<STATEINIT""">*/"params [""_name"", ""_side"", ""_isActive"", ""_area"", ""_wps"", ""_refUnits"", ""_behavior"", ""_zoneBuildings""];" \n
-                         "" \n
-                         "a = _this;" \n
-                         "" \n
-                         "diag_log format[""DZN: %1"", str(_this)];" \n
-                         "diag_log format[""DZN: %1"", _name];" \n
+                        init = /*%FSM<STATEINIT""">*/"params [""_name"", ""_side"", ""_isActive"", ""_area"", ""_wps"", ""_refUnits"", ""_behavior"", ""_zoneBuildings"",""_vehiclePoints""];" \n
                          "" \n
                          "private _zoneRoads = _area call dzn_fnc_getLocationRoads;" \n
                          "private _zoneUsedBuildings = [];" \n
@@ -313,6 +308,7 @@ class FSM
                         name = "Create_Infantry";
                         itemno = 11;
                         init = /*%FSM<STATEINIT""">*/"_unit = _grp createUnit [_classname , _groupPos, [], 0, ""NONE""];" \n
+                         "_unit addRating 10000;" \n
                          "" \n
                          "_grp setVariable [""dzn_dynai_units"", (_grp getVariable ""dzn_dynai_units"") + [_unit]];" \n
                          "_grp setVariable [""dzn_dynai_vehicles"", (_grp getVariable ""dzn_dynai_vehicles"") + [""""]];" \n
@@ -408,7 +404,9 @@ class FSM
                          "	_unit" \n
                          "	, (_grp getVariable ""dzn_dynai_vehicles"") select (_assigned select 0)	// ID of created unit/vehicle" \n
                          "	, _assigned select 1	// string of assigned role - e.g. driver, gunner" \n
-                         "] call dzn_fnc_assignInVehicle; "/*%FSM</STATEINIT""">*/;
+                         "] call dzn_fnc_assignInVehicle; " \n
+                         "" \n
+                         "_unit spawn dzn_fnc_dynai_revealNearbyUnits;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
@@ -529,6 +527,8 @@ class FSM
                         itemno = 28;
                         init = /*%FSM<STATEINIT""">*/"_grp setVariable [""dzn_dynai_wpSet"", true];" \n
                          "" \n
+                         "_unit setDir _vehDir;" \n
+                         "" \n
                          "(waypoints _grp select 0) setWaypointType ""Hold"";" \n
                          "[_unit, _assigned] spawn dzn_fnc_dynai_assignVehcleHoldBehavior;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
@@ -591,6 +591,8 @@ class FSM
                         itemno = 30;
                         init = /*%FSM<STATEINIT""">*/"_cycleWaypoints = false;" \n
                          "" \n
+                         "_unit setDir _vehDir;" \n
+                         "" \n
                          "_unit setVariable [""dzn_dynai_isStatic"",true,true];" \n
                          "_grp spawn {" \n
                          "	if (_this getVariable [""dzn_dynai_vehicleAdvanceAssigned"", false]) exitWith {};" \n
@@ -606,7 +608,9 @@ class FSM
                          "		(_lastWp select 1) == currentWaypoint _this " \n
                          "	};" \n
                          "	[vehicle (leader _this), ""vehicle hold""] call dzn_fnc_dynai_addUnitBehavior;" \n
-                         "};"/*%FSM</STATEINIT""">*/;
+                         "};" \n
+                         "" \n
+                         ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
@@ -629,7 +633,7 @@ class FSM
                 {
                         name = "Apply_Patrol_Beh";
                         itemno = 31;
-                        init = /*%FSM<STATEINIT""">*/""/*%FSM</STATEINIT""">*/;
+                        init = /*%FSM<STATEINIT""">*/"_unit setDir _vehDir;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
@@ -805,7 +809,12 @@ class FSM
                 {
                         name = "Get_Random_Posit";
                         itemno = 49;
-                        init = /*%FSM<STATEINIT""">*/"private _vehPos = [" \n
+                        init = /*%FSM<STATEINIT""">*/"private _vehPos = [];" \n
+                         "private _vehDir = random(360);" \n
+                         "" \n
+                         "if (_vehiclePoints isEqualTo []) then {" \n
+                         "" \n
+                         "_vehPos = [" \n
                          "	(_groupPos select 0) + 6*_currentUnitsCount" \n
                          "	, (_groupPos select 1) + 6*_currentUnitsCount" \n
                          "	, 0.3" \n
@@ -819,6 +828,12 @@ class FSM
                          "		, (_groupPos select 1) + 6*_currentUnitsCount + 15 + random(50)" \n
                          "		, 0.3" \n
                          "	];" \n
+                         "};" \n
+                         "" \n
+                         "} else {" \n
+                         "	private _selectedVehPos = _vehiclePoints call dzn_fnc_selectAndRemove;" \n
+                         "	_vehPos = _selectedVehPos select 0;" \n
+                         "	_vehDir = _selectedVehPos select 1;" \n
                          "};"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
