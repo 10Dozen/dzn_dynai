@@ -8,7 +8,6 @@ Dynamic AI with Blackjack and Whores
 
 ## How To
 * [Step By Step](https://github.com/10Dozen/dzn_dynai#step-by-step)
-* [Creation of Zone Properties](https://github.com/10Dozen/dzn_dynai#creation-of-zone-properties)
 * [Control Zone](https://github.com/10Dozen/dzn_dynai#control-zone)
 * [Vehicle Behavior](https://github.com/10Dozen/dzn_dynai#vehicle-behavior)
 * [Groups Reaction](https://github.com/10Dozen/dzn_dynai#groups-reaction)
@@ -33,6 +32,7 @@ Use different second value in vehicle array ( ["B_G_Offroad_01_armed_F","Vehicle
 <br /><tt>Vehicle</tt>, <tt>Vehicle Patrol</tt> - vehicle group will patrol through keypoints or random points in cycle.
 <br /><tt>Vehicle Advance</tt> - vehicle group will move through keypoints or several random points and will hold on the last checkpoint.
 <br /><tt>Vehicle Hold</tt> - vehicle group will hold therir position (static, AAA, defensive position)
+<br /><tt>Vehicle Road Hold/Road Patrol</tt> - vehicle group will hold their position at the road/patrol roads
 
 ### Groups Reaction
 If <tt>dzn_dynai_allowGroupResponse</tt> variable is <tt>true</tt> - group reactions will be used. That means, that group which met many hostiles or suffer great loses will call for help. Then nearby allied group will move to caller position to provide support.
