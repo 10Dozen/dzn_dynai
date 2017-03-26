@@ -30,8 +30,8 @@ dzn_dynai_complexSkill = [
 // If a player and no Zeus needed - exits script
 if (hasInterface && !isServer) exitWith {
 	if (dzn_dynai_enableZeusCompatibility) then {
-		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
-		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
+		// call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
+		// call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
 		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
 		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_zeusCompatibility.sqf";
 	};
@@ -39,8 +39,6 @@ if (hasInterface && !isServer) exitWith {
 
 dzn_dynai_initialized = false;
 waitUntil dzn_dynai_initCondition;
-
-dzn_dynai_pubVars = dzn_dynai_enableZeusCompatibility;
 
 // Initialization of dzn_gear
 waitUntil { !isNil "dzn_gear_serverInitDone" || !isNil "dzn_gear_initDone" };
