@@ -7,7 +7,7 @@ item2[] = {"Reference__Units",2,250,-25.000000,-1350.000000,75.000000,-1300.0000
 item3[] = {"Not__All_references",4,218,-25.000000,-1200.000000,75.000000,-1150.000000,1.000000,"Not " \n "All references" \n "processed"};
 item4[] = {"Init_Reference",2,250,-25.000000,-1100.000000,75.000000,-1050.000000,0.000000,"Init Reference"};
 item5[] = {"Not_All_groups_p",4,218,-25.000000,-1000.000000,75.000000,-950.000000,1.000000,"Not All groups" \n "processed"};
-item6[] = {"Create_Group_from",2,4346,-25.000000,-900.000000,75.000000,-850.000000,0.000000,"Create Group" \n "from Reference"};
+item6[] = {"Create_Group_from",2,250,-25.000000,-900.000000,75.000000,-850.000000,0.000000,"Create Group" \n "from Reference"};
 item7[] = {"Not_All_Units__p",4,218,-25.000000,-825.000000,75.000000,-775.000000,1.000000,"Not All Units " \n "processed"};
 item8[] = {"Init_Unit",2,250,-25.000000,-725.000000,75.000000,-675.000000,0.000000,"Init Unit"};
 item9[] = {"Infantry",4,218,-300.000000,-725.000000,-200.000000,-675.000000,1.000000,"Infantry"};
@@ -45,7 +45,7 @@ item40[] = {"All_Units_Proces",4,218,-225.000000,-900.000000,-125.000000,-850.00
 item41[] = {"Set_Group__Behavior",2,250,-225.000000,-1000.000000,-125.000000,-950.000000,0.000000,"Set Group " \n "Behavior" \n "Properties"};
 item42[] = {"All_groups_proce",4,218,-225.000000,-1100.000000,-125.000000,-1050.000000,0.000000,"All groups" \n "processed"};
 item43[] = {"",7,210,-179.000000,-804.000000,-171.000000,-796.000000,0.000000,""};
-item44[] = {"Switch_to_next_R",2,250,-225.000000,-1200.000000,-125.000000,-1150.000000,0.000000,"Switch to" \n "next Reference"};
+item44[] = {"Switch_to_next_R",2,4346,-225.000000,-1200.000000,-125.000000,-1150.000000,0.000000,"Switch to" \n "next Reference"};
 item45[] = {"All_references_p",4,218,-350.000000,-1200.000000,-250.000000,-1150.000000,0.000000,"All references" \n "processed"};
 item46[] = {"Complete_zone",1,250,-475.000000,-1200.000000,-375.000000,-1150.000000,0.000000,"Complete" \n "zone"};
 item47[] = {"Random_Position",4,218,200.000000,-650.000000,300.000000,-600.000000,0.000000,"Random" \n "Position"};
@@ -119,8 +119,8 @@ link60[] = {51,26};
 link61[] = {51,27};
 link62[] = {52,51};
 link63[] = {53,39};
-globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-434.595581,259.711090,-743.519165,-1515.899536,498,554,1};
-window[] = {0,-1,-1,-1,-1,838,43,1304,113,1,516};
+globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-838.863403,279.324158,-229.073730,-1492.923828,783,885,1};
+window[] = {2,-1,-1,-32000,-32000,827,311,1572,102,3,801};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -380,6 +380,8 @@ class FSM
                          "	// Specified houses" \n
                          "	[_unit, _zoneBuildings, _assigned select 1] spawn dzn_fnc_assignInBuilding;" \n
                          "};" \n
+                         "" \n
+                         "_grp setVariable [""dzn_dynai_wpSet"", true];" \n
                          "" \n
                          "[_unit, ""indoor""] call dzn_fnc_dynai_addUnitBehavior;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
@@ -799,7 +801,7 @@ class FSM
                          "	(call compile _name) setVariable [""dzn_dynai_isZoneAlerted"", false];" \n
                          "};" \n
                          "	" \n
-                         "(call compile _name) setVariable [""dzn_dynai_groups"", _groups, dzn_dynai_pubVars];	" \n
+                         "(call compile _name) setVariable [""dzn_dynai_groups"", _groups];	" \n
                          "dzn_dynai_activatedZones pushBack (call compile _name);" \n
                          ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
