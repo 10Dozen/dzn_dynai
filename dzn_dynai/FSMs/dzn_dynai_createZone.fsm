@@ -30,7 +30,7 @@ item25[] = {"Road_Patrol",4,218,450.000000,-400.000000,550.000000,-350.000000,3.
 item26[] = {"Patrol",4,218,325.000000,-400.000000,425.000000,-350.000000,0.000000,"Patrol"};
 item27[] = {"Road_Hold",4,218,575.000000,-400.000000,675.000000,-350.000000,4.000000,"Road Hold"};
 item28[] = {"Apply_Hold_Behav",2,250,75.000000,-325.000000,175.000000,-275.000000,0.000000,"Apply Hold" \n "Behavior"};
-item29[] = {"Apply__Road_Hold",2,4346,575.000000,-325.000000,675.000000,-275.000000,0.000000,"Apply " \n "Road Hold" \n "Behavior"};
+item29[] = {"Apply__Road_Hold",2,250,575.000000,-325.000000,675.000000,-275.000000,0.000000,"Apply " \n "Road Hold" \n "Behavior"};
 item30[] = {"Apply_Advance_Be",2,250,200.000000,-325.000000,300.000000,-275.000000,0.000000,"Apply Advance" \n "Behavior"};
 item31[] = {"Apply_Patrol_Beh",2,250,325.000000,-325.000000,425.000000,-275.000000,0.000000,"Apply Patrol" \n "Behavior"};
 item32[] = {"Apply__Road_Patrol",2,250,450.000000,-325.000000,550.000000,-275.000000,0.000000,"Apply " \n "Road Patrol" \n "Behavior"};
@@ -45,7 +45,7 @@ item40[] = {"All_Units_Proces",4,218,-225.000000,-900.000000,-125.000000,-850.00
 item41[] = {"Set_Group__Behavior",2,250,-225.000000,-1000.000000,-125.000000,-950.000000,0.000000,"Set Group " \n "Behavior" \n "Properties"};
 item42[] = {"All_groups_proce",4,218,-225.000000,-1100.000000,-125.000000,-1050.000000,0.000000,"All groups" \n "processed"};
 item43[] = {"",7,210,-179.000000,-804.000000,-171.000000,-796.000000,0.000000,""};
-item44[] = {"Switch_to_next_R",2,250,-225.000000,-1200.000000,-125.000000,-1150.000000,0.000000,"Switch to" \n "next Reference"};
+item44[] = {"Switch_to_next_R",2,4346,-225.000000,-1200.000000,-125.000000,-1150.000000,0.000000,"Switch to" \n "next Reference"};
 item45[] = {"All_references_p",4,218,-350.000000,-1200.000000,-250.000000,-1150.000000,0.000000,"All references" \n "processed"};
 item46[] = {"Complete_zone",1,250,-475.000000,-1200.000000,-375.000000,-1150.000000,0.000000,"Complete" \n "zone"};
 item47[] = {"Random_Position",4,218,200.000000,-650.000000,300.000000,-600.000000,0.000000,"Random" \n "Position"};
@@ -119,8 +119,8 @@ link60[] = {51,26};
 link61[] = {51,27};
 link62[] = {52,51};
 link63[] = {53,39};
-globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-360.580536,746.798828,-238.201843,-1294.265991,928,885,1};
-window[] = {2,-1,-1,-1,-1,975,250,1668,250,3,946};
+globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-838.863403,279.324158,-229.073730,-1492.923828,783,885,1};
+window[] = {2,-1,-1,-32000,-32000,827,311,1572,102,3,801};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -197,9 +197,10 @@ class FSM
                         name = "Init_Reference";
                         itemno = 4;
                         init = /*%FSM<STATEINIT""">*/"private _currentRef = _refUnits select _currentReferenceNumber;" \n
+                         "// _currentRef is [3,[[""O_Soldier_F"", [], """"] ,[""O_Soldier_F"", [], """"]]]" \n
                          "" \n
                          "private _totalGrpCount = round( (_currentRef select 0) * (call dzn_fnc_dynai_getMultiplier) );" \n
-                         "private _groupUnits = _currentRef select 1;" \n
+                         "private _groupUnits = _currentRef select 1; // [[""O_Soldier_F"", [], """"] ,[""O_Soldier_F"", [], """"]]" \n
                          "private _groupSkill = if (!isNil {_currentRef select 2}) then { _currentRef select 2 } else { dzn_dynai_complexSkill };" \n
                          "" \n
                          "private _currentGrpCount = 0;"/*%FSM</STATEINIT""">*/;
@@ -232,8 +233,8 @@ class FSM
                          "[" \n
                          "	_grp" \n
                          "	, [" \n
-                         "		[""dzn_dynai_homeZone"", call compile _name, dzn_dynai_pubVars]" \n
-                         "		, [""dzn_dynai_wpSet"",false, dzn_dynai_pubVars]" \n
+                         "		[""dzn_dynai_homeZone"", call compile _name]" \n
+                         "		, [""dzn_dynai_wpSet"",false]" \n
                          "		, [""dzn_dynai_units"", []]" \n
                          "		, [""dzn_dynai_vehicles"", []]" \n
                          "	]" \n
@@ -267,7 +268,10 @@ class FSM
                 {
                         name = "Init_Unit";
                         itemno = 8;
-                        init = /*%FSM<STATEINIT""">*/"private _classname = (_groupUnits select _currentUnitsCount) select 0;" \n
+                        init = /*%FSM<STATEINIT""">*/"// _groupUnits is [[""O_Soldier_F"", [], """"] ,[""O_Soldier_F"", [], """"]]" \n
+                         "// (_groupUnits select _currentUnitsCount) is [""O_Soldier_F"", [], """"]" \n
+                         "" \n
+                         "private _classname = (_groupUnits select _currentUnitsCount) select 0;" \n
                          "private _assigned = (_groupUnits select _currentUnitsCount) select 1;" \n
                          "private _gear = (_groupUnits select _currentUnitsCount) select 2;" \n
                          "				" \n
@@ -376,6 +380,8 @@ class FSM
                          "	// Specified houses" \n
                          "	[_unit, _zoneBuildings, _assigned select 1] spawn dzn_fnc_assignInBuilding;" \n
                          "};" \n
+                         "" \n
+                         "_grp setVariable [""dzn_dynai_wpSet"", true];" \n
                          "" \n
                          "[_unit, ""indoor""] call dzn_fnc_dynai_addUnitBehavior;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
@@ -795,7 +801,7 @@ class FSM
                          "	(call compile _name) setVariable [""dzn_dynai_isZoneAlerted"", false];" \n
                          "};" \n
                          "	" \n
-                         "(call compile _name) setVariable [""dzn_dynai_groups"", _groups, dzn_dynai_pubVars];	" \n
+                         "(call compile _name) setVariable [""dzn_dynai_groups"", _groups];	" \n
                          "dzn_dynai_activatedZones pushBack (call compile _name);" \n
                          ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;

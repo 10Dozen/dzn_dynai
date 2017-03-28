@@ -160,12 +160,12 @@ dzn_fnc_dynai_initZones = {
 				_properties = _properties + [_zoneBuildings, _vehiclePoints];
 				
 				[_zone, [ 
-					["dzn_dynai_area", _locations, dzn_dynai_pubVars]
-					, ["dzn_dynai_keypoints", _keypoints, dzn_dynai_pubVars]
-					, ["dzn_dynai_isActive", _properties select 2, dzn_dynai_pubVars]
-					, ["dzn_dynai_properties", _properties, dzn_dynai_pubVars]
-					, ["dzn_dynai_groups", [], dzn_dynai_pubVars]
-					, ["dzn_dynai_initialized", true, dzn_dynai_pubVars]				
+					["dzn_dynai_area", _locations]
+					, ["dzn_dynai_keypoints", _keypoints]
+					, ["dzn_dynai_isActive", _properties select 2]
+					, ["dzn_dynai_properties", _properties]
+					, ["dzn_dynai_groups", []]
+					, ["dzn_dynai_initialized", true]				
 				], true] call dzn_fnc_setVars;
 			};
 		};		

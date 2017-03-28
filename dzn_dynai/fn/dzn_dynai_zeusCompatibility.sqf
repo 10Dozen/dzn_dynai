@@ -100,7 +100,7 @@ dzn_fnc_dynai_zc_removeBehavior = {
 
 dzn_fnc_dynai_zc_applyAsSupporter = {
 	{		
-		_x call dzn_fnc_dynai_addGroupAsSupporter;
+		_x remoteExec ["dzn_fnc_dynai_addGroupAsSupporter", 2];
 	} forEach (_this);
 	["Units added as supporters","success"] call dzn_fnc_dynai_zc_showNotif;
 };
@@ -224,6 +224,8 @@ dzn_fnc_dynai_zc_onKeyPress = {
 };
 
 dzn_fnc_dynai_zc_initialize = {
+	if (!hasInterface) exitWith {};
+
 	dzn_dynai_zc_keyIsDown = false;
 	dzn_dynai_zc_displayEH = nil;
 
