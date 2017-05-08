@@ -43,6 +43,9 @@ waitUntil dzn_dynai_initCondition;
 // Initialization of dzn_gear
 waitUntil { !isNil "dzn_gear_serverInitDone" || !isNil "dzn_gear_initDone" };
 
+//	**************	SERVER OR HEADLESS	*****************
+if (!isNil "HC" && isServer) exitWith { };
+
 // Initialization of dzn_dynai
 dzn_dynai_activatedZones = [];
 dzn_dynai_activeGroups = [];
@@ -56,10 +59,6 @@ call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunction
 if (dzn_dynai_enableZeusCompatibility) then {
 	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_zeusCompatibility.sqf";
 };
-//	**************	SERVER OR HEADLESS	*****************
-if (!isNil "HC") then {if (isServer) exitWith {};};
-
-
 
 // **************************
 //	DZN DYANI START
