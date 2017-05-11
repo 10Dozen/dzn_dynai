@@ -23,6 +23,7 @@ dzn_dynai_complexSkill = [
 		dzn_dynai_complexSkillLevel			
 	}
 ];
+dzn_dynai_allowGroupResponse = (["par_dynai_enableGroupResponse", 1] call BIS_fnc_getParamValue) > 0;
 
 // **************************
 //	INITIALIZATION
