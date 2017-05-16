@@ -411,9 +411,13 @@ dzn_fnc_dynai_setSpotSkillRemote = {
 	if (local _this) then {
 		_this setSkill ["spotTime",1];
 		_this setSkill ["spotDistance",1];
+		_this setSkill ["aimingAccuracy", 0.7];
+		_this setSkill ["aimingSpeed", 0.3];
 	} else {
 		[_this, ["spotTime",1]] remoteExec ["setSkill",_this];
 		[_this, ["spotDistance",1]] remoteExec ["setSkill",_this];
+		[_this, ["aimingAccuracy",0.7]] remoteExec ["setSkill",_this];
+		[_this, ["aimingSpeed",0.3]] remoteExec ["setSkill",_this];
 	};
 };
 
