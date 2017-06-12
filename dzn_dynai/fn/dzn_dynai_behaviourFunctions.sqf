@@ -385,7 +385,8 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 			waitUntil { !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } };
 			_this call dzn_fnc_dynai_addGroupAsSupporter;
 		};
-	}; 
+	};
+	
 	_group setVariable ["dzn_dynai_units", units _group];
 	
 	// Get nearest zone	
@@ -401,7 +402,8 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 	
 	private _nearestZoneGroups = [_nearestZone, "groups"] call dzn_fnc_dynai_getZoneVar;
 	_nearestZoneGroups pushBack _group;
-
+	
+	_group setVariable ["dzn_dynai_homeZone", _nearestZone, true];
 	_group call dzn_fnc_dynai_initResponseGroup;
 };
 
@@ -412,7 +414,7 @@ dzn_fnc_dynai_setSpotSkillRemote = {
 		_this setSkill ["spotTime",1];
 		_this setSkill ["spotDistance",1];
 		_this setSkill ["aimingAccuracy", 0.7];
-		_this setSkill ["aimingSpeed", 0.3];
+		_this setSkill ["aimingSpeed", 0.6];
 	} else {
 		[_this, ["spotTime",1]] remoteExec ["setSkill",_this];
 		[_this, ["spotDistance",1]] remoteExec ["setSkill",_this];
