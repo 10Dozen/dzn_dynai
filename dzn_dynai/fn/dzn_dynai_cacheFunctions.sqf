@@ -27,43 +27,50 @@ dzn_fnc_dynai_checkAndRemoveCachedGroup = {
 };
 
 dzn_fnc_dynai_checkForCache = {
-	// Return list of units which must be cached and list of units which must be uncached
+	// Return list of units which must be cached and list of units which must be uncached:
+	//		- all indoor units
+	//		- leaders of infantry groups that are NOT in vehicles
 	// INPUT: null
 	// OUTPUT: [ @ArrayToCache, @ArrayToUncache ]
-	private["_cacheSquads","_uncacheSquads","_u","_dist"];
+	private["_u","_dist"];
 	
-	_cacheSquads = [];
-	_uncacheSquads = [];
+	private _cacheSquads = [];
+	private _uncacheSquads = [];
 	
-	// Pick not players, pick leaders not in vehicles and not duplicates OR pick all indoor units
+	// Pick not players, pick leaders and not duplicates OR pick all indoor units
+	private _listPlayer = call BIS_fnc_listPlayers;
+	private _countOfPlayrs = count _listPlayer;
+	private _allUnits = allUnits select {
+		!(isPlayer _x)
+		&& (group _x) getVariable ["dzn_dynai_groupCacheable", true]
+        && {
+        	(
+        		leader group _x == _x
+        		&& vehicle _x == _x
+        		&& !(_x in _cacheSquads)
+        		&& !(_x in _uncacheSquads)
+        		&& isNil {_x getVariable "dzn_dynai_isIndoor"}
+        	)
+        	||
+        	(!isNil {_x getVariable "dzn_dynai_isIndoor"})
+        }
+	};
+
 	{
 		_x call dzn_fnc_dynai_checkAndRemoveCachedGroup;
 		
-		if (!(isPlayer _x) 
-			&& { 
-				(leader group _x == _x 
-				&& vehicle _x == _x 
-				&& !(_x in _cacheSquads) 
-				&& !(_x in _uncacheSquads)
-				&& isNil {_x getVariable "dzn_dynai_isIndoor"})
-				||
-				(!isNil {_x getVariable "dzn_dynai_isIndoor"})
-			}) then {
-			
-			_u = _x;
-			{
-				_dist = _u distance _x;
-				if (_dist <= dzn_dynai_cacheDistance) exitWith {					
-					_uncacheSquads pushBack _u;
-				};
-				
-				if ((_forEachIndex + 1) == count (call BIS_fnc_listPlayers) && {_dist > dzn_dynai_cacheDistance }) then {
-					_cacheSquads pushBack _u;
-				};
-			} forEach (call BIS_fnc_listPlayers);	
-		};	
-	} forEach (entities "CAManBase");
+		_u = _x;
+		{
+			_dist = _u distance _x;
+			if (_dist <= dzn_dynai_cacheDistance) exitWith {
+				_uncacheSquads pushBack _u;
+			};
 
+			if ((_forEachIndex + 1) == _countOfPlayrs && {_dist > dzn_dynai_cacheDistance }) then {
+				_cacheSquads pushBack _u;
+			};
+		} forEach _listPlayer;
+	} forEach _allUnits;
 
 	[ _cacheSquads, _uncacheSquads ]
 };
@@ -72,32 +79,39 @@ dzn_fnc_dynai_cacheSquad = {
 	// Cache units of squad of given leader
 	// INPUT: @Leader spawn dzn_fnc_dynai_cacheSquad
 	// OUTPUT: NULL
-	private ["_squad","_rPositions"];
+	private ["_units","_rPositions"];
+
+	if !(isNil { _this getVariable "dzn_dynai_cache_rPositions" }) exitWith {};
 	
-	if !(isNil { _this getVariable "cache_rPositions" }) exitWith {};
-	
-	if (isNil { _this getVariable "dzn_dynai_isIndoor" }) then {		
-		_squad = (units group _this) - [_this];
+	if (isNil { _this getVariable "dzn_dynai_isIndoor" }) then {	
+		// Patrol units (exclude players and vehicle crew)
+		_units = (units group _this) - [_this];
 		_rPositions = [];		
 		{
-			if !(isPlayer _x) then {
-				_x enableSimulation false;
-				_x hideObjectGlobal true;			
-				_rPositions pushBack (_x call dzn_fnc_dynai_getMemberRelatedPos);	
+			if (
+				!isPlayer _x 
+				&& vehicle _x == _x
+				&& _x getVariable ["dzn_dynai_unitCacheable", true]
+			) then {
+				_x enableSimulationGlobal false;
+				_x hideObjectGlobal true;
+				_rPositions pushBack (_x call dzn_fnc_dynai_getMemberRelatedPos);
 				
 				_x setPos [0,0,0];
 				_x setVariable ["dzn_dynai_isCached", true];
 			
 				sleep 1;
 			};
-		} forEach _squad;	
+		} forEach _units;
 	} else {
-		_this enableSimulation false;
+		// Indoor units
+		_this enableSimulationGlobal false;
 		_this hideObjectGlobal true;
-		_rPositions = [[0,0,0]];		
+		_rPositions = [[0,0,0]];
+		_this setVariable ["dzn_dynai_isCached", true];
 	};
-	
-	_this setVariable ["cache_rPositions", _rPositions, true];	
+
+	_this setVariable ["dzn_dynai_cache_rPositions", _rPositions, true];
 };
 
 dzn_fnc_dynai_uncacheSquad = {
@@ -105,25 +119,29 @@ dzn_fnc_dynai_uncacheSquad = {
 	// INPUT: @Leader spawn dzn_fnc_dynai_uncacheSquad
 	// OUTPUT: NULL
 	
-	private ["_squad","_rPositions","_pos"];
+	private ["_units","_rPositions","_pos"];
 	
-	_squad =  if (isNil { _this getVariable "dzn_dynai_isIndoor" }) then { (units group _this) - [_this] } else { [_this] };
+	_units =  if (isNil { _this getVariable "dzn_dynai_isIndoor" }) then { (units group _this) - [_this] } else { [_this] };
 	
-	if (isNil {_this getVariable "cache_rPositions"}) exitWith {};	
-	_rPositions = _this getVariable "cache_rPositions";
-	
+	if (isNil {_this getVariable "dzn_dynai_cache_rPositions"}) exitWith {};
+	_rPositions = _this getVariable "dzn_dynai_cache_rPositions";
+
 	{
-		if (isNil { _x getVariable "dzn_dynai_isIndoor" }) then {
+		_x setVariable ["dzn_dynai_isCached", false];
+
+		if (
+			isNil { _x getVariable "dzn_dynai_isIndoor" }
+		) then {
 			_pos = (_this modelToWorldVisual (_rPositions select _forEachIndex));
 			_x setPos [_pos select 0, _pos select 1, 0];
-			_x setVariable ["dzn_dynai_isCached", false];
 		};
 		
 		sleep 1;
 		
-		_x enableSimulation true;
-		_x hideObjectGlobal false;		
-	} forEach _squad;
+		_x enableSimulationGlobal true;
+		_x hideObjectGlobal false;
+
+	} forEach ( _units select { _x getVariable ["dzn_dynai_isCached", false] } );
 	
-	_this setVariable ["cache_rPositions", nil, true];
+	_this setVariable ["dzn_dynai_cache_rPositions", nil, true];
 };
