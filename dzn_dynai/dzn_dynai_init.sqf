@@ -47,6 +47,9 @@ waitUntil { !isNil "dzn_gear_serverInitDone" || !isNil "dzn_gear_initDone" };
 //	**************	SERVER OR HEADLESS	*****************
 if (!isNil "HC" && isServer) exitWith { };
 
+dzn_dynai_owner = clientOwner;
+publicVariable "dzn_dynai_owner";
+
 // Initialization of dzn_dynai
 dzn_dynai_activatedZones = [];
 dzn_dynai_activeGroups = [];
