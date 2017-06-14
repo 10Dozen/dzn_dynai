@@ -106,57 +106,47 @@ dzn_fnc_dynai_initZones = {
 		} forEach dzn_dynai_zoneProperties;
 		
 		if (_properties isEqualTo []) then { 
-			["dzn_dynai :: There is no properties for DynAI zone '%1'", str(_x)] call BIS_fnc_error; 
-		
+			["dzn_dynai :: There is no properties for DynAI zone '%1'", str(_x)] call BIS_fnc_error;		
 		} else {
 			// Start of zone init
 			_zone setVariable ["dzn_dynai_initialized", false];
 			_zoneBuildings = [];
 			
-			// Get triggers and convert them into locations
+			// Get triggers and get location's buildings
 			_locations = [];
 			_syncObj = synchronizedObjects _zone;
 			{
 				if (_x isKindOf "EmptyDetector") then {
-					_loc = [_x, true] call dzn_fnc_convertTriggerToLocation;
-					_locations pushBack _loc;
-				
-					_locBuildings = [[_loc], dzn_dynai_allowedBuildingClasses, dzn_dynai_restrictedBuildingClasses] call dzn_fnc_getLocationBuildings;
-					// _zoneBuildings append _locBuildings;
-					
+					_locations pushBack _x;
+					_locBuildings = [
+						[_x]
+						, dzn_dynai_allowedBuildingClasses
+						, dzn_dynai_restrictedBuildingClasses
+					] call dzn_fnc_getLocationBuildings;					
 					{ _zoneBuildings pushBackUnique _x; } forEach _locBuildings;
 				};		
 			} forEach _syncObj;
 			
 			if (_locations isEqualTo []) then {
-				["dzn_dynai :: There is no triggers synchronized with DynAI zone '%1'", str(_x)] call BIS_fnc_error;
-			
+				["dzn_dynai :: There is no triggers synchronized with DynAI zone '%1'", str(_x)] call BIS_fnc_error;			
 			} else {
 				// Get area average position and size
-				#define GET_AVERAGE(PAR1,PAR2)		((PAR1) + (PAR2))/2
-				_locPos = [];
-				{
-					_locPos = if (_locPos isEqualTo []) then {
-						locationPosition _x
-					} else {
-						[
-							GET_AVERAGE(_locPos select 0, (locationPosition _x) select 0), 
-							GET_AVERAGE(_locPos select 1, (locationPosition _x) select 1), 
-							GET_AVERAGE(_locPos select 2, (locationPosition _x) select 2)
-						]
-					};
-				} forEach _locations;
+				_locPos = (_locations call dzn_fnc_getZonePosition) select 0;				
 
 				// Get Keypoints
 				_keypoints = _zone call dzn_fnc_dynai_initZoneKeypoints;
 				_vehiclePoints = _zone call dzn_fnc_dynai_initZoneVehiclePoints;
 				
-				sleep 1;				
-				
+				sleep 1;
 				_zone setPosASL _locPos;
 				
 				_properties set [3, _locations];
 				_properties set [4, _keypoints];
+
+				if (isNil {_properties select 7} || { isNil {_properties select 7} }) then {
+					_properties pushBack ({false});
+				};
+
 				_properties = _properties + [_zoneBuildings, _vehiclePoints];
 				
 				[_zone, [ 
@@ -165,8 +155,23 @@ dzn_fnc_dynai_initZones = {
 					, ["dzn_dynai_isActive", _properties select 2]
 					, ["dzn_dynai_properties", _properties]
 					, ["dzn_dynai_groups", []]
-					, ["dzn_dynai_initialized", true]				
+					, ["dzn_dynai_initialized", true]
+					, ["dzn_dynai_condition", _properties select 7]
 				], true] call dzn_fnc_setVars;
+
+				/*
+				 *	Zone Properties:
+				 *	0@	Name 			(string)
+				 *	1@	Side 			(string)
+				 *	2@	Is Active 		(bool)
+				 *	3@	Area 			(list of triggers)
+				 *	4@	Keypoints		(string or array of pos3ds)
+				 *	5@	Group templates	(array of templates)
+				 *	6@	Behaviour		(array of strings)
+				 *	7@	Condition		(code, returns bool)
+				 *	8@	Buildings		(list of building objects)
+				 *	9@	Vehicle points	(list of pos3ds of vehicle points)
+				 */
 			};
 		};		
 	} forEach _modules;
@@ -185,6 +190,7 @@ dzn_fnc_dynai_getZoneVar = {
 	 *      "prop"/"properties" - (array) list of zone's basic properties (that were set up with DynAI tool);
 	 *      "init"/"initialized" - (boolean) is zone initialized;
 	 *      "groups" - (array) list of zone's groups
+	 *	"cond"/"condition" - (code) activation condition
 	 * 
 	 * INPUT:
 	 * 0: OBJECT - Zone's GameLogic
@@ -205,6 +211,7 @@ dzn_fnc_dynai_getZoneVar = {
 		case "prop";case "properties": { _z getVariable ["dzn_dynai_properties", nil] };
 		case "init";case "initialized": { _z getVariable ["dzn_dynai_initialized", nil] };
 		case "groups": { _z getVariable ["dzn_dynai_groups", []]; };
+		case "cond"; case "condition": { _z getVariable ["dzn_dynai_condition", {true}] };
 		default { nil };
 	};
 
@@ -262,11 +269,19 @@ dzn_fnc_dynai_startZones = {
 	
 	{		
 		_x spawn {
-			// Wait for zone activation (_this getVariable "isActive")
-			waitUntil {!isNil {GET_PROP(_this, "init")} && {GET_PROP(_this, "init")}};
-			waitUntil {!isNil {GET_PROP(_this,"isActive")} && {GET_PROP(_this,"isActive")}};
-			if (DEBUG) then { player sideChat format ["dzn_dynai :: Creating zone '%1'", str(_this)]; };			
+			waitUntil { !isNil {GET_PROP(_this, "init")} && {GET_PROP(_this, "init")} };			
+			waitUntil { !isNil {GET_PROP(_this,"isActive")} && !isNil {GET_PROP(_this, "condition")} };
 			
+			// Wait for zone activation (_this getVariable "isActive")
+			waitUntil {
+				GET_PROP(_this,"isActive")
+				||
+				call (GET_PROP(_this, "condition"))
+			};
+			
+			if (DEBUG) then { player sideChat format ["dzn_dynai :: Creating zone '%1'", str(_this)]; };	
+			
+			_this setVariable ["dzn_dynai_isActive", true, true];			
 			(GET_PROP(_this,"properties")) call dzn_fnc_dynai_createZone;			
 		};
 		sleep 0.5;	
@@ -323,7 +338,7 @@ dzn_fnc_dynai_addNewZone = {
 	 * 0: STRING - Zone's name
 	 * 1: STRING - Zone's side (e.g. "west", "east", "resistance", "civilian")
 	 * 2: BOOLEAN - true - active, false - inactive on creation
-	 * 3: ARRAY - List of Locations or Triggers or [Pos3d, WidthX, WidthY, Direction, IsSquare(true/false)]
+	 * 3: ARRAY - List of Triggers or [Pos3d, WidthX, WidthY, Direction, IsSquare(true/false)]
 	 * 4: ARRAY or STRING - Keypoints (array of Pos3ds) or "randomize" to generate waypoints from zone's area
 	 * 5: ARRAY - Groups templates for zone
 	 * 6: ARRAY - Behavior settings in format [Speed mode, Behavior, Combat mode, Formation]
@@ -340,18 +355,14 @@ dzn_fnc_dynai_addNewZone = {
 	switch (typename ((_zP select 3) select 0)) do {
 		case "ARRAY": {
 			{
-				_l = createLocation ["Name", _x select 0, _x select 1, _x select 2];
-				_l setDirection ( _x select 3);
-				_l setRectangular ( _x select 4);
+				_l = createTrigger ["EmptyDetector", _x select 0];
+				_l setTriggerArea [_x select 1, _x select 2, _x select 3, _x select 4];
 				_loc pushBack _l;
 			} forEach (_zP select 3);
 		};
-		case "OBJECT": {
-			{
-				_loc pushBack ([_x, true] call dzn_fnc_convertTriggerToLocation);
-			} forEach (_zP select 3);
+		default {
+			_loc = _zP select 3;
 		};
-		case "LOCATION": { _loc = _zP select 3; };
 	};
 	_zP set [3, _loc];
 	_zP pushBack ([_zP select 3] call dzn_fnc_getLocationBuildings);
@@ -373,4 +384,3 @@ dzn_fnc_dynai_addNewZone = {
 	
 	_zP spawn dzn_fnc_dynai_createZone;
 };
-

@@ -52,6 +52,7 @@ var ZoneItem = function () {
 	this.id = "zone";
 	this.active = true;
 	this.side = "west";
+	this.condition = "true";
 	this.groupMode = {
 		"behaviourMode": 	"SAFE"
 		,"formationMode": 	"WEDGE"
@@ -78,9 +79,10 @@ var ZoneItem = function () {
 		+ 	'<div class="side-switch-off zone-side-option" value="east">EAST</div>'
 		+ 	'<div class="side-switch-off zone-side-option" value="resistance">INDEP</div>'
 		+ 	'<div class="side-switch-off zone-side-option" value="civilian">CIV</div>'
-		+ 	'</div></li>'
+		+ 	'</div></li>'		
 		+ 	'<li><div class="col-4">Activate on start</div><div class="col-4"><div class="toggle-switch zone-active-toggle">'
-		+	'<span class="toggle-switch-on">|</span><label>YES</label></div></div></li>'
+		+	'<span class="toggle-switch-on">|</span><label>YES</label></div></div><div class="col-4"><input title="Activation condition" style="display:none" class="zone-condition-input"></input></div></li>'
+		
 		+ 	'<hr /><div> Groups Behaviour </div>'
 		+ 	'<li><div class="col-4-inline">Speed mode</div><div class="col-4-inline"><select class="zone-speedmode">'
 		+	this.generateOptions("speedMode") + '</select></div>'
@@ -119,12 +121,21 @@ var ZoneItem = function () {
 			$(this.$form).find('.toggle-switch').find('.toggle-switch-on').css( "float", "right" );
 			$(this.$form).find('.toggle-switch').find('label').html('NO');
 			$(this.$form).find('.toggle-switch').css('background-color','#CECECE');
+			$(this.$form).find('.zone-condition-input').css('display','block');
 		} else {
 			this.active = true;
 			$(this.$form).find('.toggle-switch').find('.toggle-switch-on').css( "float", "left" );
 			$(this.$form).find('.toggle-switch').find('label').html('YES');
 			$(this.$form).find('.toggle-switch').css('background-color','rgb(177, 230, 89)');
+			$(this.$form).find('.zone-condition-input').css('display','none');
 		}
+	};
+	this.setCondition = function () {
+		var newCond = $(this.$form).find('.zone-condition-input').val();
+		if (newCond != "") {
+			this.condition = newCond;
+		};
+		$(this.$form).find('.condition-string').val(this.newCond);
 	};
 	this.setGroupMode = function(type) {
 		var typeClass, typeItem;
@@ -201,6 +212,9 @@ var ZoneItem = function () {
 		});
 		$(this.$form).find('.zone-active-toggle').on('click', function () {
 			Zone.toggleActive();
+		});
+		$(this.$form).find('.zone-condition-input').on('blur', function () {
+			Zone.setCondition();
 		});
 		$(this.$form).find('.zone-speedmode').on('blur', function () {
 			Zone.setGroupMode("speedMode");
@@ -280,7 +294,7 @@ var ZoneItem = function () {
 
 		var behavior = '<br />' + spc + '/* Behavior: Speed, Behavior, Combat mode, Formation */'
 			+ '<br />' + spc
-			+ '["' + this.groupMode.speedMode + '",'
+			+ ',["' + this.groupMode.speedMode + '",'
 			+ '"' + this.groupMode.behaviourMode + '",'
 			+ '"' + this.groupMode.combatMode + '",'
 			+ '"' + this.groupMode.formationMode + '"]';
@@ -314,13 +328,18 @@ var ZoneItem = function () {
 				+ '<br />' + spc + spc + ']';
 		};
 
-		var configLine = '[<br />' + spc + '"' + this.name + '", /* Zone Name */'
-			+ '<br />' + spc + '"' + this.side.toUpperCase() + '",' + this.active + ", /* Side, is Active */ [],[],"
+		var cond = "";
+		if (!this.active) {
+			cond = '<br />' + spc + ' /* (OPTIONAL) Activation condition */<br />' + spc + ',{ ' + this.condition + ' }';			
+		}
+		var configLine = '[<br />' + spc + '"' + this.name + '" /* Zone Name */'
+			+ '<br />' + spc + ',"' + this.side.toUpperCase() + '",' + this.active + ", /* Side, is Active */ [],[]"
 			+ '<br />' + spc + '/* Groups: */'
-            + '<br />' + spc + '['
+            + '<br />' + spc + ',['
             + groups
-			+ '<br />' + spc + '],'
+			+ '<br />' + spc + ']'
 			+ behavior
+			+ cond		
 			+ '<br />]';
 
         return configLine;

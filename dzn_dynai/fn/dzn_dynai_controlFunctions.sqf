@@ -19,12 +19,71 @@ dzn_fnc_dynai_activateZone = {
 	 * EXAMPLES:
 	 *      InsZone1 call dzn_fnc_dynai_activateZone
 	 */
+	if (clientOwner != dzn_dynai_owner) exitWith {
+		_this remoteExec ["dzn_fnc_dynai_activateZone", dzn_dynai_owner];
+	};
+	 
 	private["_properties"];
 	if !(isNil {GET_PROP(_this,"isActive")} && isNil {GET_PROP(_this, "init")}) then {	
-		_this setVariable ["dzn_dynai_isActive", true, true];	
+		_this setVariable ["dzn_dynai_isActive", true, true];
+		_this setVariable ["dzn_dynai_condition", { true }, true];
 		_properties = _this getVariable "dzn_dynai_properties";
 		_properties set [2, true];	
 		_this setVariable ["dzn_dynai_properties", _properties, true];	
+	};
+};
+
+dzn_fnc_dynai_deactivateZone = {
+	/*
+	 * [@Zone, (Optional)@Condition] call dzn_fnc_dynai_deactivateZone
+	 * Remove all zone's groups and deactivate zone. Zone will be re-activated on condition met
+	 *
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * OUTPUT: NULL
+	 *
+	 * EXAMPLES:
+	 *
+	 */
+	params["_zone", ["_condition", { false }]];
+	if (clientOwner != dzn_dynai_owner) exitWith {
+		_this remoteExec ["dzn_fnc_dynai_deactivateZone", dzn_dynai_owner];
+	};
+
+	if !( _zone call dzn_fnc_dynai_isActive ) exitWith {diag_log format ["dzn_dynai :: Zone %1 :: is not activated!", _zone];};
+
+    {
+    	{
+    		private _v = vehicle _x;
+    		private _u = _x;
+
+    		if (_v != _u) then { moveOut _u };
+    		deleteVehicle _u;
+    		deleteVehicle _v;
+    	} forEach (units _x);
+    	deleteGroup _x;
+    } forEach (_zone getVariable "dzn_dynai_groups");
+
+	_zone setVariable ["dzn_dynai_isActive", false, true];
+    _zone setVariable ["dzn_dynai_condition", _condition, true];
+    _zone setVariable ["dzn_dynai_groups", [], true];
+
+    _properties = _zone getVariable "dzn_dynai_properties";
+    _properties set [2, false];
+    _properties set [7, _condition];
+    _zone setVariable ["dzn_dynai_properties", _properties, true];
+
+	_zone spawn {
+		waitUntil {
+			[_this, "isActive"] call dzn_fnc_dynai_getZoneVar
+			||
+			call ([_this, "condition"] call dzn_fnc_dynai_getZoneVar)
+		};
+
+    	player sideChat format ["dzn_dynai :: Re-creating zone '%1'", str(_this)];
+
+    	_this setVariable ["dzn_dynai_isActive", true, true];
+    	( [_this, "properties"] call dzn_fnc_dynai_getZoneVar ) call dzn_fnc_dynai_createZone;
 	};
 };
 
@@ -61,6 +120,9 @@ dzn_fnc_dynai_moveZone = {
 	 *      [EnemyZone2, [3222,2000,0]] call dzn_fnc_dynai_moveZone
 	 *      [EnemyZone3, baseObject] call dzn_fnc_dynai_moveZone
 	 */
+	if (clientOwner != dzn_dynai_owner) exitWith {
+		_this remoteExec ["dzn_fnc_dynai_moveZone", dzn_dynai_owner];
+	};
 	 
 	private["_zone","_newPos","_newDir","_deltaDir","_curPos","_locations","_offsets","_dir","_dist","_oldOffset","_newOffsetPos","_props","_wps","_wpOffsets","_locBuildings"];
 	
@@ -78,8 +140,8 @@ dzn_fnc_dynai_moveZone = {
 	// Get current offsets of locations
 	_offsets = [];
 	{
-		_dir = [_curPos, (locationPosition _x)] call BIS_fnc_dirTo;
-		_dist = _curPos distance (locationPosition _x);
+		_dir = _curPos getDir (getPos _x);
+		_dist = _curPos distance (getPos _x);
 		_offsets = _offsets  + [ [_dir, _dist] ];
 	} forEach _locations;
 	
@@ -122,7 +184,7 @@ dzn_fnc_dynai_moveZone = {
 	_props = GET_PROP(_zone,"properties");	
 	
 	_props set [4, _wps];
-	_props set [7, _zoneBuildings];
+	_props set [8, _zoneBuildings];
 	
 	_zone setVariable ["dzn_dynai_properties", _props, true];
 };
@@ -155,6 +217,10 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	 * EXAMPLES:
 	 *      
 	 */
+	if (clientOwner != dzn_dynai_owner) exitWith {
+		_this remoteExec ["dzn_fnc_dynai_setZoneKeypoints", dzn_dynai_owner];
+	};
+	
 	params ["_zone","_newKeypoints"];
 	private["_properties"];
 	
@@ -167,8 +233,6 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	
 	_zone setVariable ["dzn_dynai_properties", _properties, true];
 };
-
-
 
 dzn_fnc_dynai_getGroupTemplates = {
 	/*
@@ -198,6 +262,10 @@ dzn_fnc_dynai_setGroupTemplates = {
 	 * EXAMPLES:
 	 *      
 	 */
+	if (clientOwner != dzn_dynai_owner) exitWith {
+		_this remoteExec ["dzn_fnc_dynai_setZoneKeypoints", dzn_dynai_owner];
+	};
+	
 	if ( (_this select 0) call dzn_fnc_dynai_isActive ) exitWith {diag_log format ["dzn_dynai :: Zone %1 :: already active!", _this select 0];};
 	if ( typename (_this select 1) != "ARRAY" ) exitWith {diag_log format ["dzn_dynai ::  Zone %1 :: Template is not an array!", _this select 0];};
 	
