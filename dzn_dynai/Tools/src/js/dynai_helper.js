@@ -337,7 +337,7 @@ var ZoneItem = function () {
 			+ '<br />' + spc + '/* Groups: */'
             + '<br />' + spc + ',['
             + groups
-			+ '<br />' + spc + '],'
+			+ '<br />' + spc + ']'
 			+ behavior
 			+ cond		
 			+ '<br />]';
