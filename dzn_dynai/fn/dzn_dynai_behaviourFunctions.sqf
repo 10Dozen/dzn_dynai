@@ -335,8 +335,9 @@ dzn_fnc_dynai_unassignReinforcement = {
 	
 	waitUntil { time > _timer };
 	
-	_provider call dzn_fnc_dynai_initResponseGroup;
-	_requester call dzn_fnc_dynai_initResponseGroup;
+	private _groups = [];
+	if ( {alive _x} count (units _provider) > 0 ) then { _groups pushBack _provider };
+	if ( {alive _x} count (units _requester) > 0 ) then { _groups pushBack _requester };
 	
 	{
 		_x call dzn_fnc_dynai_initResponseGroup;
@@ -351,7 +352,7 @@ dzn_fnc_dynai_unassignReinforcement = {
 				[_x, _area] call dzn_fnc_createPathFromRandom;
 			};
 		};
-	} forEach [_provider, _requester];	
+	} forEach _groups;	
 };
 
 dzn_fnc_dynai_initResponseGroup = {
