@@ -4,6 +4,197 @@
 #define GET_PROP(X,Y)	[X, Y] call dzn_fnc_dynai_getZoneVar
 
 // ================================================
+//		DZN DYNAI -- Getters
+// ================================================
+
+dzn_fnc_dynai_getZoneVar = {	
+	
+	/*
+	 * @Property = [@Zone, @PropertyName] call dzn_fnc_dynai_getZoneVar
+	 * Returns value of the given property.
+	 *      Properties are:
+	 *      "list" - (array) list of all available properties;
+	 *      "area" - (array) list of zone's locations;
+	 *      "kp"/"points"/"keypoints" - (array) list of zone's keypoints (Pos3ds);
+	 *      "isactive" - (boolean) is zone was activated;
+	 *      "prop"/"properties" - (array) list of zone's basic properties (that were set up with DynAI tool);
+	 *      "init"/"initialized" - (boolean) is zone initialized;
+	 *      "groups" - (array) list of zone's groups
+	 *	"cond"/"condition" - (code) activation condition
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * 1: STRING - Property name (e.g. "isactive", "groups")
+	 * OUTPUT: @Property value (can be any format)
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
+	private["_r","_z"];
+	_z = _this select 0;
+	_r = switch toLower(_this select 1) do {	
+		case "list": { ["area", ["keypoints","kp","points"], "isActive", ["properties","prop"], ["init","initialized"], "groups"]};
+		case "area": { _z getVariable ["dzn_dynai_area", nil] };
+		case "kp";case "points";case "keypoints": { _z getVariable ["dzn_dynai_keypoints", nil] };
+		case "vp";case "vehiclePoints": { _z getVariable ["dzn_dynai_vehiclePoints",nil] };
+		case "isactive": { _z getVariable ["dzn_dynai_isActive", nil] };
+		case "prop";case "properties": { _z getVariable ["dzn_dynai_properties", nil] };
+		case "init";case "initialized": { _z getVariable ["dzn_dynai_initialized", nil] };
+		case "groups": { _z getVariable ["dzn_dynai_groups", []]; };
+		case "cond"; case "condition": { _z getVariable ["dzn_dynai_condition", {true}] };
+		default { nil };
+	};
+
+	_r
+};
+
+dzn_fnc_dynai_getGroupVar = {
+	
+	/*
+	 * @Property = [@Group, @PropertyName] call dzn_fnc_dynai_getGroupVar
+	 * Returns value of the given property.
+	 *      Properties are:
+	 *      "list" - (array) list of all available properties;
+	 *      "home" - (object) home zone's game logic;
+	 *      "units" - (array) list of group's units;
+	 *      "vehicles" - (array) list of group's vehicles;
+	 *      "wpset" - (boolean) is group already has waypoints
+	 * 
+	 * INPUT:
+	 * 0: GROUP - Zone's group
+	 * 1: STRING - Property name (e.g. "wpSet", "units")
+	 * OUTPUT: @Property value (can be any format)
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
+	private["_r","_g"];
+	_g = _this select 0;
+	_r = switch toLower(_this select 1) do {
+		case "list": { ["home", "units", "vehicles", "wpSet"] };
+		case "wpset": { _g getVariable "dzn_dynai_wpSet" };
+		case "home": { _g getVariable "dzn_dynai_homeZone" };
+		case "units": { _g getVariable "dzn_dynai_units" };
+		case "vehicles": { _g getVariable "dzn_dynai_vehicles" };
+		default { nil };
+	};
+	
+	_r
+};
+
+dzn_fnc_dynai_isActive = {
+	/*
+	 * @IsActive? = @ZoneLogic call dzn_fnc_dynai_isActive
+	 * Return true if zone was already activated
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * OUTPUT: BOOLEAN (true - if zone was activated, false - if zone is inactive)
+	 * 
+	 * EXAMPLES:
+	 *      InsZone1 call dzn_fnc_dynai_activateZone
+	 */
+	if (isNil {GET_PROP(_this,"isActive")}) exitWith { false };	
+	GET_PROP(_this,"isActive")
+};
+
+dzn_fnc_dynai_getZoneKeypoints = {
+	/*
+	 * @List of Keypoints = @Zone call dzn_fnc_dynai_getZoneKeypoints
+	 * Returns the list of zone's keypoints (Pos3d)
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * OUTPUT: ARRAY (List of POS3d)
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
+	(GET_PROP(_this,"properties")) select 4
+};
+
+dzn_fnc_dynai_getGroupTemplates = {
+	/*
+	 * @Templates = @Zone call dzn_fnc_dynai_getGroupTemplates
+	 * Returns the list of the zone's groups templates
+	 * 
+	 * INPUT:
+	 * 0: OBJECT - Zone's GameLogic
+	 * OUTPUT: ARRAY (List of zone's groups templates)
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
+	( GET_PROP(_this,"prop") ) select 5
+};
+
+
+// ================================================
+//           DZN DYNAI -- New zone creation
+// ================================================
+
+dzn_fnc_dynai_addNewZone = {
+	/*
+	 * [@Name, @Side, @IsActive, @Area, @Keypoints, @Tamplates, @Behaviour] spawn dzn_fnc_dynai_addNewZone 
+	 * Creates new DynAI zone according to passed parameters.
+	 * 
+	 * INPUT:
+	 * 0: STRING - Zone's name
+	 * 1: STRING - Zone's side (e.g. "west", "east", "resistance", "civilian")
+	 * 2: BOOLEAN - true - active, false - inactive on creation
+	 * 3: ARRAY - List of Triggers or [Pos3d, WidthX, WidthY, Direction, IsSquare(true/false)]
+	 * 4: ARRAY or STRING - Keypoints (array of Pos3ds) or "randomize" to generate waypoints from zone's area
+	 * 5: ARRAY - Groups templates for zone
+	 * 6: ARRAY - Behavior settings in format [Speed mode, Behavior, Combat mode, Formation]
+	 * OUTPUT: NULL
+	 * 
+	 * EXAMPLES:
+	 *      
+	 */
+	 
+	if (clientOwner != dzn_dynai_owner) exitWith {
+		_this remoteExec ["dzn_fnc_dynai_addNewZone", dzn_dynai_owner];
+	};
+	
+	private ["_zP","_zoneObject","_l","_loc"];
+	_zP = _this;
+	
+	_loc = [];
+	// Check what is come as 3rd argument - Locations, Triggers or Arrays of attributes
+	switch (typename ((_zP select 3) select 0)) do {
+		case "ARRAY": {
+			{
+				_l = createTrigger ["EmptyDetector", _x select 0];
+				_l setTriggerArea [_x select 1, _x select 2, _x select 3, _x select 4];
+				_loc pushBack _l;
+			} forEach (_zP select 3);
+		};
+		default {
+			_loc = _zP select 3;
+		};
+	};
+	_zP set [3, _loc];
+	_zP pushBack ([_zP select 3] call dzn_fnc_getLocationBuildings);
+	
+	_grp = createGroup (call compile (_zP select 1));
+	_zoneObject = _grp createUnit ["Logic", (locationPosition (_zP select 3 select 0)), [], 0, "NONE"];
+	
+	_zoneObject setVehicleVarName (_zP select 0); 
+	call compile format [ "%1 = _zoneObject;", (_zP select 0)];
+	
+	_zoneObject setVariable ["dzn_dynai_area", _zP select 3];
+	_zoneObject setVariable ["dzn_dynai_keypoints", _zP select 4];
+	_zoneObject setVariable ["dzn_dynai_isActive", _zP select 2];
+	
+	_zoneObject setVariable ["dzn_dynai_properties", _zP];
+	_zoneObject setVariable ["dzn_dynai_initialized", true];
+	
+	//dzn_dynai_zoneProperties pushBack _zP;
+	
+	_zP spawn dzn_fnc_dynai_createZone;
+};
+
+// ================================================
 //           DZN DYNAI -- Zone Controls
 // ================================================
 
@@ -45,33 +236,34 @@ dzn_fnc_dynai_deactivateZone = {
 	 * EXAMPLES:
 	 *
 	 */
-	params["_zone", ["_condition", { false }]];
 	if (clientOwner != dzn_dynai_owner) exitWith {
 		_this remoteExec ["dzn_fnc_dynai_deactivateZone", dzn_dynai_owner];
 	};
+	
+	params["_zone", ["_condition", { false }]];
 
 	if !( _zone call dzn_fnc_dynai_isActive ) exitWith {diag_log format ["dzn_dynai :: Zone %1 :: is not activated!", _zone];};
 
-    {
-    	{
-    		private _v = vehicle _x;
-    		private _u = _x;
+	{
+		{
+			private _v = vehicle _x;
+			private _u = _x;
 
-    		if (_v != _u) then { moveOut _u };
-    		deleteVehicle _u;
-    		deleteVehicle _v;
-    	} forEach (units _x);
-    	deleteGroup _x;
-    } forEach (_zone getVariable "dzn_dynai_groups");
+			if (_v != _u) then { moveOut _u };
+			deleteVehicle _u;
+			deleteVehicle _v;
+		} forEach (units _x);
+		deleteGroup _x;
+	} forEach (_zone getVariable "dzn_dynai_groups");
 
 	_zone setVariable ["dzn_dynai_isActive", false, true];
-    _zone setVariable ["dzn_dynai_condition", _condition, true];
-    _zone setVariable ["dzn_dynai_groups", [], true];
+	_zone setVariable ["dzn_dynai_condition", _condition, true];
+	_zone setVariable ["dzn_dynai_groups", [], true];
 
-    _properties = _zone getVariable "dzn_dynai_properties";
-    _properties set [2, false];
-    _properties set [7, _condition];
-    _zone setVariable ["dzn_dynai_properties", _properties, true];
+	_properties = _zone getVariable "dzn_dynai_properties";
+	_properties set [2, false];
+	_properties set [7, _condition];
+	_zone setVariable ["dzn_dynai_properties", _properties, true];
 
 	_zone spawn {
 		waitUntil {
@@ -80,27 +272,11 @@ dzn_fnc_dynai_deactivateZone = {
 			call ([_this, "condition"] call dzn_fnc_dynai_getZoneVar)
 		};
 
-    	player sideChat format ["dzn_dynai :: Re-creating zone '%1'", str(_this)];
+		player sideChat format ["dzn_dynai :: Re-creating zone '%1'", str(_this)];
 
-    	_this setVariable ["dzn_dynai_isActive", true, true];
-    	( [_this, "properties"] call dzn_fnc_dynai_getZoneVar ) call dzn_fnc_dynai_createZone;
+		_this setVariable ["dzn_dynai_isActive", true, true];
+		( [_this, "properties"] call dzn_fnc_dynai_getZoneVar ) call dzn_fnc_dynai_createZone;
 	};
-};
-
-dzn_fnc_dynai_isActive = {
-	/*
-	 * @IsActive? = @ZoneLogic call dzn_fnc_dynai_isActive
-	 * Return true if zone was already activated
-	 * 
-	 * INPUT:
-	 * 0: OBJECT - Zone's GameLogic
-	 * OUTPUT: BOOLEAN (true - if zone was activated, false - if zone is inactive)
-	 * 
-	 * EXAMPLES:
-	 *      InsZone1 call dzn_fnc_dynai_activateZone
-	 */
-	if (isNil {GET_PROP(_this,"isActive")}) exitWith { false };	
-	GET_PROP(_this,"isActive")
 };
 
 dzn_fnc_dynai_moveZone = {
@@ -189,21 +365,6 @@ dzn_fnc_dynai_moveZone = {
 	_zone setVariable ["dzn_dynai_properties", _props, true];
 };
 
-dzn_fnc_dynai_getZoneKeypoints = {
-	/*
-	 * @List of Keypoints = @Zone call dzn_fnc_dynai_getZoneKeypoints
-	 * Returns the list of zone's keypoints (Pos3d)
-	 * 
-	 * INPUT:
-	 * 0: OBJECT - Zone's GameLogic
-	 * OUTPUT: ARRAY (List of POS3d)
-	 * 
-	 * EXAMPLES:
-	 *      
-	 */
-	(GET_PROP(_this,"properties")) select 4
-};
-
 dzn_fnc_dynai_setZoneKeypoints = {
 	/*
 	 * [@Zone, @List of Keypoint] call dzn_fnc_dynai_getZoneKeypoints
@@ -232,21 +393,6 @@ dzn_fnc_dynai_setZoneKeypoints = {
 	_properties set [4, _newKeypoints];
 	
 	_zone setVariable ["dzn_dynai_properties", _properties, true];
-};
-
-dzn_fnc_dynai_getGroupTemplates = {
-	/*
-	 * @Templates = @Zone call dzn_fnc_dynai_getGroupTemplates
-	 * Returns the list of the zone's groups templates
-	 * 
-	 * INPUT:
-	 * 0: OBJECT - Zone's GameLogic
-	 * OUTPUT: ARRAY (List of zone's groups templates)
-	 * 
-	 * EXAMPLES:
-	 *      
-	 */
-	( GET_PROP(_this,"prop") ) select 5
 };
 
 dzn_fnc_dynai_setGroupTemplates = {	
