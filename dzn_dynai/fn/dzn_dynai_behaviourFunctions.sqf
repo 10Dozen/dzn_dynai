@@ -3,7 +3,7 @@
 #define	GRPRES_DEBUG	false
 
 #define	CRIT_LOSES_LEVEL		floor (count (_this getVariable "dzn_dynai_units") * 0.66)
-#define 	CRIT_HOSTILE_AMOUNT	(count units _this * 1)
+#define CRIT_HOSTILE_AMOUNT		(count units _this * 1)
 #define	CRIT_INF_DISTANCE		500
 #define	CRIT_VEH_DISTANCE		1200
 
