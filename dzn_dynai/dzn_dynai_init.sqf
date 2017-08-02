@@ -28,27 +28,25 @@ dzn_dynai_allowGroupResponse = (["par_dynai_enableGroupResponse", 1] call BIS_fn
 // **************************
 //	INITIALIZATION
 // **************************
-// If a player and no Zeus needed - exits script
-if (hasInterface && !isServer) exitWith {
+
+// Exit if PLAYER or SERVER when Headless is initialized
+if ( (hasInterface && !isServer) || (!isNil "HC" && isServer) ) exitWith {
+	// If a player and no Zeus needed - exits script
 	if (dzn_dynai_enableZeusCompatibility) then {
-		// call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
-		// call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
+		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
 		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
 		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_zeusCompatibility.sqf";
 	};
 };
 
+dzn_dynai_owner = clientOwner;
+publicVariable "dzn_dynai_owner";
+
 dzn_dynai_initialized = false;
 waitUntil dzn_dynai_initCondition;
 
 // Initialization of dzn_gear
-waitUntil { !isNil "dzn_gear_serverInitDone" || !isNil "dzn_gear_initDone" };
-
-//	**************	SERVER OR HEADLESS	*****************
-if (!isNil "HC" && isServer) exitWith { };
-
-dzn_dynai_owner = clientOwner;
-publicVariable "dzn_dynai_owner";
+waitUntil { !isNil "dzn_gear_initDone" && { dzn_gear_initDone } };
 
 // Initialization of dzn_dynai
 dzn_dynai_activatedZones = [];
