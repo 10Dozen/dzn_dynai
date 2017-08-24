@@ -3,7 +3,7 @@
 #define	GRPRES_DEBUG	false
 
 #define	CRIT_LOSES_LEVEL		floor (count (_this getVariable "dzn_dynai_units") * 0.66)
-#define 	CRIT_HOSTILE_AMOUNT	(count units _this * 1)
+#define CRIT_HOSTILE_AMOUNT		(count units _this * 1)
 #define	CRIT_INF_DISTANCE		500
 #define	CRIT_VEH_DISTANCE		1200
 
@@ -414,13 +414,13 @@ dzn_fnc_dynai_setSpotSkillRemote = {
 	if (local _this) then {
 		_this setSkill ["spotTime",1];
 		_this setSkill ["spotDistance",1];
-		_this setSkill ["aimingAccuracy", 0.7];
-		_this setSkill ["aimingSpeed", 0.6];
+		_this setSkill ["aimingAccuracy", 0.75];
+		_this setSkill ["aimingSpeed", 1];
 	} else {
 		[_this, ["spotTime",1]] remoteExec ["setSkill",_this];
 		[_this, ["spotDistance",1]] remoteExec ["setSkill",_this];
-		[_this, ["aimingAccuracy",0.7]] remoteExec ["setSkill",_this];
-		[_this, ["aimingSpeed",0.3]] remoteExec ["setSkill",_this];
+		[_this, ["aimingAccuracy",0.75]] remoteExec ["setSkill",_this];
+		[_this, ["aimingSpeed",1]] remoteExec ["setSkill",_this];
 	};
 };
 
