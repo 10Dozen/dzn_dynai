@@ -1,5 +1,5 @@
 // **************************
-// 	DZN DYNAI v1.1
+// 	DZN DYNAI v1.2
 //
 //	Initialized when:
 //	{ !isNil "dzn_dynai_initialized" }
@@ -17,11 +17,7 @@ call compile preProcessFileLineNumbers "dzn_dynai\Settings.sqf";
 
 dzn_dynai_complexSkill = [ 
 	!dzn_dynai_UseSimpleSkill
-	, if (dzn_dynai_UseSimpleSkill) then {
-		dzn_dynai_overallSkillLevel	
-	} else {
-		dzn_dynai_complexSkillLevel			
-	}
+	, if (dzn_dynai_UseSimpleSkill) then { dzn_dynai_overallSkillLevel } else { dzn_dynai_complexSkillLevel }
 ];
 dzn_dynai_allowGroupResponse = (["par_dynai_enableGroupResponse", 1] call BIS_fnc_getParamValue) > 0;
 
@@ -31,9 +27,9 @@ dzn_dynai_allowGroupResponse = (["par_dynai_enableGroupResponse", 1] call BIS_fn
 
 // Exit if PLAYER or SERVER when Headless is initialized
 if ( (hasInterface && !isServer) || (!isNil "HC" && isServer) ) exitWith {
+	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
 	// If a player and no Zeus needed - exits script
 	if (dzn_dynai_enableZeusCompatibility) then {
-		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
 		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
 		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_zeusCompatibility.sqf";
 	};
