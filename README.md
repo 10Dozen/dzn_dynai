@@ -1,5 +1,5 @@
 # dzn_dynai
-##### Version: 1.1HC2
+##### Version: 1.2
 Dynamic AI with Blackjack and Whores
 
 #### Dependencies (included)
