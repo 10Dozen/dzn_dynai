@@ -342,8 +342,8 @@ dzn_fnc_dynai_moveZone = {
 		_oldOffset = _offsets select _forEachIndex;	// return [_dir, _dist] 
 		_newOffsetPos = [_newPos, (_oldOffset select 0) + _deltaDir, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
 		
-		_x setPos _newOffsetPos;
-		_x setDir (getDir _x + _deltaDir);
+		_x setPosition _newOffsetPos;
+		_x setDirection (direction _x + _deltaDir);
 		
 		_locBuildings = [[_x]] call dzn_fnc_getLocationBuildings;
 		{ _zoneBuildings pushBack _x; } forEach _locBuildings;

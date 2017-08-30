@@ -42,18 +42,17 @@ dzn_fnc_dynai_checkForCache = {
 	private _countOfPlayrs = count _listPlayer;
 	private _allUnits = allUnits select {
 		!(isPlayer _x)
-		&& (group _x) getVariable ["dzn_dynai_groupCacheable", true]
-        && {
-        	(
-        		leader group _x == _x
-        		&& vehicle _x == _x
-        		&& !(_x in _cacheSquads)
-        		&& !(_x in _uncacheSquads)
-        		&& isNil {_x getVariable "dzn_dynai_isIndoor"}
-        	)
-        	||
-        	(!isNil {_x getVariable "dzn_dynai_isIndoor"})
-        }
+		&& {
+			(
+				leader group _x == _x
+				&& vehicle _x == _x
+				&& !(_x in _cacheSquads)
+				&& !(_x in _uncacheSquads)
+				&& isNil {_x getVariable "dzn_dynai_isIndoor"}
+			)
+			||
+			(!isNil {_x getVariable "dzn_dynai_isIndoor"})
+		}
 	};
 
 	{
@@ -91,7 +90,7 @@ dzn_fnc_dynai_cacheSquad = {
 			if (
 				!isPlayer _x 
 				&& vehicle _x == _x
-				&& _x getVariable ["dzn_dynai_unitCacheable", true]
+				&& _x getVariable ["dzn_dynai_cacheable", true]
 			) then {
 				_x enableSimulationGlobal false;
 				_x hideObjectGlobal true;

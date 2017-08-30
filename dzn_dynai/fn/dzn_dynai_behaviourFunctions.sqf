@@ -3,7 +3,7 @@
 #define	GRPRES_DEBUG	false
 
 #define	CRIT_LOSES_LEVEL		floor (count (_this getVariable "dzn_dynai_units") * 0.66)
-#define CRIT_HOSTILE_AMOUNT		(count units _this * 1)
+#define 	CRIT_HOSTILE_AMOUNT		(count units _this * 1)
 #define	CRIT_INF_DISTANCE		500
 #define	CRIT_VEH_DISTANCE		1200
 
@@ -17,7 +17,6 @@ dzn_fnc_dynai_isIndoorGroup = {
 	
 	_r
 };
-
 
 // Response FSM functions
 dzn_fnc_dynai_updateActiveGroups = {
@@ -151,7 +150,7 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 		1
 	};
 	
-	private _targets = (leader _this) targetsQuery [objNull, sideEnemy, "", [], 0];
+	private _targets = ((leader _this) targetsQuery [objNull, sideEnemy, "", [], 0]) select {[side (leader _this), _x select 2] call BIS_fnc_sideIsEnemy};
 	private _targetList = [];
 	private _isCritical = false;
 	{
@@ -160,8 +159,7 @@ dzn_fnc_dynai_checkSquadKnownEnemiesCritical = {
 		private _tgtKnowledge = _x select 0;		
 		if (
 			_tgt isKindOf "CAManBase" 
-			&& (_tgtKnowledge > 0.2) 
-			&& (_tgtSide != side _this) 
+			&& (_tgtKnowledge > 0.2)
 			&& {_tgt distance (leader _this) < CRIT_INF_DISTANCE}
 		) then {
 			_targetList pushBack _x;
