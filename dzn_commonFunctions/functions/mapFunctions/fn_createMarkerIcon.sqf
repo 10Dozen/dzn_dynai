@@ -5,9 +5,7 @@
 */
 
 params ["_name","_pos","_icon","_color",["_text", ""],["_isLocal", false]];
-private["_mrk"];
-	
-_mrk = "";
+
 call compile format [
 	"_mrk = createMarker%1 [_name, _pos];
 	_mrk setMarkerShape%1 'ICON';
@@ -17,4 +15,4 @@ call compile format [
 	, if (_isLocal) then { "Local" } else { "" }
 ];
 
-_mrk
+_name

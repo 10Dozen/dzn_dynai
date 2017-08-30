@@ -4,7 +4,7 @@
 dzn_fnc_gear_assignKit = {
 	/*
 		Resolve given kit and call function to assign existing kit to unit.	
-		EXAMPLE:	[ unit, gearSetName, isBox ] spawn dzn_fnc_gear_assignKit;
+		EXAMPLE:	[ @unit, @gearSetName, @isBox ] spawn dzn_fnc_gear_assignKit;
 		INPUT:
 			0: OBJECT		- Unit for which gear will be set
 			1: ARRAY or STRING	- List of Kits or single kit for assignment: ["kit_r","kit_ar"] or "kit_ar"
@@ -14,17 +14,16 @@ dzn_fnc_gear_assignKit = {
 	params ["_unit","_kits",["_isCargo", false]];
 	private ["_kitName","_kit"];
 	
-	_kitName = if (typename _kits == "ARRAY") then { _kits call BIS_fnc_selectRandom } else { _kits };
+	_kitName = if (typename _kits == "ARRAY") then { selectRandom _kits } else { _kits };
 	
 	if (isNil {call compile _kitName}) exitWith {
 		diag_log format ["There is no kit with name %1", (_kitName)];
-		player sideChat format ["There is no kit with name %1", (_kitName)];
+		systemChat format ["There is no kit with name %1", (_kitName)];
 	};
 	
 	_kit = call compile _kitName;
-	if (typename (_kit select 0) != "ARRAY") then { 
-		_kitName = _kit call BIS_fnc_selectRandom;		
-		_kit = call compile (_kitName); 	
+	if (typename (_kit select 0) != "ARRAY") exitWith { 		
+		[_unit, _kit] call dzn_fnc_gear_assignKit;
 	};
 	
 	_unit setVariable ["dzn_gear", _kitName, true];	
@@ -42,7 +41,7 @@ dzn_fnc_gear_assignKit = {
 	#define SET_CAT(CIDX)				_ctg = _gear select CIDX
 	#define cItem(IDX)				(_ctg select IDX)
 	#define IsItem(ITEM)				(typename (ITEM) == "STRING")
-	#define getItem(ITEM)				if IsItem(ITEM) then {ITEM} else {ITEM call BIS_fnc_selectRandom}
+	#define getItem(ITEM)				if IsItem(ITEM) then {ITEM} else {selectRandom ITEM}
 	
 dzn_fnc_gear_assignGear = {
 	// [@Unit, @GearSet] spawn dzn_fnc_gear_assignGear;
@@ -110,7 +109,7 @@ dzn_fnc_gear_assignGear = {
 	// ADD ASSIGNED ITEMS
 	SET_CAT(4);
 	for "_i" from 1 to ((count _ctg) - 1) do {
-		_unit addWeapon (if IsItem(cItem(_i)) then {cItem(_i)} else {cItem(_i) call BIS_fnc_selectRandom});	
+		_unit addWeapon (if IsItem(cItem(_i)) then {cItem(_i)} else { selectRandom cItem(_i) });	
 	};
 	
 	// ADD GEAR
@@ -397,6 +396,76 @@ dzn_fnc_gear_setPreciseGear = {
 // **************************
 // INITIALIZING FUNCTIONS
 // **************************
+dzn_fnc_gear_nullifyUnusedVars = {
+	if (!isNil "dzn_gear_arsenalEventHandlerID") then {
+		removeMissionEventHandler ["EachFrame", dzn_gear_arsenalEventHandlerID];
+	};
+
+	if (!isNil "dzn_gear_editMode_controlsOverArsenalEH") then {
+		(uinamespace getvariable "RSCDisplayArsenal") displayRemoveEventHandler ["KeyDown", dzn_gear_editMode_controlsOverArsenalEH];
+	};
+
+	{
+		call compile format ["if (!isNil ""%1"") then { %1 = nil; };", _x];
+	} forEach [
+		"dzn_gear_UseStandardUniformItems"
+		, "dzn_gear_StandardUniformItems"
+		, "dzn_gear_LeaderUniformItems"
+		, "dzn_gear_UseStandardAssignedItems"
+		, "dzn_gear_StandardAssignedItems"
+		, "dzn_gear_LeaderAssignedItems"
+		, "dzn_gear_ShowGearTotals"
+		, "dzn_gear_GearTotalsBG_RGBA"
+		, "dzn_gear_ReplaceRHSStanagToDefault"
+		, "dzn_gear_kitKey"
+		, "dzn_gear_kitRoles"		
+		, "dzn_gear_editMode_keyIsDown"
+		, "dzn_gear_editMode_primaryWeaponList"
+		, "dzn_gear_editMode_primaryWeaponMagList"
+		, "dzn_gear_editMode_handgunWeaponList"
+		, "dzn_gear_editMode_handgunWeaponMagList"
+		, "dzn_gear_editMode_secondaryWeaponList"
+		, "dzn_gear_editMode_secondaryWeaponMagList"
+		, "dzn_gear_editMode_uniformList"
+		, "dzn_gear_editMode_headgearList"
+		, "dzn_gear_editMode_gogglesList"
+		, "dzn_gear_editMode_vestList"
+		, "dzn_gear_editMode_backpackList"
+		, "dzn_gear_editMode_arsenalOpened"
+		, "dzn_gear_editMode_arsenalTimerPause"
+		, "dzn_gear_editMode_canCheck_ArsenalDiff"
+		, "dzn_gear_editMode_waitToCheck_ArsenalDiff"
+		, "dzn_gear_editMode_controlsOverArsenalEH"
+		, "dzn_gear_editMode_notif_pos"
+		, "dzn_gear_editMode_lastInventory"
+		, "dzn_gear_arsenalEventHandlerID"
+		
+		, "dzn_fnc_gear_editMode_showKeybinding"
+		, "dzn_fnc_gear_editMode_onKeyPress"
+		, "dzn_fnc_gear_editMode_getEquipItems"
+		, "dzn_fnc_gear_editMode_getCurrentWeapon"
+		, "dzn_fnc_gear_editMode_getCurrentIdentity"
+		
+		, "dzn_fnc_gear_editMode_showKitGetter"
+		, "dzn_fnc_gear_editMode_createKit"		
+		, "dzn_fnc_gear_editMode_setOptions"
+		, "dzn_fnc_gear_editMode_showAmmoBearerGetterMenu"
+		, "dzn_fnc_gear_editMode_showAmmoBearerSetterMenu"
+		
+		, "dzn_fnc_gear_editMode_showAsStructuredList"
+		, "dzn_fnc_gear_editMode_getItemName"
+		, "dzn_fnc_gear_editMode_getMagazineDisplayName"
+		, "dzn_fnc_gear_editMode_getEquipDisplayName"
+		, "dzn_fnc_gear_editMode_getBackpackDisplayName"
+		, "dzn_fnc_gear_editMode_getVehicleName"
+		, "dzn_fnc_gear_editMode_convertInventoryToLine"
+		, "dzn_fnc_gear_editMode_showGearTotals"
+		, "dzn_fnc_gear_editMode_showNotif"
+		, "dzn_fnc_gear_editMode_initialize"		
+	];
+	diag_log "dzn Gear : Edit mode variables cleared";
+};
+
 dzn_fnc_gear_startLocalIdentityLoop = {
 	dzn_gear_applyLocalIdentity = true;
 
@@ -420,7 +489,6 @@ dzn_fnc_gear_startLocalIdentityLoop = {
 		};
 	}] call BIS_fnc_addStackedEventHandler;
 };
-
 
 dzn_fnc_gear_initialize = {
 	// Wait until player initialized in multiplayer

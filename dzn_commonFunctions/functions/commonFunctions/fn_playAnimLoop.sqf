@@ -1,6 +1,6 @@
 /*
  * [@Unit, @Animation, @Condition, @IsGlobal] call dzn_fnc_playAnimLoop
- * Run looped animation until condition returns True.
+ * Run looped animation while condition returns True.
  * 
  * INPUT:
  * 0: OBJECT - Unit animation will be applied to
@@ -26,7 +26,7 @@ if (_isGlobal) then {
 };
 	
 private _exit = false;
-while { call compile _loopCondition } do {		
+while { _u call compile _loopCondition } do {		
 	if (animationState _u != _animation ) then {			
 		_u switchMove _animation;
 		_u playMoveNow _animation;

@@ -1,27 +1,27 @@
 /*
- * @Result = [@Conditions, @Operator, @Value] call dzn_fnc_ccUnits
- * Count all units in given area (or from all map if list of triggers not passed) and compare with given value via operator.
- * 	OR return list of the units which match conditions
+ * @Result = [@Area, @Side, @CustomCondition, @OperatorAndValue] call dzn_fnc_ccUnits
+ * Count all units in given area (or from all map if list of triggers not passed) and compare with given value with operator.
+ *       	OR return list of the units which match conditions
  * 
  * INPUT:
- * 0: ARRAY - array of conditions in format [@Trigger or @Array of triggers (OBJECT or ARRAY), @Side (SIDE), @Custom conditions (STRING)]
- * 1: STRING - Comparsion operator: "==", "!=", ">", ">=", "<", "<="  (if "" or not passed -- function will return list of the units that match conditions)
- * 2: NUMBER - Number to compare (if -1 or not passed -- function will return list of the units that match conditions)
- * OUTPUT: BOOLEAN
+ * 0: TRIGGER or List of TRIGGERS or [] - Area to search (1 or several triggers). If [] - all map units will be checked 
+ * 1: STRING - side of units ("west","east","resistance")
+ * 2: STRING - custom conditions where _x is reference to unit ("" or nil if not used)
+ * 3: STRING - comparative operator and value (e.g. "> 4", "== 15")
+ * OUTPUT: BOOLEAN or ARRAY
  * 
  * EXAMPLES:
- *      _isAllEastDead = [[mapTriggers, east], "<", 1] call dzn_fnc_ccUnits;
- *      _isUnitsInArea = [[base_trg, west], ">=", 3] call dzn_fnc_ccUnits;
- *      _isUnitsInArea = [[[], west], "==", 1] call dzn_fnc_ccUnits;
- *
- *      _listUnitsInArea = [[base_trg, west]] call dzn_fnc_ccUnits;
+ *      _count = [ Trg1, "west", "", "< 4"] call dzn_fnc_ccUnits;
+ *      _count = [ [Trg1,Trg2,Trg3], "resistance", "primaryWeapon _x != ''", "> 2"] call dzn_fnc_ccUnits
+ *      _countAllMapUnits = [ [], "west", "", "< 4"] call dzn_fnc_ccUnits;
+ *      
+ *      _list = [ [Trg1,Trg2,Trg3], "east"] call dzn_fnc_ccUnits
  */
- 
-params["_cond", ["_operator", ""], ["_value", -1]];
 
-private _sideString = format [ "&& side _x == %1", _cond select 1];
-private _customString = if (!isNil { _cond select 2 } && {(_cond select 2) != ""}) then { format [ "&& %1", _cond select 2] } else { "" };
-private _area = _cond select 0;
+params["_area", "_side", ["_cond", ""], ["_operatorAndValue", ""]];
+
+private _sideString = format [ "&& side _x == %1", _side];
+private _customString = if (!isNil { _cond } && {(_cond) != ""}) then { format [ "&& %1", _cond] } else { "" };
 private _areaString = "";
 
 if (typename _area != "ARRAY") then { _area = [_area]; };
@@ -46,11 +46,11 @@ private _condString = format [
 	, _customString
 ];
 
-private _result = if (_value >= 0 && _operator != "") then {
+private _result = if (_operatorAndValue != "") then {
 	call compile format [
-		"%1 count allUnits %2 _value"
+		"%1 count allUnits %2"
 		, _condString
-		, _operator
+		, _operatorAndValue
 	]
 } else {
 	call compile format [
@@ -60,4 +60,3 @@ private _result = if (_value >= 0 && _operator != "") then {
 };
 
 _result
-

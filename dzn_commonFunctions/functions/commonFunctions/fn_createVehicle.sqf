@@ -26,10 +26,12 @@ if (typename _posObj == "ARRAY") then {
 
 private _v = createVehicle [_class, _pos, [], 0, "NONE"];
 _v allowDamage false;
-_v setPos _pos;
-_v setDir _dir;
-_v setVelocity [0,0,0];	
 _v spawn { sleep 5; _this allowDamage true; };
+
+_v setDir _dir;
+_v setVectorUp (surfaceNormal _pos);
+_v setPos _pos;
+_v setVelocity [0,0,0];
 
 if (_kit != "" && { !isNil "dzn_gear_serverInitDone" }) then {
 	[_v, _kit, true] call dzn_fnc_gear_assignKit;
