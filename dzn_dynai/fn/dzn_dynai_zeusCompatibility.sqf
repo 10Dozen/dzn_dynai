@@ -132,16 +132,9 @@ dzn_fnc_dynai_zc_showCacheMenu = {
 
 dzn_fnc_dynai_zc_showZeusMenu = {
 	private _allUnits = allUnits;
-	private _unitsBySide = [
-		_allUnits select { side _x == WEST }
-		, _allUnits select { side _x == EAST }
-		, _allUnits select { side _x == INDEPENDENT }
-		, _allUnits select { side _x == CIVILIAN }
-	];
-	private _vehicles = vehicles;
 	
 	[
-		[0,"HEADER","Zeus Object Manager"]
+		[0,"HEADER","dzn_DynAI Zeus Object Manager"]
 		
 		, [1,"LABEL","All Entities"]
 		, [1,"CHECKBOX"]
@@ -150,27 +143,27 @@ dzn_fnc_dynai_zc_showZeusMenu = {
 		
 		, [2,"LABEL","<t color='#004C99' shadow='0'><img image='\A3\ui_f\data\map\markers\nato\b_unknown.paa' /></t> BLUFOR Units"]
 		, [2,"CHECKBOX"]
-		, [2,"LABEL", format["%1 units", count (_unitsBySide select 0)]]
+		, [2,"LABEL", format["%1 units and %2 vehicles", count (_allUnits select {side _x == WEST}), count (vehicles select {side _x == WEST}) ]]
 		, [2,"LABEL", ""]
 		
 		, [3,"LABEL","<t color='#7F0000' shadow='0'><img image='\A3\ui_f\data\map\markers\nato\b_unknown.paa' /></t> OPFOR Units"]
 		, [3,"CHECKBOX"]
-		, [3,"LABEL", format["%1 units", count (_unitsBySide select 1)]]
+		, [3,"LABEL", format["%1 units and %2 vehicles", count (_allUnits select {side _x == EAST}), count (vehicles select {side _x == EAST}) ]]
 		, [3,"LABEL", ""]
 	
 		, [4,"LABEL","<t color='#007F00' shadow='0'><img image='\A3\ui_f\data\map\markers\nato\b_unknown.paa' /></t> INDEPENDANT Units"]
 		, [4,"CHECKBOX"]
-		, [4,"LABEL", format["%1 units", count (_unitsBySide select 2)]]
+		, [4,"LABEL", format["%1 units and %2 vehicles", count (_allUnits select {side _x == INDEPENDENT}), count (vehicles select {side _x == INDEPENDENT}) ]]
 		, [4,"LABEL", ""]
 	
 		, [5,"LABEL","<t color='#66007F' shadow='0'><img image='\A3\ui_f\data\map\markers\nato\b_unknown.paa' /></t> CIVILIAN Units"]
 		, [5,"CHECKBOX"]
-		, [5,"LABEL", format["%1 units", count (_unitsBySide select 3)]]
+		, [5,"LABEL", format["%1 units and %2 vehicles", count (_allUnits select {side _x == CIVILIAN}), count (vehicles select {side _x == CIVILIAN && !((crew _x) isEqualTo [])})]]
 		, [5,"LABEL", ""]
 		
-		, [6,"LABEL","All Vehicles"]
+		, [6,"LABEL","Empty Vehicles"]
 		, [6,"CHECKBOX"]
-		, [6,"LABEL", format["%1 vehicles", count (_vehicles)]]
+		, [6,"LABEL", format["%1 vehicles", count (vehicles select { (crew _x) isEqualTo [] })]]
 		, [6,"LABEL", ""]
 		
 		, [7,"BUTTON","CANCEL",{closeDialog 2;}]
@@ -193,20 +186,21 @@ dzn_fnc_dynai_zc_doZeusMenuAction = {
 	if (_dialogOptions select 0 select 0) then {
 		_list = entities "";
 	} else {
+		#define	GET_UNITS(X)	(allUnits select { side _x == X }) + (vehicles select { side _x == X })
 		// BLUFOR
-		if (_dialogOptions select 1 select 0) then { _list = _list + (allUnits select { side _x == WEST }); };
+		if (_dialogOptions select 1 select 0) then { _list = _list + GET_UNITS(WEST); };
 		
 		// OPFOR
-		if (_dialogOptions select 2 select 0) then { _list = _list + (allUnits select { side _x == EAST }); };
+		if (_dialogOptions select 2 select 0) then { _list = _list + GET_UNITS(EAST); };
 		
 		// INDEP
-		if (_dialogOptions select 3 select 0) then { _list = _list + (allUnits select { side _x == INDEPENDENT }); };
+		if (_dialogOptions select 3 select 0) then { _list = _list + GET_UNITS(INDEPENDENT); };
 	
 		// CIV
-		if (_dialogOptions select 4 select 0) then { _list = _list + (allUnits select { side _x == CIVILIAN }); };
+		if (_dialogOptions select 4 select 0) then { _list = _list + GET_UNITS(CIVILIAN); };
 		
 		// Vehicles
-		if (_dialogOptions select 5 select 0) then { _list = _list + (vehicles); };
+		if (_dialogOptions select 5 select 0) then { _list = _list + (vehicles select { (crew _x) isEqualTo [] }); };
 	};
 	
 	
