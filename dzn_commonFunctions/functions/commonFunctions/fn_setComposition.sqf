@@ -40,7 +40,7 @@ if (typename (_this select 0) == "ARRAY") then {
 	
 	// Spawn object
 	_obj = (_x select 0) createVehicle _pos;
-	_obj enableSimulation false;
+	_obj enableSimulationGlobal false;
 	_spawnedObjects pushBack _obj;
 	
 	// Place object
@@ -62,7 +62,7 @@ if (typename (_this select 0) == "ARRAY") then {
 
 {
 	_x allowDamage false;
-	_x enableSimulation (_x getVariable ["dzn_simulation", true]); 
+	_x enableSimulationGlobal (_x getVariable ["dzn_simulation", true]); 
 	_x spawn { 
 		sleep 2;
 		_this allowDamage true; 

@@ -27,12 +27,12 @@ private _roadsList = +_roads;
 
 for "_i" from 1 to _numberOfPoints do {
 	private _road = _roadsList call dzn_fnc_selectAndRemove;	
-	private _wp = _grp addWaypoint [getPosASL _road, 0];
+	private _wp = _grp addWaypoint [getPosATL _road, 0];
 	_wp setWaypointTimeout _timeouts;
 };
 
 if (_cycle) then {
-	_wp = _grp addWaypoint [getPosASL (units _grp select 0), 0];
+	_wp = _grp addWaypoint [getPosATL (units _grp select 0), 0];
 	_wp setWaypointType "CYCLE";	
 };
 

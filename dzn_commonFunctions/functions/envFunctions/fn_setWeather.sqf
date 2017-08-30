@@ -4,47 +4,23 @@
 	
 */
 if !(isServer || isDedicated) exitWith {};
-private["_weatherSettingsMapping"];
 
-_weatherSettingsMapping = [
-	0,
-	0.25,
-	0.5,
-	0.75,
-	1,
-	1
-];
+if (typename _this == "SCALAR") exitWith {
+	( ["random", "clear", "cloudy", "overcast", "rain", "storm"] select _this ) call dzn_fnc_setWeather;
+};
 
-if (typename _this == "STRING") then {
-	switch (toLower(_this)) do {
-		case "random": { 
-			0 setOvercast ( (_weatherSettingsMapping call BIS_fnc_selectRandom) select 1 );
-		};
-		case "clear": {
-			0 setOvercast (_weatherSettingsMapping select 0);
-		};
-		case "cloudy": {
-			0 setOvercast (_weatherSettingsMapping select 1);
-		};
-		case "overcast": {
-			0 setOvercast (_weatherSettingsMapping select 2);
-		};
-		case "rain": {
-			0 setOvercast (_weatherSettingsMapping select 3);
-			0 setRain 0.5;
-		};
-		case "storm": {
-			0 setOvercast (_weatherSettingsMapping select 4);
-			0 setRain 1;
-		};
+
+switch (toLower(_this)) do {
+	case "random": {
+		private _wthr = selectRandom [0,0,0, .1,.1,.1 ,.2,.2 ,.3 ,.5, .6 ,.7 ,.75 ,1];
+		0 setOvercast _wthr;
+		0 setRain (if (_wthr > 0.7) then { selectRandom [.5, .5, .7, 1] } else { 0 });	
 	};
-} else {
-	private _weatherId = if (_this > 0) then { _this } else { ceil(random 5) };
-	0 setOvercast (_weatherSettingsMapping select _weatherId);
-	switch (_weatherId) do {
-		case 4: { 0 setRain 0.5; };
-		case 5: { 0 setRain 1; };
-	};
+	case "clear": { 	0 setOvercast 0; 							};
+	case "cloudy": {	0 setOvercast selectRandom[.25, .3, .35, .4];			};
+	case "overcast": {	0 setOvercast selectRandom [.55, .6, .65, .7, .75]; 		};
+	case "rain": {	0 setOvercast .75; 0 setRain selectRandom [.2, .3, .4, .5]; 	};
+	case "storm": {	0 setOvercast 1; 0 setRain 1; 					};
 };
 	
 forceWeatherChange
