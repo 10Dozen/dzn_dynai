@@ -1,7 +1,7 @@
 /*%FSM<COMPILE "E:\GMZ\STEAM\SteamApps\common\Arma 3 Tools\FSMEditor\scriptedFSM.cfg, dzn_dynai_createZone">*/
 /*%FSM<HEAD>*/
 /*
-item0[] = {"Start",0,4346,-25.000000,-1500.000000,75.000000,-1450.000000,0.000000,"Start"};
+item0[] = {"Start",0,250,-25.000000,-1500.000000,75.000000,-1450.000000,0.000000,"Start"};
 item1[] = {"true",4,218,-25.000000,-1425.000000,75.000000,-1375.000000,0.000000,"true"};
 item2[] = {"Reference__Units",2,250,-25.000000,-1350.000000,75.000000,-1300.000000,0.000000,"Reference " \n "Units" \n "Loop Init"};
 item3[] = {"Not__All_references",4,218,-25.000000,-1200.000000,75.000000,-1150.000000,1.000000,"Not " \n "All references" \n "processed"};
@@ -119,8 +119,8 @@ link60[] = {51,26};
 link61[] = {51,27};
 link62[] = {52,51};
 link63[] = {53,39};
-globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-598.946777,519.240784,-316.183716,-1580.030273,783,885,1};
-window[] = {2,-1,-1,-1,-1,975,250,1511,250,3,801};
+globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-265.688690,725.454590,-133.882141,-1052.376099,955,885,1};
+window[] = {2,-1,-1,-1,-1,750,25,1286,25,3,973};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -893,7 +893,10 @@ class FSM
                 {
                         name = "Create_Vehicle";
                         itemno = 51;
-                        init = /*%FSM<STATEINIT""">*/"_unit = createVehicle [_classname, _vehPos, [], 0, ""NONE""];" \n
+                        init = /*%FSM<STATEINIT""">*/"_unit = createVehicle [" \n
+                         "	if (typename _classname == ""ARRAY"") then { selectRandom _classname } else { _classname }" \n
+                         "	, _vehPos, [], 0, ""NONE""" \n
+                         "];" \n
                          "" \n
                          "_unit allowDamage false;					" \n
                          "_unit setPosATL _vehPos;" \n
