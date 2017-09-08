@@ -572,6 +572,7 @@ dzn_fnc_dynai_zc_initialize = {
 				(dzn_dynai_CuratorUnits select 0) removeCuratorEditableObjects [(dzn_dynai_CuratorUnits select 2),true];
 			};		
 		} else {
+			dzn_dynai_CuratorUnits = [];
 			private _last = [];
 			while { true } do {
 				sleep 1;
