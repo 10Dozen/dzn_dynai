@@ -8,7 +8,7 @@
 //	{ !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } }
 //
 // **************************
-
+dzn_dynai_version = "v1.2";
 
 // **************************
 //	SETTINGS
