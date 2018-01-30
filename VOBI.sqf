@@ -1,3 +1,4 @@
+
 dzn_fn_getTgtInfo = {
 	format (["Known: %1 / %2
 		\nLast time: %3 / %4
@@ -95,3 +96,31 @@ dzn_VOBI_getTargetsFromPool = {
 		};
 	} forEach dzn_VOBI_TgtPool;
 };
+
+
+[] spawn {
+	while { true } do {
+		sleep 3;
+		
+		{
+			if (side _x == EAST) then {
+			
+				(_x call dzn_VOBI_reportTargets) call dzn_VOBI_addTargetsToPool;
+				sleep 0.5;
+				_x call dzn_VOBI_getTargetsFromPool;
+			};
+		} forEach (allUnits + vehicles);
+	};
+};
+
+/*
+	tgts = V2 call dzn_VOBI_reportTargets;
+	tgts call dzn_VOBI_addTargetsToPool;
+	
+	V1 call dzn_VOBI_getTargetsFromPool
+[	
+	[V2,4,[2484.14,685.072,2.55666]]
+	,[P1,4,[3305.72,1406.23,-0.090457]]
+	,[V1,0.277312,[2680.25,1030.57,2.75843]]
+]
+*/
