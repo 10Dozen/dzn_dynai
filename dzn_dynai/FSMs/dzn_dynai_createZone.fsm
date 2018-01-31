@@ -119,8 +119,8 @@ link60[] = {51,26};
 link61[] = {51,27};
 link62[] = {52,51};
 link63[] = {53,39};
-globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-265.688690,725.454590,-133.882141,-1052.376099,955,885,1};
-window[] = {2,-1,-1,-1,-1,750,25,1286,25,3,973};
+globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-542.877930,775.888550,123.774292,-1098.329102,955,885,1};
+window[] = {2,-1,-1,-32000,-32000,800,75,1336,75,3,973};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -135,6 +135,7 @@ class FSM
                         init = /*%FSM<STATEINIT""">*/"params [""_name"", ""_side"", ""_isActive"", ""_area"", ""_wps"", ""_refUnits"", ""_behavior"", """", ""_zoneBuildings"",""_vehiclePoints""];" \n
                          "" \n
                          "private _zoneRoads = _area call dzn_fnc_getLocationRoads;" \n
+                         "private _hasRoads = !(_zoneRoads isEqualTo []);" \n
                          "private _zoneUsedBuildings = [];" \n
                          "private _zonePos = _area call dzn_fnc_getZonePosition; //[CentralPos, xMin, yMin, xMax, yMax]" \n
                          "" \n
@@ -508,7 +509,7 @@ class FSM
                                         priority = 1.000000;
                                         to="Get_Road_Positio";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
-                                        condition=/*%FSM<CONDITION""">*/"_isRoadPatrol || _isRoadHold"/*%FSM</CONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_isRoadPatrol || _isRoadHold) && _hasRoads"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
                                 /*%FSM</LINK>*/
@@ -560,8 +561,14 @@ class FSM
                         name = "Apply__Road_Hold";
                         itemno = 29;
                         init = /*%FSM<STATEINIT""">*/"_grp setVariable [""dzn_dynai_wpSet"", true];" \n
+                         "_unit setVariable [""dzn_dynai_isStatic"",true,true];" \n
                          "" \n
-                         "_unit setDir ((getDir _road) + selectRandom [1,-1]*selectRandom[0,15,20,30]);	" \n
+                         "_unit setDir (if (_hasRoads) then {" \n
+                         "	((getDir _road) + selectRandom [1,-1]*selectRandom[0,15,20,30])" \n
+                         "} else {" \n
+                         "	(random 360)" \n
+                         "});" \n
+                         "" \n
                          "[_unit] spawn {" \n
                          "	private _unit = _this select 0;" \n
                          "	while { (getPosATL _unit) select 2 < 0 } do {" \n
@@ -662,10 +669,9 @@ class FSM
                 {
                         name = "Apply__Road_Patrol";
                         itemno = 32;
-                        init = /*%FSM<STATEINIT""">*/"_grp setVariable [""dzn_dynai_wpSet"", true];" \n
+                        init = /*%FSM<STATEINIT""">*/"/*" \n
                          "_unit setVariable [""dzn_dynai_isStatic"",true,true];" \n
                          "" \n
-                         "/*" \n
                          "[_unit] spawn {" \n
                          "	params [""_u""];" \n
                          "	" \n
@@ -682,12 +688,16 @@ class FSM
                          "	};" \n
                          "};" \n
                          "" \n
-                         "[_grp,_zoneRoads] spawn {" \n
-                         "	params[""_grp"",""_zoneRoads""];" \n
+                         "if (_hasRoads) then {" \n
+                         "	_grp setVariable [""dzn_dynai_wpSet"", true];" \n
+                         "	[_grp,_zoneRoads] spawn {" \n
+                         "		params[""_grp"",""_zoneRoads""];" \n
                          "" \n
-                         "	waitUntil { sleep 5; !((units _grp) isEqualTo []) };" \n
-                         "	[_grp, _zoneRoads] call dzn_fnc_createPathFromRoads;" \n
-                         "};"/*%FSM</STATEINIT""">*/;
+                         "		waitUntil { sleep 5; !((units _grp) isEqualTo []) };" \n
+                         "		[_grp, _zoneRoads] call dzn_fnc_createPathFromRoads;" \n
+                         "	};" \n
+                         "};" \n
+                         ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
