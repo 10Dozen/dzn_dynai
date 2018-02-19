@@ -1,8 +1,11 @@
+/*
+// dzn Common Functions
+
 #include "dzn_commonFunctions\dzn_commonFunctions.hpp"
 #include "dzn_commonFunctions\ui\baseDialogs.hpp"
 #include "dzn_commonFunctions\ui\copyPasteDialog.hpp"
 #include "dzn_commonFunctions\ui\dynamicDialog.hpp"
-
+*/
 
 
 class Params

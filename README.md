@@ -2,9 +2,10 @@
 ##### Version: 1.2
 Dynamic AI with Blackjack and Whores
 
-#### Dependencies (included)
+#### Dependencies
 - dzn_commonFunctions v1.1 (https://github.com/10Dozen/dzn_commonFunctions)
 - dzn_gear v2.7 (https://github.com/10Dozen/dzn_gear)
+Use https://github.com/10Dozen/tSF_Installer for easy installation
 
 ## How To
 * [Step By Step](https://github.com/10Dozen/dzn_dynai#step-by-step)
