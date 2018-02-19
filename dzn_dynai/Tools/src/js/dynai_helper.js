@@ -290,7 +290,7 @@ var ZoneItem = function () {
 	};
 	
 	this.getConfig = function () {
-		var spc = "&nbsp;&nbsp;&nbsp;&nbsp;";
+		var spc = "	";
 
 		var behavior = '<br />' + spc + '/* Behavior: Speed, Behavior, Combat mode, Formation */'
 			+ '<br />' + spc
