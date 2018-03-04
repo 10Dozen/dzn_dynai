@@ -462,6 +462,10 @@ dzn_fnc_dynai_addUnitBehavior = {
 			[_unit, "Full Frontal", false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
 			_unit setVariable ["dzn_dynai_isVehicleHold", true, true];
 		};
+		case "vehicle overwatch": {
+			[_unit, "All Aspect", true] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
+			_unit setVariable ["dzn_dynai_isVehicleHold", true, true];
+		};
 	};
 };
 
@@ -666,4 +670,37 @@ dzn_fnc_dynai_alertZone = {
 	[_this, [], "RANDOM SAD"] call dzn_fnc_dynai_moveGroups;
 	[_this, "COMBAT", true, 5] spawn dzn_fnc_dynai_setGroupsMode;
 	
+};
+
+dzn_fnc_dynai_vehicleAdvance = {
+	// @Grp spawn dzn_fnc_dynai_vehicleAdvance
+	if (_this getVariable ["dzn_dynai_vehicleAdvanceAssigned", false]) exitWith {};
+	_this setVariable  ["dzn_dynai_vehicleAdvanceAssigned", true];
+
+	waitUntil {_this getVariable ["dzn_dynai_wpSet", false]};
+	_this setVariable  ["dzn_dynai_vehicleAdvanceAssigned", nil];
+	
+	private _lastWp = (waypoints _this) select (count (waypoints _this) - 1);
+	_lastWp setWaypointType "Hold";
+	
+	private _unloadWP = (waypoints _this) select 1;
+	_unloadWP setWaypointType "UNLOAD";
+	waitUntil { 
+		sleep 15; 
+		(_lastWp select 1) == currentWaypoint _this
+		&& (leader _this) distance2d (waypointPosition [_this,(currentWaypoint _this)]) < 30
+	};
+	
+	private _vehicles = [];
+	{ _vehicles pushBackUnique (vehicle _x) } forEach ((units _this) select { vehicle _x != _x});	
+	{ [_x, "vehicle overwatch"] call dzn_fnc_dynai_addUnitBehavior; } forEach _vehicles;	
+	
+	private _infantry = (units _this) select { vehicle _x == _x };
+	private _infGrp = createGroup (side (_infantry select 0));
+	_infantry joinSilent _infGrp;
+	
+	private _loc = createTrigger ["EmptyDetector", getPos (leader _infGrp)];
+	_loc setTriggerArea [75,75,0,false,100];
+	[_infGrp, [_loc], 2 + random(5), true] spawn dzn_fnc_createPathFromRandom;
+	_loc spawn { sleep 1; deleteVehicle _this; };	
 };
