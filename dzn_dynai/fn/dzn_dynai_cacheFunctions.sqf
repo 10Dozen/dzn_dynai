@@ -89,8 +89,6 @@ dzn_fnc_dynai_checkForCache = {
 		} forEach _listPlayer;
 	} forEach _allUnits;
 
-	
-	hint format ["CACHE:\n%1\n\n\nUNCACHE:\n%2", str( _cacheSquads), str(_uncacheSquads)];
 	[ _cacheSquads, _uncacheSquads ]
 };
 
