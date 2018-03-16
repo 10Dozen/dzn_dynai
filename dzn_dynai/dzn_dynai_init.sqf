@@ -1,5 +1,5 @@
 // **************************
-// 	DZN DYNAI v1.2
+// 	DZN DYNAI v1.3
 //
 //	Initialized when:
 //	{ !isNil "dzn_dynai_initialized" }
@@ -8,7 +8,7 @@
 //	{ !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } }
 //
 // **************************
-dzn_dynai_version = "v1.2";
+dzn_dynai_version = "v1.3";
 
 // **************************
 //	SETTINGS

@@ -106,27 +106,29 @@ dzn_fnc_dynai_zc_showCacheMenu = {
 	
 	[
 		[0, "HEADER", "dzn_DynAI Zeus Caching Tool"]
-		, [1, "LABEL", "INSTANT"]
-		, [1, "BUTTON", "CACHE", {
+		, [0, "LABEL", ""]
+		, [0, "LABEL", ""]
+		, [0, "BUTTON", "CLOSE", { closeDialog 2; }]
+		
+		, [1, "LABEL", "<t align='center'>Caching toggling hint:</t>"]
+		, [2, "LABEL", "<t align='center'><t color='#ffcc00'>To uncache:</t> Non-cacheable -> Uncache</t>"]
+		, [3, "LABEL", "<t align='center'><t color='#ffcc00'>To cache:</t> Cacheable -> Uncache -> Cache</t>"]
+		
+		, [4, "LABEL", "INSTANT"]
+		, [4, "BUTTON", "CACHE", {
 			[dzn_dynai_zc_groupsTotalSelected, true] call dzn_fnc_dynai_zc_cacheGroups;
 		}]
-		, [1, "BUTTON", "UN-CACHE", {
+		, [4, "BUTTON", "UN-CACHE", {
 			[dzn_dynai_zc_groupsTotalSelected, false] call dzn_fnc_dynai_zc_cacheGroups;
 		}]
 
-		, [2, "LABEL", "TOGGLE"]
-		, [2, "BUTTON", "CACHEABLE", {
+		, [5, "LABEL", "TOGGLE"]
+		, [5, "BUTTON", "CACHEABLE", {
 			[dzn_dynai_zc_groupsTotalSelected, true] call dzn_fnc_dynai_zc_toggleCacheableGroups;
 		}]
-		, [2, "BUTTON", "NON-CACHEABLE", {
+		, [5, "BUTTON", "NON-CACHEABLE", {
 			[dzn_dynai_zc_groupsTotalSelected, false] call dzn_fnc_dynai_zc_toggleCacheableGroups;
-		}]
-		, [3, "LABEL", ""]
-		, [4, "LABEL", ""]
-		, [4, "LABEL", ""]
-		, [4, "LABEL", ""]
-		, [4, "LABEL", ""]
-		, [4, "BUTTON", "CLOSE", { closeDialog 2; }]
+		}]		
 	] call dzn_fnc_ShowAdvDialog;
 };
 
@@ -482,9 +484,7 @@ dzn_fnc_dynai_zc_toggleCacheableGroups = {
 		private _cachedGroups = [];
 		{
 			if !(_x in _cachedGroups) then {
-				{ _x setVariable ["dzn_dynai_cacheable", true]; } forEach (units _x);
-				
-				(leader _x)  spawn  dzn_fnc_dynai_cacheSquad;
+				{ _x setVariable ["dzn_dynai_cacheable", true, true]; } forEach (units _x);
 				_cachedGroups pushBack _x;
 			};
 		} forEach _grps;
@@ -494,8 +494,7 @@ dzn_fnc_dynai_zc_toggleCacheableGroups = {
 		private _uncachedGroups = [];
 		{
 			if !(_x in _uncachedGroups) then {
-				{ _x setVariable ["dzn_dynai_cacheable", false]; } forEach (units _x);
-				(leader _x) spawn  dzn_fnc_dynai_uncacheSquad;
+				{ _x setVariable ["dzn_dynai_cacheable", false, true]; } forEach (units _x);
 				_uncachedGroups pushBack _x;
 			};
 		} forEach _grps;
@@ -573,15 +572,17 @@ dzn_fnc_dynai_zc_initialize = {
 			};		
 		} else {
 			dzn_dynai_CuratorUnits = [];
-			private _last = [];
-			while { true } do {
-				sleep 1;
-				if !(dzn_dynai_CuratorUnits isEqualTo _last) then {
-					(dzn_dynai_CuratorUnits select 0) addCuratorEditableObjects [(dzn_dynai_CuratorUnits select 1),true];
-					(dzn_dynai_CuratorUnits select 0) removeCuratorEditableObjects [(dzn_dynai_CuratorUnits select 2),true];
-					_last = dzn_dynai_CuratorUnits;
+			[] spawn {
+				private _last = [];
+				while { true } do {
+					sleep 1;
+					if !(dzn_dynai_CuratorUnits isEqualTo _last) then {
+						(dzn_dynai_CuratorUnits select 0) addCuratorEditableObjects [(dzn_dynai_CuratorUnits select 1),true];
+						(dzn_dynai_CuratorUnits select 0) removeCuratorEditableObjects [(dzn_dynai_CuratorUnits select 2),true];
+						_last = dzn_dynai_CuratorUnits;
+					};
 				};
-			};		
+			};			
 		};
 	};
 

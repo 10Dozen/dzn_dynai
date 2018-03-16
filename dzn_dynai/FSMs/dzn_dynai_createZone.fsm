@@ -31,7 +31,7 @@ item26[] = {"Patrol",4,218,325.000000,-400.000000,425.000000,-350.000000,0.00000
 item27[] = {"Road_Hold",4,218,575.000000,-400.000000,675.000000,-350.000000,4.000000,"Road Hold"};
 item28[] = {"Apply_Hold_Behav",2,250,75.000000,-325.000000,175.000000,-275.000000,0.000000,"Apply Hold" \n "Behavior"};
 item29[] = {"Apply__Road_Hold",2,250,575.000000,-325.000000,675.000000,-275.000000,0.000000,"Apply " \n "Road Hold" \n "Behavior"};
-item30[] = {"Apply_Advance_Be",2,250,200.000000,-325.000000,300.000000,-275.000000,0.000000,"Apply Advance" \n "Behavior"};
+item30[] = {"Apply_Advance_Be",2,4346,200.000000,-325.000000,300.000000,-275.000000,0.000000,"Apply Advance" \n "Behavior"};
 item31[] = {"Apply_Patrol_Beh",2,250,325.000000,-325.000000,425.000000,-275.000000,0.000000,"Apply Patrol" \n "Behavior"};
 item32[] = {"Apply__Road_Patrol",2,250,450.000000,-325.000000,550.000000,-275.000000,0.000000,"Apply " \n "Road Patrol" \n "Behavior"};
 item33[] = {"",7,210,-134.000000,-179.000000,-116.000000,-171.000000,0.000000,""};
@@ -120,7 +120,7 @@ link61[] = {51,27};
 link62[] = {52,51};
 link63[] = {53,39};
 globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-542.877930,775.888550,123.774292,-1098.329102,955,885,1};
-window[] = {2,-1,-1,-32000,-32000,800,75,1336,75,3,973};
+window[] = {2,-1,-1,-1,-1,925,200,1461,200,3,973};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -607,6 +607,9 @@ class FSM
                          "_unit setDir _vehDir;" \n
                          "" \n
                          "_unit setVariable [""dzn_dynai_isStatic"",true,true];" \n
+                         "" \n
+                         "_grp spawn dzn_fnc_dynai_vehicleAdvance;" \n
+                         "/*" \n
                          "_grp spawn {" \n
                          "	if (_this getVariable [""dzn_dynai_vehicleAdvanceAssigned"", false]) exitWith {};" \n
                          "	_this setVariable  [""dzn_dynai_vehicleAdvanceAssigned"", true];" \n
@@ -616,13 +619,16 @@ class FSM
                          "	private _lastWp = (waypoints _this) select (count (waypoints _this) - 1);" \n
                          "	_lastWp setWaypointType ""Hold"";" \n
                          "" \n
+                         "  private _unloadWP = (waypoints _this) select 0;" \n
+                         "  _unloadWP setWaypointType ""UNLOAD"";" \n
+                         "" \n
                          "	waitUntil { " \n
                          "		sleep 15; " \n
                          "		(_lastWp select 1) == currentWaypoint _this " \n
                          "	};" \n
                          "	[vehicle (leader _this), ""vehicle hold""] call dzn_fnc_dynai_addUnitBehavior;" \n
                          "};" \n
-                         "" \n
+                         "*/" \n
                          ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
