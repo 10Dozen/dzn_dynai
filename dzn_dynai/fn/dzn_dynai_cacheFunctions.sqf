@@ -26,6 +26,11 @@ dzn_fnc_dynai_checkAndRemoveCachedGroup = {
 	deleteVehicle _this;
 };
 
+dzn_fnc_dynai_checkUnitsAssignedToVehicle = {
+	// @Bool = @Leader call dzn_fnc_dynai_checkUnitsAssignedToVehicle
+	{ !(assignedVehicleRole _x isEqualTo []) } count (units group _this) > 0
+};
+
 dzn_fnc_dynai_checkForCache = {
 	// Return list of units which must be cached and list of units which must be uncached:
 	//		- all indoor units
@@ -44,33 +49,48 @@ dzn_fnc_dynai_checkForCache = {
 		!(isPlayer _x)
 		&& {
 			(
+				/* Is leader of patrol group */
 				leader group _x == _x
 				&& vehicle _x == _x
+				/*
 				&& !(_x in _cacheSquads)
 				&& !(_x in _uncacheSquads)
+				*/
 				&& isNil {_x getVariable "dzn_dynai_isIndoor"}
+				&& !(_x call dzn_fnc_dynai_checkUnitsAssignedToVehicle)
 			)
 			||
+			/* Or indoor unis */
 			(!isNil {_x getVariable "dzn_dynai_isIndoor"})
 		}
 	};
-
+	
 	{
+		// Clear cached units that won't be uncached
 		_x call dzn_fnc_dynai_checkAndRemoveCachedGroup;
 		
 		_u = _x;
 		{
 			_dist = _u distance _x;
-			if (_dist <= dzn_dynai_cacheDistance) exitWith {
+
+			if (									// Uncache when...
+				_dist <= dzn_dynai_cacheDistance 				// AI in range of uncache to player
+				|| _u call dzn_fnc_dynai_checkUnitsAssignedToVehicle	// OR group has been assigned to vehicle
+			) exitWith {
 				_uncacheSquads pushBack _u;
 			};
 
-			if ((_forEachIndex + 1) == _countOfPlayrs && {_dist > dzn_dynai_cacheDistance }) then {
+			if (									// Cache when..
+				(_forEachIndex + 1) == _countOfPlayrs 			// This means -> all players were checked some lines above and none is closer than caching range
+				&& { _dist > dzn_dynai_cacheDistance }			// AND distance to last player is far than caching range
+			) then {
 				_cacheSquads pushBack _u;
 			};
 		} forEach _listPlayer;
 	} forEach _allUnits;
 
+	
+	hint format ["CACHE:\n%1\n\n\nUNCACHE:\n%2", str( _cacheSquads), str(_uncacheSquads)];
 	[ _cacheSquads, _uncacheSquads ]
 };
 
@@ -96,7 +116,7 @@ dzn_fnc_dynai_cacheSquad = {
 				_x hideObjectGlobal true;
 				_rPositions pushBack (_x call dzn_fnc_dynai_getMemberRelatedPos);
 				
-				_x setPos [0,0,0];
+				_x setPos dzn_dynai_cachingPosition;
 				_x setVariable ["dzn_dynai_isCached", true];
 			
 				sleep 1;

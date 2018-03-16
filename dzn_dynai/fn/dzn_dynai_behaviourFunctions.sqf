@@ -683,7 +683,7 @@ dzn_fnc_dynai_vehicleAdvance = {
 	private _lastWp = (waypoints _this) select (count (waypoints _this) - 1);
 	_lastWp setWaypointType "Hold";
 	
-	private _unloadWP = (waypoints _this) select 1;
+	private _unloadWP = (waypoints _this) select 0;
 	_unloadWP setWaypointType "UNLOAD";
 	waitUntil { 
 		sleep 15; 

@@ -39,11 +39,12 @@ dzn_dynai_restrictedBuildingClasses		= [
 ];
 
 // Caching Settings
-dzn_dynai_enableCaching				= true;
+dzn_dynai_enableCaching			= true;
 dzn_dynai_cachingTimeout			= 20; // seconds
 dzn_dynai_cacheCheckTimer			= 15; // seconds
 
-dzn_dynai_cacheDistance				= 800; // meters
+dzn_dynai_cacheDistance			= 800; // meters
+dzn_dynai_cachingPosition			= [-1000,-1000,0];
 
 // Zeus Compatibility settings
 dzn_dynai_enableZeusCompatibility	= true;
