@@ -2,6 +2,8 @@
 ##### Version: 1.3
 Dynamic AI with Blackjack and Whores
 
+### License: APL-SA
+
 #### Dependencies
 - dzn_commonFunctions v1.2 (https://github.com/10Dozen/dzn_commonFunctions)
 - dzn_gear v2.8 (https://github.com/10Dozen/dzn_gear)
