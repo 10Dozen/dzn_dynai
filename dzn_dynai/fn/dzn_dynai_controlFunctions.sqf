@@ -304,21 +304,26 @@ dzn_fnc_dynai_moveZone = {
 	
 	_zone = if (!isNil {_this select 0}) then {_this select 0};
 	if (isNil "_zone") exitWith {};
-	_newPos = if (typename (_this select 1) == "ARRAY") then { _this select 1 } else { getPosASL (_this select 1) };
+	
 	_newDir = if (isNil {_this select 2}) then { getDir _zone } else { _this select 2 };
-	_deltaDir = _newDir - (getDir _zone);	
+	_deltaDir = _newDir - (getDir _zone);
+	_newPos = if (typename (_this select 1) == "ARRAY") then { _this select 1 } else { getPosATL (_this select 1) };
+	_newPos set [2, 0];
 	
 	waitUntil { !isNil {GET_PROP(_zone,"init")} && {GET_PROP(_zone,"init")} };
 	
-	_curPos = getPosASL _zone;
+	_curPos = getPosATL _zone;
 	_locations = GET_PROP(_zone,"area");
 	
 	// Get current offsets of locations
 	_offsets = [];
 	{
-		_dir = _curPos getDir (getPos _x);
-		_dist = _curPos distance (getPos _x);
-		_offsets = _offsets  + [ [_dir, _dist] ];
+		private _pos = getPos _x;
+		
+		_offsets pushBack [
+			_curPos getDir _pos
+			, _curPos distance2d _pos
+		];
 	} forEach _locations;
 	
 	// Get current offsets of keypoints
@@ -326,23 +331,25 @@ dzn_fnc_dynai_moveZone = {
 	_wpOffsets = [];
 	if (typename _wps == "ARRAY") then {
 		{
-			_dir = [_curPos, _x] call BIS_fnc_dirTo;
-			_dist = _curPos distance _x;
-			_wpOffsets = _wpOffsets  + [ [_dir, _dist] ];
+			_wpOffsets pushBack [
+				_curPos getDir  _x
+				, _curPos distance2d _x
+			];
 		} forEach _wps;
 	};
 	
 	// Move zone
-	_zone setPosASL _newPos;
+	_zone setPosATL _newPos;
 	_zone setDir _newDir;
 	_zoneBuildings = [];
 	
 	// Move locations
 	{
-		_oldOffset = _offsets select _forEachIndex;	// return [_dir, _dist] 
-		_newOffsetPos = [_newPos, (_oldOffset select 0) + _deltaDir, _oldOffset select 1] call dzn_fnc_getPosOnGivenDir;
+		_oldOffset = _offsets # _forEachIndex;	// return [_dir, _dist] 
+		_newOffsetPos = [_newPos, (_oldOffset # 0) + _deltaDir, _oldOffset # 1] call dzn_fnc_getPosOnGivenDir;
+		_newOffsetPos set [2,0];		
 		
-		_x setPos _newOffsetPos;
+		_x setPosATL _newOffsetPos;
 		_x setDir (getDir _x + _deltaDir);
 		
 		_locBuildings = [[_x]] call dzn_fnc_getLocationBuildings;
