@@ -1,0 +1,104 @@
+# Each side should have separate config with specific unit classes and kits
+
+Name: Insurgents
+Side: east           # west
+                     # east
+                     # indep
+                     # civ
+
+# Behaviour of all groups in the zone
+Speed: LIMITED       # "LIMITED" (half speed),
+                     # "NORMAL" (full speed, maintain formation),
+                     # "FULL" (do not wait for any other units in formation)
+
+Behaviour: SAFE      # "CARELESS",
+                     # "SAFE",
+                     # "AWARE",
+                     # "COMBAT",
+                     # "STEALTH"
+
+Combat Mode: YELLOW  # "BLUE" : Never fire, keep formation,
+                     # "GREEN" : Hold fire, keep formation,
+                     # "WHITE" : Hold fire, engage at will/loose formation
+                     # "YELLOW" : Fire at will, keep formation,
+                     # "RED" : Fire at will, engage at will/loose formation
+
+Formation: WEDGE     # "COLUMN"
+                     # "STAG COLUMN"
+                     # "WEDGE"
+                     # "ECH LEFT"
+                     # "ECH RIGHT"
+                     # "VEE"
+                     # "LINE"
+                     # "FILE"
+                     # "DIAMOND"
+
+# Pools of units used by default
+Defaults:
+    Leader:                     # Array of unit description for squad leader role
+        - class: O_officer_F    # Unit class
+          kit: kit_nato_sl      # dzn_gear kit to use
+    Infantry:                   # Array of unit description for squad member role
+        - class: O_rifleman_F
+          kit: kit_nato_random
+    Crew:                       # Array of unit description for vehicle crew role
+        - class: O_crew_F
+          kit: kit_crew
+    CrewDriver:                 # (optional) Specific descriptor for vehicle driver, may be used as reference e.g. *Defaults > CrewDriver
+        - class: O_crew_F
+          kit: kit_crew
+          seat: driver          # What seat should take the unit
+    Vehicles:                   # Array of vehicles description
+        - class: B_G_Offroad_01_armed_F
+          kit: kit_cargo_light
+          autocrew: true
+
+
+
+# (Optional) Shortcuts example for DynAI per group behaviours names to use in config, may be referenced as e.g. *Behaviour > Hold for Vehicle Hold
+Task:
+    Patrol: Patrol
+    Road Patrol: Road Patrol
+    Hold: Vehicle Hold
+    CQB: Indoor
+
+# Description of different kins of groups
+# Each group will be added to UI dialog as [ Name           ][< Count >] on creation of new zone
+# Basically an array of groups configurations
+Groups:
+    # Patrol infantry only group
+    - name: Infantry patrol          # Display name
+      amount: (min: 3, max: 6)       # Default number of groups to pre-select and upper cap to randomize, to be used in UI to set defaults. Default min: 3, max: 2
+      unitCount: (min: 4, max: 10)   # Group size
+      task: *Task > Patrol  # DynAI Behaviour of the group
+      leader:  # (optional) Pool of units to select for leader; if leader section is not set -- Defaults > Leader array will be used
+          - class: O_officer_F
+            kit: kit_nato_sl
+      units:   # (optional) Pool of units to select for memebers; if units section is not set -- Defaults > Infantry array will be used
+          - class: O_rifleman_F
+            kit: kit_nato_random
+
+    # Combined group of infantry with vehicles
+    - name: Motorized patrol
+      unitCount: (min: 4, max: 10)
+      vehicleCount: (min: 1, max: 3)   # (optional) Number of vehicles in group. If not set - none will be used
+      task: *Task > Road Patrol
+      vehicles:                    # (optional) Pool of vehicles to select
+          # Vehicle with auto crew creation
+          - class: B_G_Offroad_01_armed_F  # Vehicle class
+            autocrew: true         # (optional) Will create same unit for each given seat. If not set - crew section should describe unit for each seat (see below)
+            autocrewDetailed:      # (optional) Overrides for crew set up. If not set -- all non-cargo seats will be occupied by *Defaults > Crew units
+                class: O_crew_F    # (optional) Class of unit, if not set - Defaults > Crew class & kits will be selected
+                seats:             # (optional) List of seats to fullfill. If none -- all non-cargo seats will be used, see fullCrew command
+                    - driver
+                    - gunner
+                kit: kit_nato_random # (optional) Kit to apply to crew
+            kit: kit_cargo_light_vehicle   # (optional) Kit to apply to vehicle
+
+          # Vehicle with specified crew per seat
+          - class: B_G_Offroad_01_armed_F
+            crew:                             # Will create specific unit per specific seat
+                - class: O_rifleman_F         # Unit class
+                  kit: kit_nato_r             # Unit's dzn_gear kit
+                  seat: gunner                # Unit's seat
+                - *Defaults > CrewDriver      # ... or reference to some defaults

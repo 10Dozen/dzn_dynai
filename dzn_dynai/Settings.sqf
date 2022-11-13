@@ -15,7 +15,7 @@ dzn_dynai_makeZoneAlertOnRequest		= true;	// Change behavior of all groups once 
 // Behavior settings
 dzn_dynai_allowVehicleHoldBehavior		= true;
 
-/*	
+/*
 	Skill:
 	if dzn_dynai_UseSimpleSkill == true:  dzn_dynai_overallSkillLevel is used do determine skill.
 	If false -- complex skills are used. More info about complex skills https://community.bistudio.com/wiki/AI_Sub-skills
@@ -48,3 +48,8 @@ dzn_dynai_cachingPosition			= [-1000,-1000,0];
 
 // Zeus Compatibility settings
 dzn_dynai_enableZeusCompatibility	= true;
+
+// Plugins
+dzn_dynai_Plugins = [
+    "name: Dynamic Spawner, path: 'dzn_dynai\plugins\DynamicSpawner\DynamicSpawner.sqf', enable: true"
+];

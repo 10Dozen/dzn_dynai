@@ -1,5 +1,5 @@
 // **************************
-// 	DZN DYNAI v1.3
+// 	DZN DYNAI v1.3.2
 //
 //	Initialized when:
 //	{ !isNil "dzn_dynai_initialized" }
@@ -8,14 +8,15 @@
 //	{ !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } }
 //
 // **************************
-dzn_dynai_version = "v1.3.1";
+dzn_dynai_version = "v1.3.2";
 
+diag_log text format ["(dzn_dynai) [Init] Start initialization. Version: %1.", dzn_dynai_version];
 // **************************
 //	SETTINGS
 // **************************
 call compile preProcessFileLineNumbers "dzn_dynai\Settings.sqf";
 
-dzn_dynai_complexSkill = [ 
+dzn_dynai_complexSkill = [
 	!dzn_dynai_UseSimpleSkill
 	, if (dzn_dynai_UseSimpleSkill) then { dzn_dynai_overallSkillLevel } else { dzn_dynai_complexSkillLevel }
 ];
@@ -27,6 +28,8 @@ dzn_dynai_allowGroupResponse = (["par_dynai_enableGroupResponse", 1] call BIS_fn
 
 // Exit if PLAYER or SERVER when Headless is initialized
 if ( (hasInterface && !isServer) || (!isNil "HC" && isServer) ) exitWith {
+    diag_log text "(dzn_dynai) [Init] Running on client machine detected.";
+
 	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
 	// If a player and no Zeus needed - exits script
 	if (dzn_dynai_enableZeusCompatibility) then {
@@ -37,6 +40,7 @@ if ( (hasInterface && !isServer) || (!isNil "HC" && isServer) ) exitWith {
 
 dzn_dynai_owner = clientOwner;
 publicVariable "dzn_dynai_owner";
+diag_log text format ["(dzn_dynai) [Init] Running on server/headless machine detected. OwnerID: %1", dzn_dynai_owner];
 
 dzn_dynai_initialized = false;
 waitUntil dzn_dynai_initCondition;
@@ -71,7 +75,7 @@ call dzn_fnc_dynai_startZones;
 //	GROUP RESPONSES SYSTEM
 // **************************
 
-if (dzn_dynai_allowGroupResponse) then { 
+if (dzn_dynai_allowGroupResponse) then {
 	call dzn_fnc_dynai_processUnitBehaviours;
 	[] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm";
 };
@@ -85,9 +89,27 @@ waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf";
 [false] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
 
+// **************************
+// PLUGINS
+// **************************
+{
+    private _pluginData = [_x, "PARSE_LINE"] call dzn_fnc_parseSFML;
+    private _name = _pluginData getOrDefault ["name", format ["Unknown Plugin %1", _forEachIndex]];
+    private _enabled = _pluginData getOrDefault ["enable", false];
+    private _path = _pluginData getOrDefault ["path", ""];
+    private _args = _pluginData getOrDefault ["args", []];
+
+    if (_enabled && _path != "") then {
+        diag_log text format ["(dzn_dynai) [Init] Activating plugin %1 from path %2", _name, _path];
+        _args call compile preProcessFileLineNumbers _path;
+    };
+} forEach dzn_dynai_Plugins;
+
 
 // **************************
 //	INITIALIZED
 // **************************
-dzn_dynai_initialized = true; 
+
+diag_log text "(dzn_dynai) [Init] Fully initialized";
+dzn_dynai_initialized = true;
 publicVariable "dzn_dynai_initialized";

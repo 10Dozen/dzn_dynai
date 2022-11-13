@@ -1,11 +1,11 @@
 # dzn_dynai
-##### Version: 1.3.1
+##### Version: 1.3.2
 Dynamic AI with Blackjack and Whores
 
 ### License: APL-SA
 
 #### Dependencies
-- dzn_commonFunctions v1.2 (https://github.com/10Dozen/dzn_commonFunctions)
+- dzn_commonFunctions v1.4 (https://github.com/10Dozen/dzn_commonFunctions)
 - dzn_gear v2.8 (https://github.com/10Dozen/dzn_gear)
 Use https://github.com/10Dozen/tSF_Installer for easy installation
 
@@ -57,7 +57,7 @@ It is available to set individual skill level for every group. To do it - add sk
 	  ["B_Soldier_F",[0,"driver"],""],
 	  ["B_Soldier_F",[0,"gunner"],""]
   ],</tt>
-  
+
   <tt>[false, 0.5] /* Simple skill: isComplex(BOOLEAN), skill level(NUMBER)  */</tt>
 <tt>]</tt>
 <h4>Complex skill</h4>
@@ -68,6 +68,6 @@ It is available to set individual skill level for every group. To do it - add sk
 	  ["B_Soldier_F",[0,"driver"],""],
 	  ["B_Soldier_F",[0,"gunner"],""]
   ],</tt>
-  
+
   <tt>[true, [["accuracy, 0.5], ["spotTime", 0.9]]] /* Complex Skill: isComplex(BOOLEAN), Skill array (NUMBER) */</tt>
 <tt>]</tt>
