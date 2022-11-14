@@ -1,12 +1,12 @@
 #include "DynamicSpawner.h"
 
 /* TODO:
-    - read _args as file with configs references, then read each config and store into DynamicSpawner
    - Test & bugfixing:
      [] -
      [] -
+     [] -
+     [] -
 
-   - Styling
 */
 
 // ---------------------------------------
@@ -20,9 +20,21 @@ if (!isNil QSELF) exitWith {};
 // ---------------------------------------
 // Init self object
 private _groupsConfigs = (_settings get "Zone configs") apply {
-    // Fullfill related path
-    if (_x select [0,1] == "\") then { _x = PATH_PREFIX + _x; };
-    [_x] call dzn_fnc_parseSFML
+    private _file = _x get "file";
+    private _argsFile = _x get "include";
+    private _argsData = [];
+
+    // Fullfill related path for file
+    if (_file select [0,1] == "\") then { _file = PATH_PREFIX + _file; };
+
+    // Parse args data file if present
+    if (!isNil "_argsFile") then {
+        if (_argsFile select [0,1] == "\") then { _argsFile = PATH_PREFIX + _argsFile; };
+        _argsData = [_argsFile] call dzn_fnc_parseSFML;
+    };
+
+    // Parse file using arguments data
+    [_file, "LOAD_FILE", _argsData] call dzn_fnc_parseSFML
 };
 
 SELF = createHashMapFromArray [

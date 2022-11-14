@@ -4,7 +4,8 @@ Dynamic Spawner:
     # Paths to zone configs. May be as full path from mission root
     # or as related path to dzn_dynai\plugins\DynamicSpawner\ by adding leading \ symbol
     Zone Configs:
-        - \example.yml  # Same as: dzn_dynai\plugins\DynamicSpawner\example.yml
+        - file: \example.yml   # Zone config. Shortcuted - same as: dzn_dynai\plugins\DynamicSpawner\example.yml
+          include: \defaults.yml  # Zone config's arguments file. Content of this file will be available as `_this` in zone's config (e.g. defaults)
 
     Defaults:
         Size: [300, 300]  # in meters by width and heights

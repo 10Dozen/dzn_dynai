@@ -46,26 +46,10 @@ Task:
         Road Hold Frontal: Vehicle Road Frontal Hold
 
 
-# Pools of units used by default
-Defaults:
-    Leader:                     # Array of unit description for squad leader role
-        - class: O_officer_F    # Unit class
-          kit: kit_nato_sl      # dzn_gear kit to use
-    Infantry:                   # Array of unit description for squad member role
-        - class: O_rifleman_F
-          kit: kit_nato_random
-    Crew:                       # Array of unit description for vehicle crew role
-        - class: O_crew_F
-          kit: kit_crew
-    Vehicles:                   # Array of vehicles description
-        - class: B_G_Offroad_01_armed_F
-          kit: kit_cargo_light
-          autocrew: true
-    # Example of the pre-configured pool that may be referenced as *Defaults > SpecialForces
-    SpecialForces:
-        - class: O_recon_F
-          kit: kit_recon
-
+# Pools of units used by default.
+# In this example - it maps to content of the defaults.yml file, so you can use
+# same defaults for several configs. See PluginSettings.yml.
+Defaults: `_this`
 
 # Description of different kins of groups
 # Each group will be added to UI dialog on creation of new zone

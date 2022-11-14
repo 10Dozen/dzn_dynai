@@ -5,7 +5,7 @@ Dynamic AI with Blackjack and Whores
 ### License: APL-SA
 
 #### Dependencies
-- dzn_commonFunctions v1.4 (https://github.com/10Dozen/dzn_commonFunctions)
+- dzn_commonFunctions v1.5 (https://github.com/10Dozen/dzn_commonFunctions)
 - dzn_gear v2.8 (https://github.com/10Dozen/dzn_gear)
 Use https://github.com/10Dozen/tSF_Installer for easy installation
 
