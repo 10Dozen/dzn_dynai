@@ -92,6 +92,8 @@ call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sq
 // **************************
 // PLUGINS
 // **************************
+dzn_dynai_PluginsSettings = ["dzn_dynai\plugins\PluginsSettings.yml"] call dzn_fnc_parseSFML;
+
 {
     private _pluginData = [_x, "PARSE_LINE"] call dzn_fnc_parseSFML;
     private _name = _pluginData getOrDefault ["name", format ["Unknown Plugin %1", _forEachIndex]];
@@ -100,11 +102,14 @@ call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sq
     private _args = _pluginData getOrDefault ["args", []];
 
     if (_enabled && _path != "") then {
+        // Fulfill related path if met
+        if (_path select [0,1] == "\") then {
+            _path = "dzn_dynai\plguins" + _path;
+        };
         diag_log text format ["(dzn_dynai) [Init] Activating plugin %1 from path %2", _name, _path];
-        _args call compile preProcessFileLineNumbers _path;
+        [_args, dzn_dynai_PluginsSettings get _name] call compile preProcessFileLineNumbers _path;
     };
 } forEach dzn_dynai_Plugins;
-
 
 // **************************
 //	INITIALIZED

@@ -1,0 +1,53 @@
+
+
+Dynamic Spawner:
+    # Paths to zone configs. May be as full path from mission root
+    # or as related path to dzn_dynai\plugins\DynamicSpawner\ by adding leading \ symbol
+    Zone Configs:
+        - \example.yml  # Same as: dzn_dynai\plugins\DynamicSpawner\example.yml
+
+    Defaults:
+        Size: [300, 300]  # in meters by width and heights
+        Shape: ELLIPSE    # or RECTANGLE
+
+        # Base value in meters, actual radius depends on map scale
+        SelectionRadius: 250
+
+        # Step size of zone area modification (size/angle)
+        SizeChangeStep: 50
+        AngleChangeStep: 10
+
+        # Group count by default
+        GroupCount:
+            Min: 3
+            Max: 6
+            Limit: 10
+
+        MarkerColor:
+            west: ColorBLUFOR
+            east: ColorOPFOR
+            resistance: colorIndependent
+
+        MarkerAlpha:
+            Active: 0.75
+            Inactive: 0.25
+            Highlighted: 1.00
+
+        MarkerBrush:
+            Active: SolidBorder
+            Inactive: Cross
+            Preview: Solid
+
+    Keybinds: # See https://community.bistudio.com/wiki/DIK_KeyCodes
+        Create: 210  # DIK_INSERT
+        Delete: 211  # DIK_DELETE
+        Activate: 199  # DIK_HOME
+        Deactivate: 207  # DIK_END
+        ModifyAdd: 13  # DIK_EQUALS
+        ModifySubtract: 12  # DIK_MINUS
+        ModifyShape: 43  # DIK_BACKSLASH
+        CycleConfigUp: 201  # DIK_PGUP
+        CycleConfigDown: 209  # DIK_PGDN
+
+# -------------------------------
+# End of Dynamic Spawner settings

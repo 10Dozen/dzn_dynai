@@ -11,7 +11,7 @@
 
 #include "DynamicSpawner.h"
 
-if (isNil self_GET(ZoneCreationStarted)) exitWith {};
+if (!self_GET(ZoneCreationStarted)) exitWith {};
 
 params ["_param", ["_action", ACTION_INCREASE]];
 
@@ -21,16 +21,19 @@ private _mrk = self_GET(NewZone.Marker);
 
 switch (_param) do {
     case PARAM_SIZE: {
-        _mrk setMarkerSize [_w + 50 * _modifier, _h + 50 * _modifier];
+        _mrk setMarkerSize [
+            _w + NEW_ZONE_SIZE_CHANGE_STEP * _modifier,
+            _h + NEW_ZONE_SIZE_CHANGE_STEP * _modifier
+        ];
     };
     case PARAM_SIZE_X: {
-        _mrk setMarkerSize [_w + 50 * _modifier, _h];
+        _mrk setMarkerSize [_w + NEW_ZONE_SIZE_CHANGE_STEP * _modifier, _h];
     };
     case PARAM_SIZE_Y: {
-        _mrk setMarkerSize [_w, _h + 50 * _modifier];
+        _mrk setMarkerSize [_w, _h + NEW_ZONE_SIZE_CHANGE_STEP * _modifier];
     };
     case PARAM_ANGLE: {
-        _mrk setMarkerDir ((markerDir _mrk) + 10 * _modifier);
+        _mrk setMarkerDir ((markerDir _mrk) + NEW_ZONE_ANGLE_CHANGE_STEP * _modifier);
     };
     case PARAM_SHAPE: {
         private _newShape = ["ELLIPSE", "RECTANGLE"] select (markerShape _mrk == "ELLIPSE");
@@ -39,7 +42,11 @@ switch (_param) do {
     case PARAM_CONFIG: {
         private _targetID = self_GET(NewZone.ConfigID) + _modifier;
         private _configsCount = (count self_GET(Configs)) - 1;
-        _targetID = [[_targetID, _configsCount] select (_targetID < 0), 0] select (_targetID > _configsCount);
+        // Handle cycling out of bonds
+        _targetID = [
+            [_targetID, _configsCount] select (_targetID < 0),
+            0
+        ] select (_targetID > _configsCount);
 
         // Update variable
         self_SET(NewZone.ConfigID, _targetID);
@@ -48,9 +55,6 @@ switch (_param) do {
         private _config = self_GET(Configs) select _targetID;
         private _side = _config get CFG_SIDE;
         self_GET(NewZone.Marker) setMarkerColor GET_COLOR_BY_SIDE(_side);
-
-        // Update hint informaition
-        [] call self_FUNC(__ShowHintOnCreation);
     };
 };
 

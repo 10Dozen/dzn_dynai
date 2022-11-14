@@ -1,6 +1,7 @@
 #include "DynamicSpawner.h"
 
 /* TODO:
+    - read _args as file with configs references, then read each config and store into DynamicSpawner
    - Test & bugfixing:
      [] -
      [] -
@@ -8,25 +9,26 @@
    - Styling
 */
 
-// Configs - configure by adding full path to file from mission root
-private _configs = [
-    "dzn_dynai\plugins\DynamicSpawner\west.yml"
+// ---------------------------------------
+params [
+    "_args",
+    "_settings"
 ];
 
-
-
-// ---------------------------------------
-params [["_reset", false]];
-if (!_reset || !isNil QSELF) exitWith {};
+if (!isNil QSELF) exitWith {};
 
 // ---------------------------------------
 // Init self object
-private _groupsConfigs = _configs apply { [_x] call dzn_fnc_parseSFML };
+private _groupsConfigs = (_settings get "Zone configs") apply {
+    // Fullfill related path
+    if (_x select [0,1] == "\") then { _x = PATH_PREFIX + _x; };
+    [_x] call dzn_fnc_parseSFML
+};
 
 SELF = createHashMapFromArray [
     // Methods
     self_PREP(__HandleKeyUp),
-    self_PREP(__HandleMouseDown),
+    self_PREP(__HandleMapClick),
     self_PREP(__StartZoneCreation),
     self_PREP(__StopZoneCreation),
     self_PREP(__ChangeZoneDetails),
@@ -41,6 +43,8 @@ SELF = createHashMapFromArray [
 
     // Attributes
     // General
+    // - Settings for plugin
+    [self_PAR(Settings), _settings],
     // - Configs to use in spawner
     [self_PAR(Configs), _groupsConfigs],
     // - List of active zones created by spawner

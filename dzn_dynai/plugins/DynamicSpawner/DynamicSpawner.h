@@ -1,20 +1,3 @@
-// Defaults
-#define NEW_ZONE_MARKER_SHAPE "ELLIPSE"
-#define NEW_ZONE_MARKER_SIZE [300, 300]
-
-#define NEW_ZONE_GROUP_COUNT_MIN 3
-#define NEW_ZONE_GROUP_COUNT_MAX 6
-#define NEW_ZONE_GROUP_COUNT_LIMIT 10
-
-#define ZONE_SELECT_DISTANCE_BASE 250
-#define ZONE_MARKER_ALPHA 0.5
-#define ZONE_MARKER_ALPHA_ACTIVE 1
-#define ZONE_MARKER_ALPHA_INACTIVE 0.25
-
-#define ZONE_MARKER_BRUSH_ACTIVE "SolidBorder"
-#define ZONE_MARKER_BRUSH_INACTIVE "Cross"
-#define ZONE_MARKER_BRUSH_PREVIEW "Solid"
-
 // Macroses
 #define SELF dzn_dynai_DynamicSpawner
 
@@ -27,14 +10,53 @@
 #define self_FUNC(FNC) self_GET(FNC)
 #define self_PAR(X) toUpper 'X'
 
-#define GET_COLOR_BY_SIDE(SIDE) switch (SIDE) do {\
-    case west: { "ColorBLUFOR" };\
-    case east: { "ColorOPFOR" };\
-    case resistance: { "colorIndependent" };\
-}
+#define self_ENV_                   ([self_GET(Settings), ]
+#define _SETTING                    ]] call dzn_fnc_getByPath)
+#define _SETTING_OR_DEFAULT(DEF)    ] , DEF, DEF] call dzn_fnc_getByPath)
+
+#define ARR_2(A,B) A, B
 
 #define MAP_DIALOG (findDisplay 12 displayCtrl 51)
+
+#define PATH_PREFIX "dzn_dynai\plugins\DynamicSpawner"
+
 #include "\a3\ui_f\hpp\definedikcodes.inc"
+
+// Defaults
+#define GET_COLOR_BY_SIDE(SIDE) self_ENV_ "Defaults", "MarkerColor", toString SIDE _SETTING_OR_DEFAULT("ColorOrange")
+
+#define NEW_ZONE_MARKER_SHAPE self_ENV_ "Defaults", "Shape" _SETTING_OR_DEFAULT("ELLIPSE")
+#define NEW_ZONE_MARKER_SIZE  self_ENV_ "Defaults", "Size" _SETTING_OR_DEFAULT([ARR_2(300, 300)])
+
+#define NEW_ZONE_SIZE_CHANGE_STEP self_ENV_ "Defaults", "SizeChangeStep" _SETTING_OR_DEFAULT(50)
+#define NEW_ZONE_ANGLE_CHANGE_STEP self_ENV_ "Defaults", "AngleChangeStep" _SETTING_OR_DEFAULT(10)
+
+#define NEW_ZONE_GROUP_COUNT_MIN self_ENV_ "Defaults", "GroupCount", "Min" _SETTING_OR_DEFAULT(3)
+#define NEW_ZONE_GROUP_COUNT_MAX self_ENV_ "Defaults", "GroupCount", "Max" _SETTING_OR_DEFAULT(6)
+#define NEW_ZONE_GROUP_COUNT_LIMIT self_ENV_ "Defaults", "GroupCount", "Limit" _SETTING_OR_DEFAULT(10)
+
+#define ZONE_SELECT_DISTANCE_BASE self_ENV_ "Defaults", "SelectionRadius" _SETTING_OR_DEFAULT(250)
+
+#define ZONE_MARKER_ALPHA_ACTIVE self_ENV_ "Defaults", "MarkerAlpha", "Active" _SETTING_OR_DEFAULT(0.75)
+#define ZONE_MARKER_ALPHA_INACTIVE self_ENV_ "Defaults", "MarkerAlpha", "Inactive" _SETTING_OR_DEFAULT(0.25)
+#define ZONE_MARKER_ALPHA_HIGHLIGHTED self_ENV_ "Defaults", "MarkerAlpha", "Highlighted" _SETTING_OR_DEFAULT(1)
+
+#define ZONE_MARKER_BRUSH_ACTIVE self_ENV_ "Defaults", "MarkerBrush", "Active" _SETTING_OR_DEFAULT("SolidBorder")
+#define ZONE_MARKER_BRUSH_INACTIVE self_ENV_ "Defaults", "MarkerBrush", "Inactive" _SETTING_OR_DEFAULT("Cross")
+#define ZONE_MARKER_BRUSH_PREVIEW self_ENV_ "Defaults", "MarkerBrush", "Preview" _SETTING_OR_DEFAULT("Solid")
+
+// Keybinds
+#define KEY_CREATE self_ENV_ "Keybinds", "Create" _SETTING_OR_DEFAULT(210)
+#define KEY_DELETE self_ENV_ "Keybinds", "Delete" _SETTING_OR_DEFAULT(211)
+#define KEY_ACTIVATE self_ENV_ "Keybinds", "Activate" _SETTING_OR_DEFAULT(199)
+#define KEY_DEACTIVATE self_ENV_ "Keybinds", "Deactivate" _SETTING_OR_DEFAULT(207)
+#define KEY_ADD self_ENV_ "Keybinds", "ModifyAdd" _SETTING_OR_DEFAULT(13)
+#define KEY_SUBTRACT self_ENV_ "Keybinds", "ModifySubtract" _SETTING_OR_DEFAULT(12)
+#define KEY_SHAPE self_ENV_ "Keybinds", "ModifyShape" _SETTING_OR_DEFAULT(43)
+#define KEY_CYCLE_UP self_ENV_ "Keybinds", "CycleConfigUp" _SETTING_OR_DEFAULT(201)
+#define KEY_CYCLE_DOWN self_ENV_ "Keybinds", "CycleConfigDown" _SETTING_OR_DEFAULT(209)
+
+
 
 // Action Enum
 #define ACTION_INCREASE 1

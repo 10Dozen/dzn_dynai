@@ -12,7 +12,7 @@
 
 #include "DynamicSpawner.h"
 
-params ["_pos", "_uiSelections", ["_activate", false]];
+params ["_pos", "_uiSelections", ["_activate", true]];
 
 private _zoneID = self_GET(ZoneID) + 1;
 self_SET(ZoneID, _zoneID);
@@ -56,7 +56,7 @@ _zoneMrk setMarkerShape _mrkShape;
 _zoneMrk setMarkerDir _mrkDir;
 _zoneMrk setMarkerSize [_mrkW, _mrkH];
 _zoneMrk setMarkerColor (markerColor _mrk);
-_zoneMrk setMarkerAlpha ([ZONE_MARKER_ALPHA_INACTIVE, ZONE_MARKER_ALPHA] select _activate);
+_zoneMrk setMarkerAlpha ([ZONE_MARKER_ALPHA_INACTIVE, ZONE_MARKER_ALPHA_ACTIVE] select _activate);
 _zoneMrk setMarkerBrush ([ZONE_MARKER_BRUSH_INACTIVE, ZONE_MARKER_BRUSH_ACTIVE] select _activate);
 
 private _zones = self_GET(Zones);

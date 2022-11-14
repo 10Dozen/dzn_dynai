@@ -1,5 +1,3 @@
-# Each side should have separate config with specific unit classes and kits
-
 Name: Insurgents
 Side: east           # west
                      # east
@@ -33,6 +31,21 @@ Formation: WEDGE     # "COLUMN"
                      # "FILE"
                      # "DIAMOND"
 
+# (Optional) Shortcuts for DynAI unit's task, may be referenced as e.g.:
+#   *Task > CQB for unit indoor behavior
+#   *Task > Vehicle > Road Patrol for vehicle's road patroling behavior
+Task:
+    Patrol: ''
+    CQB: indoors
+    Vehicle:
+        Patrol: Vehicle Patrol
+        Hold: Vehicle Hold
+        Hold Frontal: Vehicle Frontal Hold
+        Road Patrol: Vehicle Road Patrol
+        Road Hold: Vehicle Road Hold
+        Road Hold Frontal: Vehicle Road Frontal Hold
+
+
 # Pools of units used by default
 Defaults:
     Leader:                     # Array of unit description for squad leader role
@@ -44,37 +57,30 @@ Defaults:
     Crew:                       # Array of unit description for vehicle crew role
         - class: O_crew_F
           kit: kit_crew
-    CrewDriver:                 # (optional) Specific descriptor for vehicle driver, may be used as reference e.g. *Defaults > CrewDriver
-        - class: O_crew_F
-          kit: kit_crew
-          seat: driver          # What seat should take the unit
     Vehicles:                   # Array of vehicles description
         - class: B_G_Offroad_01_armed_F
           kit: kit_cargo_light
           autocrew: true
+    # Example of the pre-configured pool that may be referenced as *Defaults > SpecialForces
+    SpecialForces:
+        - class: O_recon_F
+          kit: kit_recon
 
-
-
-# (Optional) Shortcuts example for DynAI per group behaviours names to use in config, may be referenced as e.g. *Behaviour > Hold for Vehicle Hold
-Task:
-    Patrol: Patrol
-    Road Patrol: Road Patrol
-    Hold: Vehicle Hold
-    CQB: Indoor
 
 # Description of different kins of groups
-# Each group will be added to UI dialog as [ Name           ][< Count >] on creation of new zone
-# Basically an array of groups configurations
+# Each group will be added to UI dialog on creation of new zone
 Groups:
     # Patrol infantry only group
     - name: Infantry patrol          # Display name
-      amount: (min: 3, max: 6)       # Default number of groups to pre-select and upper cap to randomize, to be used in UI to set defaults. Default min: 3, max: 2
-      unitCount: (min: 4, max: 10)   # Group size
-      task: *Task > Patrol  # DynAI Behaviour of the group
-      leader:  # (optional) Pool of units to select for leader; if leader section is not set -- Defaults > Leader array will be used
+      amount: (min: 3, max: 6)       # Default number of groups to pre-select and upper cap to randomize, to be used in UI to set defaults. Default min configured in PluginSettings
+      unitCount: (min: 4, max: 10)   # (optional) Number of units in the group. If not set - none will be used
+      task: *Task > Patrol           # DynAI Behaviour of the group
+      # (optional) Pool of units to select for leader; if leader section is not set -- Defaults > Leader array will be used
+      leader:
           - class: O_officer_F
             kit: kit_nato_sl
-      units:   # (optional) Pool of units to select for memebers; if units section is not set -- Defaults > Infantry array will be used
+      # (optional) Pool of units to select for memebers; if units section is not set -- Defaults > Infantry array will be used
+      units:
           - class: O_rifleman_F
             kit: kit_nato_random
 
@@ -87,13 +93,17 @@ Groups:
           # Vehicle with auto crew creation
           - class: B_G_Offroad_01_armed_F  # Vehicle class
             autocrew: true         # (optional) Will create same unit for each given seat. If not set - crew section should describe unit for each seat (see below)
+
+          # Vehicle with auto crew creation, but specified by user
+          - class: B_G_Offroad_01_armed_F
+            kit: kit_cargo_light_vehicle   # (optional) Kit to apply to vehicle
+            autocrew: true
             autocrewDetailed:      # (optional) Overrides for crew set up. If not set -- all non-cargo seats will be occupied by *Defaults > Crew units
                 class: O_crew_F    # (optional) Class of unit, if not set - Defaults > Crew class & kits will be selected
                 seats:             # (optional) List of seats to fullfill. If none -- all non-cargo seats will be used, see fullCrew command
                     - driver
                     - gunner
                 kit: kit_nato_random # (optional) Kit to apply to crew
-            kit: kit_cargo_light_vehicle   # (optional) Kit to apply to vehicle
 
           # Vehicle with specified crew per seat
           - class: B_G_Offroad_01_armed_F

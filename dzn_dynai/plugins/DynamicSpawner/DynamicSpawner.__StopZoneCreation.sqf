@@ -14,8 +14,10 @@ self_SET(ZoneCreationStarted, false);
 removeMissionEventHandler ["Map", self_GET(NewZone.MapClosedHandler)];
 [self_GET(NewZone.PFH)] call CBA_fnc_removePerFrameHandler;
 
+// Delete marker
 deleteMarker self_GET(NewZone.Marker);
 
+// Drop variables
 self_SET(NewZone.Marker, nil);
 self_SET(NewZone.PFH, nil);
 self_SET(NewZone.MapClosedHandler, nil);

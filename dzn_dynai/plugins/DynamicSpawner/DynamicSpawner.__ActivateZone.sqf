@@ -25,6 +25,6 @@ _zone call dzn_fnc_dynai_activateZone;
 
 // Update marker to show active status
 _marker setMarkerBrush ZONE_MARKER_BRUSH_ACTIVE;
-_marker setMarkerAlpha ZONE_MARKER_ALPHA_ACTIVE;
+_marker setMarkerAlpha ZONE_MARKER_ALPHA_HIGHLIGHTED;
 
 [] call self_FUNC(__ShowHintOnSelection);

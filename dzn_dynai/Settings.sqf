@@ -51,5 +51,5 @@ dzn_dynai_enableZeusCompatibility	= true;
 
 // Plugins
 dzn_dynai_Plugins = [
-    "name: Dynamic Spawner, path: 'dzn_dynai\plugins\DynamicSpawner\DynamicSpawner.sqf', enable: true"
+    "name: Dynamic Spawner, enable: true, path: '\DynamicSpawner\DynamicSpawner.sqf'"
 ];
