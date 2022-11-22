@@ -29,3 +29,5 @@ if (isNil "_zone") exitWith {};
 
 // Delete DynAI zone object
 deleteVehicle _zone;
+
+hintSilent "";

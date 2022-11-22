@@ -9,20 +9,24 @@
 
 #include "DynamicSpawner.h"
 
+DBG_1("(__ShowZoneCreationMenu) Invoked. Params: %1", _this);
+
 params ["_pos"];
 
-private _cfg = self_GET(Configs) select self_GET(ConfigID);
+private _cfg = self_GET(Configs) select self_GET(NewZone.ConfigID);
 private _name = _cfg get CFG_NAME;
 private _side = _cfg get CFG_SIDE;
 private _groups = _cfg get CFG_GROUPS;
+
+DBG_3("(__ShowZoneCreationMenu) ConfigID: %1. Zone's name [%2], side [%3]", self_GET(NewZone.ConfigID), _name, _side);
 
 private _uiFields = [
     [0, "HEADER", "DynAI Spawner - Create New Zone"],
     [1, "LABEL", format ["Name: %1 (%2)", _name, _side]],
     [2, "LABEL", "Group:"],
     [2, "LABEL", ""],
-    [2, "LABEL", "Min"],
-    [2, "LABEL", "Max"]
+    [2, "LABEL", "<t align='center'>Min</t>"],
+    [2, "LABEL", "<t align='center'>Max</t>"]
 ];
 private _uiLineID = 3;
 
@@ -46,8 +50,9 @@ _groups apply {
 
     _uiFields append [
         [_uiLineID, "LABEL", _grpName],
-        [_uiLineID, "LISTBOX", _optionsMin apply { toString _x }, _optionsMin],
-        [_uiLineID, "LISTBOX", _optionsMax apply { toString _x }, _optionsMax]
+        [_uiLineID, "LABEL", ""],
+        [_uiLineID, "LISTBOX", _optionsMin apply { str _x }, _optionsMin],
+        [_uiLineID, "LISTBOX", _optionsMax apply { str _x }, _optionsMax]
     ];
 
     _uiLineID = _uiLineID + 1;
@@ -65,7 +70,9 @@ _uiFields append [
         closeDialog 2;
         [_args, _this, false] call self_FUNC(__CreateZone);
     }, _pos],
-    [_uiLineID, "BUTTON", "CANCEL", { closeDialog 2; }]
+    [_uiLineID, "BUTTON", "CANCEL", {
+         closeDialog 2;
+    }]
 ];
 
 _uiFields call dzn_fnc_ShowAdvDialog;

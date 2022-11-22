@@ -7,6 +7,7 @@ Dynamic Spawner:
         - file: \example.yml   # Zone config. Shortcuted - same as: dzn_dynai\plugins\DynamicSpawner\example.yml
           include: \defaults.yml  # Zone config's arguments file. Content of this file will be available as `_this` in zone's config (e.g. defaults)
 
+
     Defaults:
         Size: [300, 300]  # in meters by width and heights
         Shape: ELLIPSE    # or RECTANGLE
@@ -17,6 +18,7 @@ Dynamic Spawner:
         # Step size of zone area modification (size/angle)
         SizeChangeStep: 50
         AngleChangeStep: 10
+        SizeMin: 10
 
         # Group count by default
         GroupCount:
@@ -25,9 +27,9 @@ Dynamic Spawner:
             Limit: 10
 
         MarkerColor:
-            west: ColorBLUFOR
-            east: ColorOPFOR
-            resistance: colorIndependent
+            WEST: ColorBLUFOR
+            EAST: ColorOPFOR
+            GUER: colorIndependent
 
         MarkerAlpha:
             Active: 0.75
@@ -42,7 +44,7 @@ Dynamic Spawner:
     Keybinds: # See https://community.bistudio.com/wiki/DIK_KeyCodes
         Create: 210  # DIK_INSERT
         Delete: 211  # DIK_DELETE
-        Activate: 199  # DIK_HOME
+        Activate: 28  # DIK_RETURN (Enter)
         Deactivate: 207  # DIK_END
         ModifyAdd: 13  # DIK_EQUALS
         ModifySubtract: 12  # DIK_MINUS

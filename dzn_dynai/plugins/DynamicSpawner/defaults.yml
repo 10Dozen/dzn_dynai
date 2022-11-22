@@ -3,19 +3,31 @@
 
 Leader:                     # Array of unit description for squad leader role
     - class: O_officer_F    # Unit class
-      kit: kit_nato_sl      # dzn_gear kit to use
+      #kit: kit_nato_sl      # dzn_gear kit to use
 Infantry:                   # Array of unit description for squad member role
     - class: O_rifleman_F
-      kit: kit_nato_random
+      #kit: kit_nato_random
 Crew:                       # Array of unit description for vehicle crew role
     - class: O_crew_F
-      kit: kit_crew
+      #kit: kit_crew
 Vehicles:                   # Array of vehicles description
     - class: B_G_Offroad_01_armed_F
-      kit: kit_cargo_light
+      #kit: kit_cargo_light
       autocrew: true
 
 # Example of the pre-configured pool that may be referenced as *Defaults > SpecialForces
+# e.g.:
+# units: *Defaults > SpecialForces
 SpecialForces:
     - class: O_recon_F
-      kit: kit_recon
+      #kit: kit_recon
+
+
+# Example of the pre-configured single unit to add to pool as a reference *Defaults > CrewDriver
+# e.g.:
+# crew:
+#     - *Defaults > CrewDriver
+CrewDriver:
+    class: O_crew_F
+    #kit: kit_crew
+    seat: driver

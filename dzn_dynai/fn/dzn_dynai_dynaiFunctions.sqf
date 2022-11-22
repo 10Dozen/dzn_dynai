@@ -2,16 +2,18 @@
 #define DEBUG		false
 
 dzn_fnc_dynai_initValidate = {
-	if (isNil "dzn_dynai_core") exitWith { 
-		["dzn_dynai :: There is no 'dzn_dynai_core' placed on the map!"] call BIS_fnc_error; 
-		false
-	};
-	
-	if ((synchronizedObjects dzn_dynai_core) isEqualTo []) exitWith { 
-		["dzn_dynai :: There is no DynAI zones synchronized with 'dzn_dynai_core' object!"] call BIS_fnc_error;
-		false
-	};
-	
+    if (!isNil "dzn_dynai_core") exitWith { true };
+
+    // 1.3.2: Previously there was a warn for user about missing assets to initialize zones.
+    //        As plugins were added it is possible that user only wants Dynamic Spawner,
+    //        so error message is excessive. But as dzn_dynai_core is needed to run DynAI -
+    //        it will be created automatically
+
+    private _logicGrp = createGroup (createCenter sideLogic);
+    private _logic = _logicGrp createUnit ["Logic", [1000,1000,0], [], 0, "NONE"];
+    _logic setVehicleVarName "dzn_dynai_core";
+    missionNamespace setVariable ["dzn_dynai_core", _logic, true];
+
 	true
 };
 
@@ -51,12 +53,12 @@ dzn_fnc_dynai_getMultiplier = {
 			case 10: { selectRandom [1.00, 1.25, 1.50, 1.75, 2.00] };
 		};
 	};
-	
+
 	dzn_dynai_amountMultiplier
 };
 
 dzn_fnc_dynai_initZoneKeypoints = {
-	// @Keypoints = @Zone call dzn_fnc_dynai_initZoneKeypoints;	
+	// @Keypoints = @Zone call dzn_fnc_dynai_initZoneKeypoints;
 	private _keypoints = [];
 	{
 		if (_x isKindOf "LocationArea_F") then {
@@ -64,7 +66,7 @@ dzn_fnc_dynai_initZoneKeypoints = {
 			_keypoints pushBack [_pos select 0, _pos select 1, 0];
 		};
 	} forEach (synchronizedObjects _this);
-	
+
 	if (_keypoints isEqualTo []) then { "randomize" } else { _keypoints };
 };
 
@@ -75,9 +77,9 @@ dzn_fnc_dynai_initZoneVehiclePoints = {
 		if (_x isKindOf "LocationOutpost_F") then {
 			private _pos = getPosASL _x;
 			_vps pushBack [ [_pos select 0, _pos select 1, 0], getDir _x ];
-		};		
+		};
 	} forEach (synchronizedObjects _this);
-	
+
 	_vps
 };
 
@@ -88,15 +90,15 @@ dzn_fnc_dynai_initZones = {
 		OUTPUT: 	NULL
 	*/
 	if !(call dzn_fnc_dynai_initValidate) exitWith {};
-	
+
 	private ["_modules", "_properties","_syncObj", "_locations","_synced", "_wps", "_keypoints","_locationBuildings","_locBuildings","_locPos"];
 
 	call dzn_fnc_dynai_getSkillFromParameters;
 	_modules = synchronizedObjects dzn_dynai_core;
-	
+
 	{
 		private _zone = _x;
-		
+
 		// Get propertis from configuration arra
 		_properties = [];
 		{
@@ -104,14 +106,14 @@ dzn_fnc_dynai_initZones = {
 				_properties = _x;
 			};
 		} forEach dzn_dynai_zoneProperties;
-		
-		if (_properties isEqualTo []) then { 
-			["dzn_dynai :: There is no properties for DynAI zone '%1'", str(_x)] call BIS_fnc_error;		
+
+		if (_properties isEqualTo []) then {
+			["dzn_dynai :: There is no properties for DynAI zone '%1'", str(_x)] call BIS_fnc_error;
 		} else {
 			// Start of zone init
 			_zone setVariable ["dzn_dynai_initialized", false];
 			_zoneBuildings = [];
-			
+
 			// Get triggers and get location's buildings
 			_locations = [];
 			_syncObj = synchronizedObjects _zone;
@@ -122,24 +124,24 @@ dzn_fnc_dynai_initZones = {
 						[_x]
 						, dzn_dynai_allowedBuildingClasses
 						, dzn_dynai_restrictedBuildingClasses
-					] call dzn_fnc_getLocationBuildings;					
+					] call dzn_fnc_getLocationBuildings;
 					{ _zoneBuildings pushBackUnique _x; } forEach _locBuildings;
-				};		
+				};
 			} forEach _syncObj;
-			
+
 			if (_locations isEqualTo []) then {
-				["dzn_dynai :: There is no triggers synchronized with DynAI zone '%1'", str(_x)] call BIS_fnc_error;			
+				["dzn_dynai :: There is no triggers synchronized with DynAI zone '%1'", str(_x)] call BIS_fnc_error;
 			} else {
 				// Get area average position and size
-				_locPos = (_locations call dzn_fnc_getZonePosition) select 0;				
+				_locPos = (_locations call dzn_fnc_getZonePosition) select 0;
 
 				// Get Keypoints
 				_keypoints = _zone call dzn_fnc_dynai_initZoneKeypoints;
 				_vehiclePoints = _zone call dzn_fnc_dynai_initZoneVehiclePoints;
-				
+
 				sleep 1;
 				_zone setPosASL _locPos;
-				
+
 				_properties set [3, _locations];
 				_properties set [4, _keypoints];
 
@@ -148,8 +150,8 @@ dzn_fnc_dynai_initZones = {
 				};
 
 				_properties = _properties + [_zoneBuildings, _vehiclePoints];
-				
-				[_zone, [ 
+
+				[_zone, [
 					["dzn_dynai_area", _locations]
 					, ["dzn_dynai_keypoints", _keypoints]
 					, ["dzn_dynai_isActive", _properties select 2]
@@ -173,42 +175,42 @@ dzn_fnc_dynai_initZones = {
 				 *	9@	Vehicle points	(list of pos3ds of vehicle points)
 				 */
 			};
-		};		
+		};
 	} forEach _modules;
 };
 
 #define GET_PROP(X,Y)	[X, Y] call dzn_fnc_dynai_getZoneVar
 
-dzn_fnc_dynai_startZones = {	
+dzn_fnc_dynai_startZones = {
 	/*
 		Start all zones
 		INPUT: 		NULL
 		OUTPUT: 	NULL
 	*/
-	
+
 	if !(call dzn_fnc_dynai_initValidate) exitWith {};
-	
+
 	private _modules = synchronizedObjects dzn_dynai_core;
-	
-	{		
+
+	{
 		_x spawn {
-			waitUntil { !isNil {GET_PROP(_this, "init")} && {GET_PROP(_this, "init")} };			
+			waitUntil { !isNil {GET_PROP(_this, "init")} && {GET_PROP(_this, "init")} };
 			waitUntil { !isNil {GET_PROP(_this,"isActive")} && !isNil {GET_PROP(_this, "condition")} };
-			
+
 			// Wait for zone activation (_this getVariable "isActive")
 			waitUntil {
 				GET_PROP(_this,"isActive")
 				||
 				call (GET_PROP(_this, "condition"))
 			};
-			
-			if (DEBUG) then { player sideChat format ["dzn_dynai :: Creating zone '%1'", str(_this)]; };	
-			
-			_this setVariable ["dzn_dynai_isActive", true, true];			
-			(GET_PROP(_this,"properties")) call dzn_fnc_dynai_createZone;			
+
+			if (DEBUG) then { player sideChat format ["dzn_dynai :: Creating zone '%1'", str(_this)]; };
+
+			_this setVariable ["dzn_dynai_isActive", true, true];
+			(GET_PROP(_this,"properties")) call dzn_fnc_dynai_createZone;
 		};
-		sleep 0.5;	
-	} forEach _modules;	
+		sleep 0.5;
+	} forEach _modules;
 };
 
 dzn_fnc_dynai_createZone = {
@@ -217,16 +219,16 @@ dzn_fnc_dynai_createZone = {
 		INPUT: 		Zone propreties
 		OUTPUT: 	NULL
 	*/
-	
+
 	_this execFSM "dzn_dynai\FSMs\dzn_dynai_createZone.fsm";
 };
 
 dzn_fnc_dynai_assignVehcleHoldBehavior = {
 	params["_unit","_mode"];
 	sleep 5;
-	
+
 	_unit setVariable ["dzn_dynai_vehicleHold", true];
-	if (dzn_dynai_allowVehicleHoldBehavior) then { 
+	if (dzn_dynai_allowVehicleHoldBehavior) then {
 		private _aspectMode = if (["Vehicle Hold", _mode, false] call BIS_fnc_inString) then { "vehicle hold" } else { "vehicle 90 hold" };
 		[_unit, _aspectMode] call dzn_fnc_dynai_addUnitBehavior;
 	};
@@ -235,14 +237,14 @@ dzn_fnc_dynai_assignVehcleHoldBehavior = {
 dzn_fnc_dynai_revealNearbyUnits = {
 	sleep 10;
 	if (_this != leader (group _this)) exitWith {};
-	
-	private _nearest = nearestObjects [_this,["CAManBase"],300];	
+
+	private _nearest = nearestObjects [_this,["CAManBase"],300];
 	private _side = side _this;
 
 	{
 		if (_side == side _x) then {
-			(group _this) reveal _x;		
+			(group _this) reveal _x;
 			sleep 1;
-		};		
+		};
 	} forEach _nearest;
 };

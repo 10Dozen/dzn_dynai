@@ -10,7 +10,7 @@
 // **************************
 dzn_dynai_version = "v1.3.2";
 
-diag_log text format ["(dzn_dynai) [Init] Start initialization. Version: %1.", dzn_dynai_version];
+diag_log text format ["[dzn_dynai] (init) Start initialization. Version: %1.", dzn_dynai_version];
 // **************************
 //	SETTINGS
 // **************************
@@ -28,7 +28,7 @@ dzn_dynai_allowGroupResponse = (["par_dynai_enableGroupResponse", 1] call BIS_fn
 
 // Exit if PLAYER or SERVER when Headless is initialized
 if ( (hasInterface && !isServer) || (!isNil "HC" && isServer) ) exitWith {
-    diag_log text "(dzn_dynai) [Init] Running on client machine detected.";
+    diag_log text "[dzn_dynai] (init) Running on client machine detected.";
 
 	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
 	// If a player and no Zeus needed - exits script
@@ -40,7 +40,7 @@ if ( (hasInterface && !isServer) || (!isNil "HC" && isServer) ) exitWith {
 
 dzn_dynai_owner = clientOwner;
 publicVariable "dzn_dynai_owner";
-diag_log text format ["(dzn_dynai) [Init] Running on server/headless machine detected. OwnerID: %1", dzn_dynai_owner];
+diag_log text format ["[dzn_dynai] (init) Running on server/headless machine detected. OwnerID: %1", dzn_dynai_owner];
 
 dzn_dynai_initialized = false;
 waitUntil dzn_dynai_initCondition;
@@ -66,15 +66,18 @@ if (dzn_dynai_enableZeusCompatibility) then {
 //	DZN DYANI START
 // **************************
 waitUntil { time > dzn_dynai_preInitTimeout };
+
+diag_log text format ["[dzn_dynai] (init) Starting zones initialization (found %1 zone(s) in Zones.sqf).", count dzn_dynai_zoneProperties];
 call dzn_fnc_dynai_initZones;
 
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout) };
+
+diag_log text "[dzn_dynai] (init) Starting active zones.";
 call dzn_fnc_dynai_startZones;
 
 // **************************
 //	GROUP RESPONSES SYSTEM
 // **************************
-
 if (dzn_dynai_allowGroupResponse) then {
 	call dzn_fnc_dynai_processUnitBehaviours;
 	[] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm";
@@ -83,15 +86,25 @@ if (dzn_dynai_allowGroupResponse) then {
 // **************************
 //	CACHING SYSTEM
 // **************************
-if !(dzn_dynai_enableCaching) exitWith {dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";};
-
-waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
-call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf";
-[false] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
+if (dzn_dynai_enableCaching) then {
+    diag_log text format ["[dzn_dynai] (init) Caching is enabled. Postponed start in %1 seconds.", dzn_dynai_cachingTimeout];
+    [
+        {
+            diag_log text "[dzn_dynai] (init) Start caching.";
+            call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf";
+            [false] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
+        },
+        [],
+        dzn_dynai_cachingTimeout
+    ] call CBA_fnc_waitAndExecute;
+};
 
 // **************************
 // PLUGINS
 // **************************
+
+diag_log text "[dzn_dynai] (init) Checking for active plugins...";
+systemChat "[dzn_dynai] (init) Init plugins...";
 dzn_dynai_PluginsSettings = ["dzn_dynai\plugins\PluginsSettings.yml"] call dzn_fnc_parseSFML;
 
 {
@@ -104,9 +117,9 @@ dzn_dynai_PluginsSettings = ["dzn_dynai\plugins\PluginsSettings.yml"] call dzn_f
     if (_enabled && _path != "") then {
         // Fulfill related path if met
         if (_path select [0,1] == "\") then {
-            _path = "dzn_dynai\plguins" + _path;
+            _path = "dzn_dynai\plugins" + _path;
         };
-        diag_log text format ["(dzn_dynai) [Init] Activating plugin %1 from path %2", _name, _path];
+        diag_log text format ["[dzn_dynai] (init) Activating plugin [%1] from path [%2]", _name, _path];
         [_args, dzn_dynai_PluginsSettings get _name] call compile preProcessFileLineNumbers _path;
     };
 } forEach dzn_dynai_Plugins;
@@ -115,6 +128,6 @@ dzn_dynai_PluginsSettings = ["dzn_dynai\plugins\PluginsSettings.yml"] call dzn_f
 //	INITIALIZED
 // **************************
 
-diag_log text "(dzn_dynai) [Init] Fully initialized";
+diag_log text "[dzn_dynai] (init) Fully initialized";
 dzn_dynai_initialized = true;
 publicVariable "dzn_dynai_initialized";

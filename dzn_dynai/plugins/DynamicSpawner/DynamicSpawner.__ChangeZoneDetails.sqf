@@ -21,16 +21,27 @@ private _mrk = self_GET(NewZone.Marker);
 
 switch (_param) do {
     case PARAM_SIZE: {
+        private _newW = _w + NEW_ZONE_SIZE_CHANGE_STEP * _modifier;
+        private _newH = _h + NEW_ZONE_SIZE_CHANGE_STEP * _modifier;
+
         _mrk setMarkerSize [
-            _w + NEW_ZONE_SIZE_CHANGE_STEP * _modifier,
-            _h + NEW_ZONE_SIZE_CHANGE_STEP * _modifier
+            [NEW_ZONE_SIZE_MIN, _newW] select (_newW > NEW_ZONE_SIZE_MIN),
+            [NEW_ZONE_SIZE_MIN, _newH] select (_newH > NEW_ZONE_SIZE_MIN)
         ];
     };
     case PARAM_SIZE_X: {
-        _mrk setMarkerSize [_w + NEW_ZONE_SIZE_CHANGE_STEP * _modifier, _h];
+        private _newW = _w + NEW_ZONE_SIZE_CHANGE_STEP * _modifier;
+        _mrk setMarkerSize [
+            [NEW_ZONE_SIZE_MIN, _newW] select (_newW > NEW_ZONE_SIZE_MIN),
+            _h
+        ];
     };
     case PARAM_SIZE_Y: {
-        _mrk setMarkerSize [_w, _h + NEW_ZONE_SIZE_CHANGE_STEP * _modifier];
+        private _newH = _h + NEW_ZONE_SIZE_CHANGE_STEP * _modifier;
+        _mrk setMarkerSize [
+            _w,
+            [NEW_ZONE_SIZE_MIN, _newH] select (_newH > NEW_ZONE_SIZE_MIN)
+        ];
     };
     case PARAM_ANGLE: {
         _mrk setMarkerDir ((markerDir _mrk) + NEW_ZONE_ANGLE_CHANGE_STEP * _modifier);
