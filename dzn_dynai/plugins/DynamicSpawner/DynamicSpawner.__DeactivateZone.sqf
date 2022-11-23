@@ -11,16 +11,24 @@
 */
 
 #include "DynamicSpawner.h"
+DBG_1("(__DeactivateZone) Invoked. Params: %1", _this);
 
 params ["_zoneName", "_marker", "_configID"];
 
 private _zone = missionNamespace getVariable _zoneName;
 if (isNil "_zone") exitWith {
+    DBG("(__DeactivateZone) Exit on DynAI zone not exists");
     // Zone is not present for some reason - delete it to avoid inconsistancy
     _this call self_FUNC(__DeleteZone);
 };
 
-// Activate zone
+if (_zone getVariable ["dzn_dynai_groups", []] isEqualTo []) exitWith {
+    DBG("(__DeactivateZone) Exit on DynAI zone is in activation process.");
+    hintSilent parseText "dzn_DynAI Spawner<br />Selected zone is in activation process. Please, wait for full activation!";
+};
+
+// Deactivate zone
+DBG("(__DeactivateZone) Deactivating zone.");
 [_zone] call dzn_fnc_dynai_deactivateZone;
 
 // Update marker to show active status

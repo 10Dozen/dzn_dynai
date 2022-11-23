@@ -287,7 +287,7 @@ dzn_fnc_dynai_deactivateZone = {
 
 	params["_zone", ["_condition", { false }]];
 
-	if !( _zone call dzn_fnc_dynai_isActive ) exitWith {diag_log format ["dzn_dynai :: Zone %1 :: is not activated!", _zone];};
+	if !( _zone call dzn_fnc_dynai_isActive ) exitWith {};
 
 	{
 		{

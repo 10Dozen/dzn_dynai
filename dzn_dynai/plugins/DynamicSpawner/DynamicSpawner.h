@@ -1,9 +1,31 @@
 // Macroses
 #define SELF dzn_dynai_DynamicSpawner
+#define PATH_PREFIX "dzn_dynai\plugins\DynamicSpawner"
+
+// Error reporting
+#define ERROR_REPORT_PREFIX '[dzn_dynai][plugin:DynamicSpawner] '
+#define ERROR_REPORT_OUTPUTS "systemChat,RPT"
+#define REPORT_ [ERROR_REPORT_OUTPUTS, ERROR_REPORT_PREFIX +
+#define _ERROR  ] call dzn_fnc_report
 
 #define QUOTE(X) #X
 #define QSELF QUOTE(SELF)
+#define self_PREP(FUNCNAME) [toUpper QUOTE(FUNCNAME), compileScript ['dzn_dynai\plugins\DynamicSpawner\DynamicSpawner.FUNCNAME.sqf']]
+#define self_GET(X) (SELF get self_PAR(X))
+#define self_SET(PAR,VALUE) (SELF set [self_PAR(PAR), VALUE])
+#define self_FUNC(FNC) self_GET(FNC)
+#define self_PAR(X) toUpper 'X'
 
+#define self_ENV_                   ([self_GET(Settings), [
+#define _SETTING                    ]] call dzn_fnc_getByPath)
+#define _SETTING_OR_DEFAULT(DEF)    ] , DEF, DEF] call dzn_fnc_getByPath)
+
+#define ARR_2(A,B) A, B
+#define KEY_NAME(X) (keyName X select [1, count (keyName X) - 2])
+#define MAP_DIALOG (findDisplay 12 displayCtrl 51)
+
+
+// Debug
 #define DEBUG DEBUG
 #ifdef DEBUG
     #define DBG_PREFIX '[dzn_dynai.DynamicSpawner] '
@@ -23,27 +45,9 @@
     #define DBG_5(MSG,ARG1,ARG2,ARG3,ARG4,ARG5)
 #endif
 
-#define self_PREP(FUNCNAME) [toUpper QUOTE(FUNCNAME), compileScript ['dzn_dynai\plugins\DynamicSpawner\DynamicSpawner.FUNCNAME.sqf']]
-#define self_GET(X) (SELF get self_PAR(X))
-#define self_SET(PAR,VALUE) (SELF set [self_PAR(PAR), VALUE])
-#define self_FUNC(FNC) self_GET(FNC)
-#define self_PAR(X) toUpper 'X'
-
-#define self_ENV_                   ([self_GET(Settings), [
-#define _SETTING                    ]] call dzn_fnc_getByPath)
-#define _SETTING_OR_DEFAULT(DEF)    ] , DEF, DEF] call dzn_fnc_getByPath)
-
-#define ARR_2(A,B) A, B
-
-#define KEY_NAME(X) (keyName X select [1, count (keyName X) - 2])
-
-#define MAP_DIALOG (findDisplay 12 displayCtrl 51)
-
-#define PATH_PREFIX "dzn_dynai\plugins\DynamicSpawner"
-
-#include "\a3\ui_f\hpp\definedikcodes.inc"
 
 // Defaults
+#include "\a3\ui_f\hpp\definedikcodes.inc"
 #define GET_COLOR_BY_SIDE(SIDE) self_ENV_ "Defaults", "MarkerColor", str SIDE _SETTING_OR_DEFAULT("ColorOrange")
 
 #define NEW_ZONE_MARKER_SHAPE self_ENV_ "Defaults", "Shape" _SETTING_OR_DEFAULT("ELLIPSE")

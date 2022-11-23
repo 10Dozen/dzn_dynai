@@ -7,7 +7,7 @@
             1st group of 4 units
             2nd groups of 7 units
             3rd group of 3 units
-          But now it will be 3 similar groups with e.g. 4 units 
+          But now it will be 3 similar groups with e.g. 4 units
 
    - Test & bugfixing:
      [] -
@@ -44,10 +44,9 @@ private _groupsConfigs = (_settings get "Zone Configs") apply {
 
         if (_argsData get "#ERRORS" isNotEqualTo []) then {
             _valid = false;
-            ["[dzn_dynai.DynamicSpawner] Parsing error occured for include file [%1]. Config [%2] was skipped.", _argsFile, _file] call BIS_fnc_error;
-            diag_log text format ["[dzn_dynai] [plugin:DynamicSpawner] Parsing error occured for include file [%1]. Config [%2] was skipped.", _argsFile, _file];
-            diag_log text format ["[dzn_dynai] [plugin:DynamicSpawner] Errors:"];
-            { diag_log text format ["[dzn_dynai] [plugin:DynamicSpawner]   %1", _x]; } forEach (_argsData get "#ERRORS");
+            REPORT_ "Parsing error occured for include file [%1]. Config [%2] was skipped.", _argsFile, _file _ERROR;
+            diag_log text format [ERROR_REPORT_PREFIX + "Errors:"];
+            { diag_log text format [ERROR_REPORT_PREFIX + "   %1", _x]; } forEach (_argsData get "#ERRORS");
 
             continue;
         };
@@ -56,15 +55,18 @@ private _groupsConfigs = (_settings get "Zone Configs") apply {
     // Parse file using arguments data
     private _config = [_file, "LOAD_FILE", _argsData] call dzn_fnc_parseSFML;
     if (_config get "#ERRORS" isNotEqualTo []) then {
-        ["[dzn_dynai.DynamicSpawner] Parsing error occured for config file [%1]. Config was skipped.", _file] call BIS_fnc_error;
-        diag_log text format ["[dzn_dynai] [plugin:DynamicSpawner] Parsing error occured for config file [%1]. Config [%2] was skipped.", _file];
-        diag_log text format ["[dzn_dynai] [plugin:DynamicSpawner] Errors:"];
-        { diag_log text format ["[dzn_dynai] [plugin:DynamicSpawner]   %1", _x]; } forEach (_config get "#ERRORS");
-
+        REPORT_ "Parsing error occured for config file [%1]. Config was skipped.", _file _ERROR;
+        diag_log text format [ERROR_REPORT_PREFIX + "Errors:"];
+        { diag_log text format [ERROR_REPORT_PREFIX + "   %1", _x]; } forEach (_config get "#ERRORS");
         continue;
     };
 
     _config
+} select { !isNil "_x" };
+
+diag_log text str(_groupsConfigs);
+if (_groupsConfigs isEqualTo []) exitWith {
+    REPORT_ "There is no valid config found for plugin. Plugin disabled." _ERROR;
 };
 
 SELF = createHashMapFromArray [

@@ -12,10 +12,27 @@ if (self_GET(SelectedZone) isEqualTo []) exitWith {
 
 self_GET(SelectedZone) params ["_zoneName", "_mrk", "_configID"];
 
-private _cfg = self_GET(Configs) select _configID;
+private _config = self_GET(Configs) select _configID;
 (markerSize _mrk) params ["_w", "_h"];
 
+private _sideName = str(_config get CFG_SIDE);
+private _sideColor = switch (_config get CFG_SIDE) do {
+    case west: { "#5975DA" };
+    case east: { "#DA5959" };
+    case resistance: { "#59DA7C" };
+};
+
 private _zone = missionNamespace getVariable _zoneName;
+
+// --- Get status of the zone
+private _zoneStatus = "<t color='#FFCB8E'>INACTIVE</t>";
+if (_zone call dzn_fnc_dynai_isActive) then {
+    if (_zone getVariable ["dzn_dynai_groups", []] isEqualTo []) then {
+        _zoneStatus = "<t color='#59DACF'>ACTIVATING (SPAWNING)</t>";
+    } else {
+        _zoneStatus = "<t color='#8EFF95'>ACTIVE</t>";
+    };
+};
 
 // --- Get alive units and vehicles in zone
 private _totalUnitsCount = 0;
@@ -39,7 +56,8 @@ private _unitsInGroups = ([_zone, "groups"] call dzn_fnc_dynai_getZoneVar) apply
 private _grpsWithUnits = { _x > 0 } count _unitsInGroups;
 
 // --- Get zone's template info
-private _groupsInfo = (_zone call dzn_fnc_dynai_getGroupTemplates) apply {
+private _groupsInfo = [];
+{
     _x params ["_count", "_units"];
 
     private _infantry = [];
@@ -64,22 +82,22 @@ private _groupsInfo = (_zone call dzn_fnc_dynai_getGroupTemplates) apply {
 
     private _templatesInfo = if (_vehicles isNotEqualTo []) then {
         format [
-            "%1 x (%2; with vehicles: %3)",
-            _count,
+            "Grp %1 (%2; with vehicles: %3)",
+            _forEachIndex + 1,
             _infantryDetails joinString ", ",
             _vehicleDetails joinString ", "
         ]
     } else {
         format [
-            "%1 x (%2)",
-            _count,
+            "Grp %1 (%2)",
+            _forEachIndex + 1,
             _infantryDetails joinString ", ",
             _vehicleDetails joinString ", "
         ]
     };
 
-    (_templatesInfo)
-};
+    _groupsInfo pushBAck _templatesInfo;
+} forEach (_zone call dzn_fnc_dynai_getGroupTemplates);
 
 
 // --- Compose main details info
@@ -91,28 +109,29 @@ private _details = format [
     <br /><t size='0.75' color='#999999' align='left'>STATUS:</t>
         <br /><t align='left'>%3</t>
     <br /><t size='0.75' color='#999999' align='left'># OF GROUPS WITH UNITS</t>
-        <br /><t align='left'>%4 (%5 units total)</t>
-    <br /><t size='0.75' color='#999999' align='left'># VEHICLES</t>
-        <br /><t align='left'>%6</t>
+        <br /><t align='left'>%4 (%5 units total, %6 vehicles)</t>
+    <br /><t size='0.75' color='#999999' align='left'>AREA</t>
+         <br /><t align='left'>%7 x %8 m</t>
     <br />
     <br /><t size='0.75' color='#999999' align='left'>TEMPLATE INFO:</t>
-        <br /><t align='left'>%7</t>
+        <br /><t align='left'>%9</t>
     ",
-    _cfg get CFG_NAME,
-    _cfg get CFG_SIDE,
-    ["INACTIVE", "ACTIVE"] select (_zone call dzn_fnc_dynai_isActive),
+    _config get CFG_NAME,
+    format ["<t color='%1'>%2</t>", _sideColor, _sideName],
+    _zoneStatus,
     _grpsWithUnits,
     _totalUnitsCount,
     _totalVehiclesCount,
+    _w, _h,
     _groupsInfo joinString "<br />"
 ];
 
 // --- Compose Keybinds info
 private _keybinds = [
-    "Keys:",
-    format ["[ %1 ] to delete zone", KEY_NAME(KEY_DELETE)],
-    format ["[ %1 ] to deactivate zone", KEY_NAME(KEY_DEACTIVATE)],
-    format ["[ %1 ] to activate zone", KEY_NAME(KEY_ACTIVATE)],
+    "<t size='0.75' color='#999999' align='center'>Keys:</t>",
+    format ["[ <t color='#65A9EB'>%1</t> ] to delete zone", KEY_NAME(KEY_DELETE)],
+    format ["[ <t color='#65A9EB'>%1</t> ] to deactivate zone", KEY_NAME(KEY_DEACTIVATE)],
+    format ["[ <t color='#65A9EB'>%1</t> ] to activate zone", KEY_NAME(KEY_ACTIVATE)],
     "or click elsewhere to deselect"
 ] joinString "<br />";
 
