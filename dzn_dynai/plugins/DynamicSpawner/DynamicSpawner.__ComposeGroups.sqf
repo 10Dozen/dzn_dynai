@@ -150,7 +150,7 @@ private _zoneTemplates = [];
                     private _crewCfg = selectRandom (if (_vicIsHeavy) then {
                         _cfg get CFG_DEFAULTS get CFG_DEFAULTS__CREW_HEAVY
                     } else {
-                        _cfg get CFG_DEFAULTS get CFG_DEFAULTS__CREW)
+                        _cfg get CFG_DEFAULTS get CFG_DEFAULTS__CREW
                     });
                     private _detailedCfg = _vicCfg get CFG_VIC__AUTOCREW_DETAILED;
 
