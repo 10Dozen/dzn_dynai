@@ -10,6 +10,9 @@ Infantry:                   # Array of unit description for squad member role
 Crew:                       # Array of unit description for vehicle crew role
     - class: O_crew_F
       #kit: kit_crew
+CrewHeavy:                  # Array of unit desciptions for heavy vehicle crew role
+    - class: O_crew_F
+
 Vehicles:                   # Array of vehicles description
     - class: B_G_Offroad_01_armed_F
       #kit: kit_cargo_light
@@ -22,6 +25,9 @@ SpecialForces:
     - class: O_recon_F
       #kit: kit_recon
 
+SpecialCars:
+    - class: ["CarClass1", "CarClass2", "CarClass3"]    # Array in the class field will randomize class on spawning
+      autocrew: true
 
 # Example of the pre-configured single unit to add to pool as a reference *Defaults > CrewDriver
 # e.g.:

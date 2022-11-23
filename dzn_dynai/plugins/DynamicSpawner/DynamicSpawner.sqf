@@ -1,19 +1,8 @@
 #include "DynamicSpawner.h"
 
 /* TODO:
-     [] - ComposeGroups: For each group type for selected amount of groups it should be created
-          a separate template and unit count randmozied inside it.
-          E.g. 3 groups with unit count 3-7 should result in:
-            1st group of 4 units
-            2nd groups of 7 units
-            3rd group of 3 units
-          But now it will be 3 similar groups with e.g. 4 units
-
-   - Test & bugfixing:
-     [] -
-     [] -
-     [] -
-     [] -
+    [T] - Check for duplicates of include file and re-use alreadt parsed one
+    [T] - Add Crew and CrewHeavy default pools for general, cars and APC+ vehicles
 
 */
 

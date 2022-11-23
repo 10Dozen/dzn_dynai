@@ -123,6 +123,12 @@ private _zoneTemplates = [];
                 // --- Add vehicle
                 private _vicCfg = selectRandom _vicCfgPool;
                 private _vicClass = _vicCfg get CFG_VIC__CLASS;
+                if (_vicClass isEqualType []) then {
+                    _vicClass = selectRandom _vicClass;
+                };
+                // TODO: Specify condition
+                private _vicIsHeavy = HEAVY_VEHICLES_KINDS findIf { _vicClass isKindOf _x } > -1;
+                DBG_2("(__ComposeGroups)     Vehicle class [%1] is considered as %2 vehicle", _vicClass, ["LIGHT", "HEAVY"] select _vicIsHeavy);
 
                 // _vicID is the number of vehicle element in the template array
                 private _vicID = _template pushBack [
@@ -133,14 +139,19 @@ private _zoneTemplates = [];
                 DBG_2("(__ComposeGroups)     Vehicle added: %1 (VicID = %2)", _template select (count _template - 1), _vicID);
 
                 // --- Composing crew
-                if (_vicCfg getOrDefault [CFG_VIC__AUTOCREW, false]) then {
+                private _isAutocrew = _vicCfg getOrDefault [CFG_VIC__AUTOCREW, false] || { isNil {_vicCfg get CFG_VIC__CREW} };
+                if (_isAutocrew) then {
                     // - Autocrew
                     // -------------------
                     // Use default Crew config and all non-cargo seats
                     // until not overwritten by user
 
                     DBG("(__ComposeGroups)         Autocrew creation:");
-                    private _crewCfg = selectRandom (_cfg get CFG_DEFAULTS get CFG_DEFAULTS__CREW);
+                    private _crewCfg = selectRandom (if (_vicIsHeavy) then {
+                        _cfg get CFG_DEFAULTS get CFG_DEFAULTS__CREW_HEAVY
+                    } else {
+                        _cfg get CFG_DEFAULTS get CFG_DEFAULTS__CREW)
+                    });
                     private _detailedCfg = _vicCfg get CFG_VIC__AUTOCREW_DETAILED;
 
                     // Select from autocrewDetailed section or use defaults

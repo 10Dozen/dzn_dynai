@@ -46,9 +46,11 @@ dzn_dynai_initialized = false;
 waitUntil dzn_dynai_initCondition;
 
 // Initialization of dzn_gear
+diag_log text "[dzn_dynai] (init) Waiting for dzn_gear initialization";
 waitUntil { !isNil "dzn_gear_initDone" && { dzn_gear_initDone } };
 
 // Initialization of dzn_dynai
+diag_log text "[dzn_dynai] (init) Compilation of the zones configs and functions";
 dzn_dynai_activatedZones = [];
 dzn_dynai_activeGroups = [];
 dzn_dynai_zoneProperties = [

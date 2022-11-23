@@ -82,7 +82,12 @@
 #define KEY_CYCLE_UP self_ENV_ "Keybinds", "CycleConfigUp" _SETTING_OR_DEFAULT(201)
 #define KEY_CYCLE_DOWN self_ENV_ "Keybinds", "CycleConfigDown" _SETTING_OR_DEFAULT(209)
 
-
+// Vehicle type definition
+#define HEAVY_VEHICLES_KINDS [ \
+    "Tank_F", \
+    "Wheeled_APC_F", \
+    "Tracked_APC_F" \
+]
 
 // Action Enum
 #define ACTION_INCREASE 1
@@ -108,6 +113,7 @@
 #define CFG_DEFAULTS__LEADER "Leader"
 #define CFG_DEFAULTS__INFANTRY "Infantry"
 #define CFG_DEFAULTS__CREW "Crew"
+#define CFG_DEFAULTS__CREW_HEAVY "CrewHeavy"
 #define CFG_DEFAULTS__VEHICLES "Vehicles"
 
 #define CFG_GROUPS__NAME "name"
