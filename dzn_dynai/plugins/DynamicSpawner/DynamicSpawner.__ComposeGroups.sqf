@@ -81,17 +81,12 @@ private _zoneTemplates = [];
                 _cfg get CFG_DEFAULTS get CFG_DEFAULTS__LEADER
             ]);
 
-            private _leaderClass = _leaderCfg get CFG_UNIT__CLASS;
-            if ([_leaderClass] call dzn_fnc_checkClassExists) then {
-                _template pushBack [
-                    _leaderClass,
-                    _infantryTask,
-                    _leaderCfg getOrDefault [CFG_UNIT__KIT, ""]
-                ];
-                DBG_1("(__ComposeGroups)     Leader added: %1", _template select (count _template - 1));
-            } else {
-                REPORT_ "Incorrect unit classname [%1] in group [%2] found. Unit skipped.", _leaderClass, _grpCfg get CFG_GROUPS__NAME _ERROR;
-            };
+            _template pushBack [
+                _leaderCfg get CFG_UNIT__CLASS,
+                _infantryTask,
+                _leaderCfg getOrDefault [CFG_UNIT__KIT, ""]
+            ];
+            DBG_1("(__ComposeGroups)     Leader added: %1", _template select (count _template - 1));
 
             // --- Composing team members
             // Selecting from group's defined Units pool or from Defaults > Infantry
@@ -102,14 +97,8 @@ private _zoneTemplates = [];
 
             for "_i" from 1 to _unitCount do {
                 private _unitCfg = selectRandom _unitCfgPool;
-                private _unitClass = _unitCfg get CFG_UNIT__CLASS;
-                if !([_unitClass] call dzn_fnc_checkClassExists) then {
-                    REPORT_ "Incorrect unit classname [%1] in group [%2] found. Unit skipped.", _unitClass, _grpCfg get CFG_GROUPS__NAME _ERROR;
-                    continue;
-                };
-
                 _template pushBack [
-                    _unitClass,
+                    _unitCfg get CFG_UNIT__CLASS,
                     _infantryTask,
                     _unitCfg getOrDefault [CFG_UNIT__KIT, ""]
                 ];
@@ -134,12 +123,6 @@ private _zoneTemplates = [];
                 // --- Add vehicle
                 private _vicCfg = selectRandom _vicCfgPool;
                 private _vicClass = _vicCfg get CFG_VIC__CLASS;
-
-                // --- Validate vehicle class
-                if !([_vicClass] call dzn_fnc_checkClassExists) then {
-                    REPORT_ "Incorrect vehicle classname [%1] in group [%2] found. Vehicle skipped.", _vicClass, _grpCfg get CFG_GROUPS__NAME _ERROR;
-                    continue;
-                };
 
                 // _vicID is the number of vehicle element in the template array
                 private _vicID = _template pushBack [
@@ -186,18 +169,17 @@ private _zoneTemplates = [];
                         _customCrewKit
                     };
 
-                    if !([_crewClass] call dzn_fnc_checkClassExists) then {
-                        REPORT_ "Incorrect autocrew classname [%1] in group [%2] found. Crew skipped.", _crewClass, _grpCfg get CFG_GROUPS__NAME _ERROR;
-                        continue;
-                    };
-
                     DBG_1("(__ComposeGroups)             Class: %1", _crewClass);
                     DBG_1("(__ComposeGroups)             Kit: %1", _crewKit);
                     DBG_1("(__ComposeGroups)             Seats: %1", _seats);
                     DBG("(__ComposeGroups)             -----------");
 
                     {
-                        _template pushBack [_crewClass, [_vicID, _x], _crewKit];
+                        _template pushBack [
+                            _crewClass,
+                            [_vicID, _x],
+                            _crewKit
+                        ];
                         DBG_1("(__ComposeGroups)             Autocrew created: %1", _template select (count _template - 1));
                     } forEach _seats;
                 } else {
@@ -209,15 +191,8 @@ private _zoneTemplates = [];
 
                     {
                         DBG_1("(__ComposeGroups)             Crew config: %1", _x);
-
-                        private _crewClass =  _x get CFG_UNIT__CLASS;
-                        if !([_crewClass] call dzn_fnc_checkClassExists) then {
-                            REPORT_ "Incorrect crew classname [%2] in group [%3] found. Crew skipped.", _crewClass, _grpCfg get CFG_GROUPS__NAME _ERROR;
-                            continue;
-                        };
-
                         _template pushBack [
-                            _crewClass,
+                            _x get CFG_UNIT__CLASS,
                             [_vicID, _x get CFG_UNIT__SEAT],
                             _x getOrDefault [CFG_UNIT__KIT, ""]
                         ];
