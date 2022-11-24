@@ -30,9 +30,10 @@ dzn_fnc_dynai_getZoneVar = {
 	 * EXAMPLES:
 	 *
 	 */
-	private["_r","_z"];
-	_z = _this select 0;
-	_r = switch toLower(_this select 1) do {
+    params ["_z", "_prop"];
+    if (isNil "_z") exitWith {};
+
+	private _r = switch toLower(_prop) do {
 		case "list": { ["area", ["keypoints","kp","points"], "isActive", ["properties","prop"], ["init","initialized"], "groups"]};
 		case "area": { _z getVariable ["dzn_dynai_area", nil] };
 		case "kp";case "points";case "keypoints": { _z getVariable ["dzn_dynai_keypoints", nil] };
@@ -45,11 +46,10 @@ dzn_fnc_dynai_getZoneVar = {
 		default { nil };
 	};
 
-	_r
+	(if (isNil "_r")  then { nil } else { _r })
 };
 
 dzn_fnc_dynai_getGroupVar = {
-
 	/*
 	 * @Property = [@Group, @PropertyName] call dzn_fnc_dynai_getGroupVar
 	 * Returns value of the given property.
@@ -285,7 +285,7 @@ dzn_fnc_dynai_deactivateZone = {
 		_this remoteExec ["dzn_fnc_dynai_deactivateZone", dzn_dynai_owner];
 	};
 
-	params["_zone", ["_condition", { false }]];
+	params ["_zone", ["_condition", { false }], ["_delete", false]];
 
 	if !( _zone call dzn_fnc_dynai_isActive ) exitWith {};
 
@@ -310,11 +310,16 @@ dzn_fnc_dynai_deactivateZone = {
 	_properties set [7, _condition];
 	_zone setVariable ["dzn_dynai_properties", _properties, true];
 
+    dzn_dynai_activatedZones = dzn_dynai_activatedZones - [zone];
+
+    if (_delete) exitWith {
+        deleteVehicle _zone;
+    };
+
 	_zone spawn {
 		waitUntil {
 			[_this, "isActive"] call dzn_fnc_dynai_getZoneVar
-			||
-			call ([_this, "condition"] call dzn_fnc_dynai_getZoneVar)
+			|| call ([_this, "condition"] call dzn_fnc_dynai_getZoneVar)
 		};
 
 		player sideChat format ["dzn_dynai :: Re-creating zone '%1'", str(_this)];

@@ -36,12 +36,15 @@ private _allSeats = (fullCrew [_veh, "", true]) apply {
         DBG("(__GetVehicleSeats)     (X) This is a cargo seat. Skip");
         continue;
     };
-    if (_seat == "turret" && { count _turretPath > 1 }) then {
-        _seat = format ["turret%1%2", _turretPath # 0, _turretPath # 1];
-        DBG_1("(__GetVehicleSeats)     (U) This is a turret seat. Convert name to %1", _seat);
-    } else {
-        DBG("(__GetVehicleSeats)     (X) This is a FFV turret seat. Skip");
-        continue;
+
+    if (_seat == "turret") then {
+        if (count _turretPath > 1) then {
+            _seat = format ["turret%1%2", _turretPath # 0, _turretPath # 1];
+            DBG_1("(__GetVehicleSeats)     (U) This is a turret seat. Convert name to %1", _seat);
+        } else {
+            DBG("(__GetVehicleSeats)     (X) This is a FFV turret seat. Skip");
+            continue;
+        };
     };
 
     DBG("(__GetVehicleSeats)     (V) Valid crew seat");

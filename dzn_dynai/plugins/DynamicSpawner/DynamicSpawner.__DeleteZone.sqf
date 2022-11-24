@@ -22,20 +22,16 @@ if (!isNil "_zone" && { _zone getVariable ["dzn_dynai_groups", []] isEqualTo [] 
 
 // Remove zone from DynAI Spawner
 private _zonesList = self_GET(Zones);
-DBG_1("(__DeleteZone) Spawner zone list: %1", _zoneList);
+DBG_1("(__DeleteZone) Spawner zone list: %1", _zonesList);
 
-_zoneList = _zoneList - _this;
-DBG_1("(__DeleteZone) Spawner zone list after deletion: %1", _zoneList);
+_zonesList = _zonesList - [_this];
+DBG_1("(__DeleteZone) Spawner zone list after deletion: %1", _zonesList);
 
 // Remove marker from map
 deleteMarker _marker;
 
 // Stop DynAI zone
-DBG("(__DeleteZone) Deactivating DynAI zone");
-[_zone] call dzn_fnc_dynai_deactivateZone;
-
-// Delete DynAI zone object
-DBG("(__DeleteZone) Deleting DynAI zone");
-deleteVehicle _zone;
+DBG("(__DeleteZone) Deactivating & deleting DynAI zone");
+[_zone, nil, true] call dzn_fnc_dynai_deactivateZone;
 
 hintSilent "";

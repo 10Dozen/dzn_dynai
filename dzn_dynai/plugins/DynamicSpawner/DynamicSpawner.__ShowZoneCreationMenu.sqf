@@ -45,8 +45,8 @@ _groups apply {
 
     private _min = _grpAmount get "min";
     private _max = _grpAmount get "max";
-    private _optionsMin = [_min] + (_seed select [_min, _limit]) + (_seed select [0, _min]);
-    private _optionsMax = [_max] + (_seed select [_max, _limit]) + (_seed select [0, _max]);
+    private _optionsMin = [_min] + (_seed select [_min+1, _limit]) + (_seed select [0, _min]);
+    private _optionsMax = [_max] + (_seed select [_max+1, _limit]) + (_seed select [0, _max]);
 
     _uiFields append [
         [_uiLineID, "LABEL", _grpName],

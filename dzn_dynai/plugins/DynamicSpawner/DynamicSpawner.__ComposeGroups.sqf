@@ -41,15 +41,15 @@ private _zoneTemplates = [];
 
     // --- Getting number of groups of given type
     (_groupAmountRanges select _forEachIndex) params ["_grpAmountMin", "_grpAmountMax"];
-    private _delta = [_grpAmountMax - _grpAmountMin, 0] select (_grpAmountMax < _grpAmountMin);
-    private _grpAmount = _grpAmountMin + round random _delta;
+    private _grpAmountDelta = [_grpAmountMax - _grpAmountMin, 0] select (_grpAmountMax < _grpAmountMin);
+    private _grpAmount = _grpAmountMin + round random _grpAmountDelta;
 
     private _unitsCountMin = 0;
     private _unitsCountDelta = 0;
     private _unitsCountRange = _grpCfg get CFG_GROUPS__COUNT_UNIT;
     if (!isNil "_unitsCountRange") then {
         _unitsCountMin = _unitsCountRange get "min";
-        _unitsCountDelta = [(_unitsCountRange get "max") - _unitsCountMin, 0] select ((_unitsCountRange get "max") < _unitsCountMin);
+        _unitsCountDelta = [(_unitsCountRange get "max") - _unitsCountMin, 0] select ((_unitsCountRange get "max") <= _unitsCountMin);
     };
 
     private _vicsCountMin = 0;
@@ -57,13 +57,13 @@ private _zoneTemplates = [];
     private _vicsCountRange = _grpCfg get CFG_GROUPS__COUNT_VEHICLE;
     if (!isNil "_vicsCountRange") then {
         _vicsCountMin = _vicsCountRange get "min";
-        _vicsCountDelta = [(_vicsCountRange get "max") - _vicsCountMin, 0] select ((_vicsCountRange get "max") < _vicsCountMin);
+        _vicsCountDelta = [(_vicsCountRange get "max") - _vicsCountMin, 0] select ((_vicsCountRange get "max") <= _vicsCountMin);
     };
 
-    DBG_5("(__ComposeGroups) Composing group type %1 (%2). Count: %3 (min-max: %4-%5) ", _forEachIndex, _grpCfg get CFG_GROUPS__NAME, _grpAmount, _grpAmountMin, _grpAmountMax);
+    DBG_5("(__ComposeGroups) Composing groups type %1 (%2). Count: %3 (min: %4 + random %5) ", _forEachIndex + 1, _grpCfg get CFG_GROUPS__NAME, _grpAmount, _grpAmountMin, _grpAmountDelta);
 
     for "_i" from 1 to _grpAmount do {
-        DBG_5("(__ComposeGroups) Group %1: Name: %2.", _i, _grpCfg get CFG_GROUPS__NAME);
+        DBG_2("(__ComposeGroups) Group %1: Type: %2.", _i, _grpCfg get CFG_GROUPS__NAME);
 
         // --- Composing template for group
         private _template = [];
@@ -71,8 +71,8 @@ private _zoneTemplates = [];
         // --- Composing infantry units
         if (_unitsCountMin != 0 && _unitsCountDelta != 0) then {
             // --- Getting number of units in the group
-            private _unitCount = _unitsCountMin + (round random _delta) - 1; // -1 here is for group leader
-            DBG_3("(__ComposeGroups)     Units count: %1 (min-max: %2-%3)", _unitCount, _unitsCountMin, _unitsCountMin + _delta);
+            private _unitCount = _unitsCountMin + (round random _unitsCountDelta) - 1; // -1 here is for group leader
+            DBG_3("(__ComposeGroups)     Units count: %1 (min: %2 + random %3)", _unitCount, _unitsCountMin, _unitsCountDelta);
 
             // --- Composing leader data
             // Selecting from group's defined Leader pool or from Defaults > Leader
@@ -110,8 +110,8 @@ private _zoneTemplates = [];
         // --- Composing vehicles & crew
         if (_vicsCountMin != 0 && _vicsCountDelta != 0) then {
             // --- Getting number of vehicles in the group
-            private _vicsCount = _vicsCountMin + round random _delta;
-            DBG_3("(__ComposeGroups)     Vehicles count: %1 (min-max: %2-%3)", _vicsCount, _vicsCountMin, _vicsCountMin + _vicsCountDelta);
+            private _vicsCount = _vicsCountMin + round random _vicsCountDelta;
+            DBG_3("(__ComposeGroups)     Vehicles count: %1 (min: %2 + random %3)", _vicsCount, _vicsCountMin, _vicsCountDelta);
 
             // --- Composing vehicles
             private _vicCfgPool = _grpCfg getOrDefault [
@@ -126,9 +126,6 @@ private _zoneTemplates = [];
                 if (_vicClass isEqualType []) then {
                     _vicClass = selectRandom _vicClass;
                 };
-                // TODO: Specify condition
-                private _vicIsHeavy = HEAVY_VEHICLES_KINDS findIf { _vicClass isKindOf _x } > -1;
-                DBG_2("(__ComposeGroups)     Vehicle class [%1] is considered as %2 vehicle", _vicClass, ["LIGHT", "HEAVY"] select _vicIsHeavy);
 
                 // _vicID is the number of vehicle element in the template array
                 private _vicID = _template pushBack [
@@ -139,6 +136,9 @@ private _zoneTemplates = [];
                 DBG_2("(__ComposeGroups)     Vehicle added: %1 (VicID = %2)", _template select (count _template - 1), _vicID);
 
                 // --- Composing crew
+                private _vicIsHeavy = HEAVY_VEHICLES_KINDS findIf { _vicClass isKindOf _x } > -1;
+                DBG_2("(__ComposeGroups)         Vehicle class [%1] is heavy? %2", _vicClass, _vicIsHeavy);
+
                 private _isAutocrew = _vicCfg getOrDefault [CFG_VIC__AUTOCREW, false] || { isNil {_vicCfg get CFG_VIC__CREW} };
                 if (_isAutocrew) then {
                     // - Autocrew

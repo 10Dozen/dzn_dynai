@@ -65,9 +65,9 @@ Groups:
             #kit: kit_nato_sl
       # (optional) Pool of units to select for memebers; if units section is not set -- Defaults > Infantry array will be used
       units:
-          - class: O_rifleman_F
+          - class: O_Soldier_F
             #kit: kit_nato_random
-          - class: O_grenadier_F
+          - class: O_Soldier_GL_F
             #kit: kit_nato_random
 
     # Combined group of infantry with vehicles
@@ -94,7 +94,7 @@ Groups:
           # Vehicle with specified crew per seat
           - class: B_G_Offroad_01_armed_F
             crew:                             # Will create specific unit per specific seat
-                - class: O_rifleman_F         # Unit class
+                - class: O_Soldier_F         # Unit class
                   #kit: kit_nato_r             # Unit's dzn_gear kit
                   seat: gunner                # Unit's seat
                 - *Defaults > CrewDriver      # ... or reference to some defaults

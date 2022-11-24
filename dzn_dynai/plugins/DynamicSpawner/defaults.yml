@@ -5,10 +5,10 @@ Leader:                     # Array of unit description for squad leader role
     - class: O_officer_F    # Unit class
       #kit: kit_nato_sl      # dzn_gear kit to use
 Infantry:                   # Array of unit description for squad member role
-    - class: O_rifleman_F
+    - class: O_Soldier_F
       #kit: kit_nato_random
 Crew:                       # Array of unit description for vehicle crew role
-    - class: O_crew_F
+    - class: O_Soldier_F
       #kit: kit_crew
 CrewHeavy:                  # Array of unit desciptions for heavy vehicle crew role
     - class: O_crew_F
@@ -26,7 +26,7 @@ SpecialForces:
       #kit: kit_recon
 
 SpecialCars:
-    - class: ["CarClass1", "CarClass2", "CarClass3"]    # Array in the class field will randomize class on spawning
+    - class: ["O_LSV_02_armed_F", "O_MRAP_02_hmg_F"]    # Array in the class field will randomize class on spawning
       autocrew: true
 
 # Example of the pre-configured single unit to add to pool as a reference *Defaults > CrewDriver
