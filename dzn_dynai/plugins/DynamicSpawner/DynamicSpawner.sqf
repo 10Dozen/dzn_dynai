@@ -1,21 +1,11 @@
 #include "DynamicSpawner.h"
 
-/* TODO:
-    [T] - Check for duplicates of include file and re-use alreadt parsed one
-    [T] - Add Crew and CrewHeavy default pools for general, cars and APC+ vehicles
-    [T] - Turret path for FFV is incorectly converted:
-            22:44:57 [dzn_dynai.DynamicSpawner] (__GetVehicleSeats)   Scanning seat: [<NULL-object>,"turret",5,[6],true]
-            22:44:57 [dzn_dynai.DynamicSpawner] (__GetVehicleSeats)     (U) This is a turret seat. Convert name to turret6<null>
-          Looks like DynAI won't support turret6 style, so need to skip such seats...
-*/
 
 // ---------------------------------------
 params [
     "_args",
     "_settings"
 ];
-
-DSData = _this;
 
 if (!isNil QSELF) exitWith {};
 
@@ -56,7 +46,6 @@ private _groupsConfigs = (_settings get "Zone Configs") apply {
     _config
 } select { !isNil "_x" };
 
-diag_log text str(_groupsConfigs);
 if (_groupsConfigs isEqualTo []) exitWith {
     REPORT_ "There is no valid config found for plugin. Plugin disabled." _ERROR;
 };
@@ -105,5 +94,3 @@ SELF = createHashMapFromArray [
     [self_PAR(NewZone.PFH), nil],
     [self_PAR(NewZone.MapClosedHandler), nil]
 ];
-
-systemChat "DynamicSpawner Activated";

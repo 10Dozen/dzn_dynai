@@ -106,7 +106,6 @@ if (dzn_dynai_enableCaching) then {
 // **************************
 
 diag_log text "[dzn_dynai] (init) Checking for active plugins...";
-systemChat "[dzn_dynai] (init) Init plugins...";
 dzn_dynai_PluginsSettings = ["dzn_dynai\plugins\PluginsSettings.yml"] call dzn_fnc_parseSFML;
 
 {

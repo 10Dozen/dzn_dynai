@@ -44,6 +44,9 @@ private _zoneTemplates = [];
     private _grpAmountDelta = [_grpAmountMax - _grpAmountMin, 0] select (_grpAmountMax < _grpAmountMin);
     private _grpAmount = _grpAmountMin + round random _grpAmountDelta;
 
+    DBG_3("(__ComposeGroups) Group Type %1 (%2). Selected range: %3", _forEachIndex + 1, _grpCfg get CFG_GROUPS__NAME, _groupAmountRanges select _forEachIndex);
+    DBG_5("(__ComposeGroups) Composing groups type %1 (%2). Count: %3 (min: %4 + random %5) ", _forEachIndex + 1, _grpCfg get CFG_GROUPS__NAME, _grpAmount, _grpAmountMin, _grpAmountDelta);
+
     private _unitsCountMin = 0;
     private _unitsCountDelta = 0;
     private _unitsCountRange = _grpCfg get CFG_GROUPS__COUNT_UNIT;
@@ -60,7 +63,6 @@ private _zoneTemplates = [];
         _vicsCountDelta = [(_vicsCountRange get "max") - _vicsCountMin, 0] select ((_vicsCountRange get "max") <= _vicsCountMin);
     };
 
-    DBG_5("(__ComposeGroups) Composing groups type %1 (%2). Count: %3 (min: %4 + random %5) ", _forEachIndex + 1, _grpCfg get CFG_GROUPS__NAME, _grpAmount, _grpAmountMin, _grpAmountDelta);
 
     for "_i" from 1 to _grpAmount do {
         DBG_2("(__ComposeGroups) Group %1: Type: %2.", _i, _grpCfg get CFG_GROUPS__NAME);
@@ -217,7 +219,7 @@ private _zoneTemplates = [];
         // --- Adding group template (quantity and units descriptors) to zone template
         _zoneTemplates pushBack [1, _template];
     };
-    DBG_2("(__ComposeGroups) Group %1 (%2) template composed.", _forEachIndex, _grpCfg get CFG_GROUPS__NAME);
+    DBG_2("(__ComposeGroups) Group %1 (%2) template composed.", _forEachIndex + 1, _grpCfg get CFG_GROUPS__NAME);
 } forEach (_cfg get CFG_GROUPS);
 
 _zoneTemplates

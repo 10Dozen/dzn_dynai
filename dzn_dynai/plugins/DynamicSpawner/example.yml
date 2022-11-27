@@ -41,6 +41,8 @@ Task:
         Patrol: Vehicle Patrol
         Hold: Vehicle Hold
         Hold Frontal: Vehicle Frontal Hold
+        # Note: Road tasks should only be applied to vehicle-only groups
+        # (as vehicles will be spawned exclusivly on roads, while infantry - at any point in area)
         Road Patrol: Vehicle Road Patrol
         Road Hold: Vehicle Road Hold
         Road Hold Frontal: Vehicle Road Frontal Hold

@@ -40,8 +40,8 @@ DBG_4("(__CreateZone)     Shape: %1 x %2 @ %3 (%4) ", _mrkW, _mrkH, _mrkDir, _mr
 DBG_1("(__CreateZone)     Area: %1", _area);
 
 private _groupsAmountRange = [];
-for "_i" from 0 to count(_uiSelections) / 2 step 2 do {
-    DBG_2("(__CreateZone) Parse UI selections for group %1: Min = %2 :  Max = %3", _i, _uiSelections # _i # 3, _uiSelections # (_i + 1) # 3);
+for "_i" from 0 to count(_uiSelections) step 2 do {
+    DBG_3("(__CreateZone) Parse UI selections for group %1: Min = %2 :  Max = %3", _i, (_uiSelections # _i) # 3, (_uiSelections # (_i + 1)) # 3);
     _groupsAmountRange pushBack [
         (_uiSelections select _i) # 3,
         (_uiSelections select (_i + 1)) # 3

@@ -1,6 +1,6 @@
 // Delay before and after zones initializations
-dzn_dynai_preInitTimeout			=	0; //3;
-dzn_dynai_afterInitTimeout			=	0; //3;
+dzn_dynai_preInitTimeout			=	0;
+dzn_dynai_afterInitTimeout			=	0;
 dzn_dynai_initCondition			=	{ true };
 
 
