@@ -56,7 +56,7 @@ deleteVehicle _veh;
 DBG_1("(__GetVehicleSeats)   Vehicle deleted: %1", _veh);
 
 // --- Re-order list of seats via sort descending - turret or gunner will be the first role to assign
-_seats sort false;
+_allSeats sort false;
 
 // Cache & return results
 _cache set [_vehClass, _allSeats];
