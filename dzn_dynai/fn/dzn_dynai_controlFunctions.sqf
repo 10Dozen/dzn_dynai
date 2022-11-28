@@ -158,7 +158,7 @@ dzn_fnc_dynai_addNewZone = {
 
     params ["_zoneName", "_zoneSide", "_isActive", "_areas", "_keypoints", "_templates", "_behaviour"];
 
-    private _side = if (typename _zoneSide == "SIDE") then { _zoneSide } else { call compile _zoneSide };
+    private _side = call compile _zoneSide;
     if (isNil "_side") exitWith {
         ["[dzn_dynai] dzn_fnc_dynai_addNewZone: Incorrect side definition [%1]", _zoneSide] call BIS_fnc_error;
     };

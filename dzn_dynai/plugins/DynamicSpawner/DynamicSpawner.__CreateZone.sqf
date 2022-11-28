@@ -21,7 +21,14 @@ self_SET(ZoneID, _zoneID);
 
 private _cfg = self_GET(Configs) select self_GET(NewZone.ConfigID);
 private _zoneName = format ["DynAI_Spawner_Zone_%1", _zoneID];
-private _side = _cfg get CFG_SIDE;
+
+// Stringify side as dynai operates with string name of the side, but Arma stringifies it somewhat strange
+private _side = switch (_cfg get CFG_SIDE) do {
+    case west: { "west" };
+    case east: { "east" };
+    case resistance: { "resistance" };
+    case civilian: { "civilian" };
+};
 private _isActive = _activate;
 
 private _mrk = self_GET(NewZone.Marker);
@@ -66,7 +73,7 @@ DBG_1("(__CreateZone)     Behaviour: %1", _behaviour);
 #ifdef DEBUG
     NEW_ZONE_PARAMS = [_zoneName, str _side, _isActive, [_area], _keypoints, _templates, _behaviour];
 #endif
-[_zoneName, str _side, _isActive, [_area], _keypoints, _templates, _behaviour] spawn dzn_fnc_dynai_addNewZone;
+[_zoneName, _side, _isActive, [_area], _keypoints, _templates, _behaviour] spawn dzn_fnc_dynai_addNewZone;
 
 // Save new zone to DynAI Spawner:
 // Copy marker
