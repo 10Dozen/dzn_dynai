@@ -35,7 +35,12 @@ dzn_dynai_complexSkillLevel			=	[
     ,["courage", 0.5]
 ];
 
-// Building list
+// Indoors - behavior settings 
+dzn_dynai_indoor_chanceToAdvance = 33;
+dzn_dynai_indoor_distanceToAdvance = 25;
+dzn_dynai_indoor_distanceToForceAttack = 75;
+
+// Indoors - Building list
 dzn_dynai_allowedBuildingClasses    = ["House", "CBA_buildingPos"];
 dzn_dynai_restrictedBuildingClasses = [
 	/* Altis */
