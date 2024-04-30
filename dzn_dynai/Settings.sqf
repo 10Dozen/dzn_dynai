@@ -36,7 +36,7 @@ dzn_dynai_complexSkillLevel			=	[
 ];
 
 // Indoors - behavior settings 
-dzn_dynai_indoor_chanceToAdvance = 33;
+dzn_dynai_indoor_chanceToAdvance = 10;
 dzn_dynai_indoor_distanceToAdvance = 25;
 dzn_dynai_indoor_distanceToForceAttack = 75;
 
