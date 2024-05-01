@@ -13,14 +13,14 @@ item8[] = {"Init_Unit",2,250,-25.000000,-725.000000,75.000000,-675.000000,0.0000
 item9[] = {"Infantry",4,218,-300.000000,-725.000000,-200.000000,-675.000000,1.000000,"Infantry"};
 item10[] = {"Vehicle",4,218,325.000000,-725.000000,425.000000,-675.000000,0.000000,"Vehicle"};
 item11[] = {"Create_Infantry",2,250,-300.000000,-500.000000,-200.000000,-450.000000,0.000000,"Create Infantry"};
-item12[] = {"Indoor",4,218,-425.000000,-400.000000,-325.000000,-350.000000,3.000000,"Indoor"};
-item13[] = {"Apply_indoor_beh",2,250,-425.000000,-325.000000,-325.000000,-275.000000,0.000000,"Apply indoor" \n "behavior"};
-item14[] = {"In_Vehicle",4,218,-300.000000,-400.000000,-200.000000,-350.000000,2.000000,"In Vehicle"};
-item15[] = {"Assign__in_Vehic",2,250,-300.000000,-325.000000,-200.000000,-275.000000,0.000000,"Assign " \n "in Vehicle"};
-item16[] = {"Patrol",4,218,-175.000000,-400.000000,-75.000000,-350.000000,0.000000,"Patrol"};
-item17[] = {"Assign_Patrol",2,250,-175.000000,-325.000000,-75.000000,-275.000000,0.000000,"Assign Patrol"};
-item18[] = {"Unit_Completed",4,218,-75.000000,-200.000000,25.000000,-150.000000,0.000000,"Unit" \n "Completed"};
-item19[] = {"Go_to_Next_Unit",2,250,-75.000000,-125.000000,25.000000,-75.000000,0.000000,"Go to Next Unit"};
+item12[] = {"Indoor",4,218,-500.000000,-400.000000,-400.000000,-350.000000,10.000000,"Indoor"};
+item13[] = {"Apply_indoor_beh",2,250,-500.000000,-325.000000,-400.000000,-275.000000,0.000000,"Apply indoor" \n "behavior"};
+item14[] = {"In_Vehicle",4,218,-375.000000,-400.000000,-275.000000,-350.000000,9.000000,"In Vehicle"};
+item15[] = {"Assign__in_Vehic",2,250,-375.000000,-325.000000,-275.000000,-275.000000,0.000000,"Assign " \n "in Vehicle"};
+item16[] = {"Patrol",4,218,-250.000000,-400.000000,-150.000000,-350.000000,0.000000,"Patrol"};
+item17[] = {"Assign_Patrol",2,250,-250.000000,-325.000000,-150.000000,-275.000000,0.000000,"Assign Patrol"};
+item18[] = {"Unit_Completed",4,218,-25.000000,-200.000000,75.000000,-150.000000,0.000000,"Unit" \n "Completed"};
+item19[] = {"Go_to_Next_Unit",2,250,-25.000000,-125.000000,75.000000,-75.000000,0.000000,"Go to Next Unit"};
 item20[] = {"",7,210,-529.000061,-804.000000,-520.999939,-796.000000,0.000000,""};
 item21[] = {"Init_Vehicle",2,250,325.000000,-650.000000,425.000000,-600.000000,0.000000,"Init Vehicle"};
 item22[] = {"",7,210,-529.000000,-104.000000,-521.000000,-96.000000,0.000000,""};
@@ -31,12 +31,12 @@ item26[] = {"Patrol",4,218,325.000000,-400.000000,425.000000,-350.000000,0.00000
 item27[] = {"Road_Hold",4,218,575.000000,-400.000000,675.000000,-350.000000,4.000000,"Road Hold"};
 item28[] = {"Apply_Hold_Behav",2,250,75.000000,-325.000000,175.000000,-275.000000,0.000000,"Apply Hold" \n "Behavior"};
 item29[] = {"Apply__Road_Hold",2,250,575.000000,-325.000000,675.000000,-275.000000,0.000000,"Apply " \n "Road Hold" \n "Behavior"};
-item30[] = {"Apply_Advance_Be",2,4346,200.000000,-325.000000,300.000000,-275.000000,0.000000,"Apply Advance" \n "Behavior"};
+item30[] = {"Apply_Advance_Be",2,250,200.000000,-325.000000,300.000000,-275.000000,0.000000,"Apply Advance" \n "Behavior"};
 item31[] = {"Apply_Patrol_Beh",2,250,325.000000,-325.000000,425.000000,-275.000000,0.000000,"Apply Patrol" \n "Behavior"};
 item32[] = {"Apply__Road_Patrol",2,250,450.000000,-325.000000,550.000000,-275.000000,0.000000,"Apply " \n "Road Patrol" \n "Behavior"};
-item33[] = {"",7,210,-134.000000,-179.000000,-116.000000,-171.000000,0.000000,""};
-item34[] = {"",7,210,-259.000000,-179.000000,-241.000000,-171.000000,0.000000,""};
-item35[] = {"",7,210,-384.000000,-179.000000,-365.999969,-171.000000,0.000000,""};
+item33[] = {"",7,210,-209.000000,-179.000000,-191.000000,-171.000000,0.000000,""};
+item34[] = {"",7,210,-334.000000,-179.000000,-316.000000,-171.000000,0.000000,""};
+item35[] = {"",7,210,-459.000000,-179.000000,-440.999969,-171.000000,0.000000,""};
 item36[] = {"",7,210,116.000000,-179.000000,134.000000,-171.000000,0.000000,""};
 item37[] = {"",7,210,241.000000,-179.000000,259.000000,-171.000000,0.000000,""};
 item38[] = {"",7,210,366.000000,-179.000000,384.000000,-171.000000,0.000000,""};
@@ -55,6 +55,9 @@ item50[] = {"Get_Road_Positio",2,250,450.000000,-575.000000,550.000000,-525.0000
 item51[] = {"Create_Vehicle",2,250,325.000000,-500.000000,425.000000,-450.000000,0.000000,"Create Vehicle"};
 item52[] = {"_",4,218,325.000000,-575.000000,425.000000,-525.000000,0.000000,""};
 item53[] = {"",7,210,616.000000,-179.000000,633.999939,-171.000000,0.000000,""};
+item54[] = {"Entrenched",4,218,-125.000000,-400.000000,-25.000000,-350.000000,10.000000,"Entrenched"};
+item55[] = {"Apply_entrenched",2,4346,-125.000000,-325.000000,-25.000000,-275.000000,0.000000,"Apply entrenched" \n " behavior"};
+item56[] = {"",7,210,-79.000000,-179.000000,-71.000000,-171.000000,0.000000,""};
 link0[] = {0,1};
 link1[] = {1,2};
 link2[] = {2,3};
@@ -70,57 +73,61 @@ link11[] = {10,21};
 link12[] = {11,12};
 link13[] = {11,14};
 link14[] = {11,16};
-link15[] = {12,13};
-link16[] = {13,35};
-link17[] = {14,15};
-link18[] = {15,34};
-link19[] = {16,17};
-link20[] = {17,33};
-link21[] = {18,19};
-link22[] = {19,22};
-link23[] = {20,43};
-link24[] = {21,47};
-link25[] = {21,48};
-link26[] = {22,20};
-link27[] = {23,28};
-link28[] = {24,30};
-link29[] = {25,32};
-link30[] = {26,31};
-link31[] = {27,29};
-link32[] = {28,36};
-link33[] = {29,53};
-link34[] = {30,37};
-link35[] = {31,38};
-link36[] = {32,39};
-link37[] = {33,18};
-link38[] = {34,33};
-link39[] = {35,34};
-link40[] = {36,18};
-link41[] = {37,36};
-link42[] = {38,37};
-link43[] = {39,38};
-link44[] = {40,41};
-link45[] = {41,5};
-link46[] = {41,42};
-link47[] = {42,44};
-link48[] = {43,7};
-link49[] = {43,40};
-link50[] = {44,3};
-link51[] = {44,45};
-link52[] = {45,46};
-link53[] = {47,49};
-link54[] = {48,50};
-link55[] = {49,52};
-link56[] = {50,52};
-link57[] = {51,23};
-link58[] = {51,24};
-link59[] = {51,25};
-link60[] = {51,26};
-link61[] = {51,27};
-link62[] = {52,51};
-link63[] = {53,39};
-globals[] = {0.000000,0,0,0,0,640,480,2,320,6316128,1,-542.877930,775.888550,123.774292,-1098.329102,955,885,1};
-window[] = {2,-1,-1,-1,-1,925,200,1461,200,3,973};
+link15[] = {11,54};
+link16[] = {12,13};
+link17[] = {13,35};
+link18[] = {14,15};
+link19[] = {15,34};
+link20[] = {16,17};
+link21[] = {17,33};
+link22[] = {18,19};
+link23[] = {19,22};
+link24[] = {20,43};
+link25[] = {21,47};
+link26[] = {21,48};
+link27[] = {22,20};
+link28[] = {23,28};
+link29[] = {24,30};
+link30[] = {25,32};
+link31[] = {26,31};
+link32[] = {27,29};
+link33[] = {28,36};
+link34[] = {29,53};
+link35[] = {30,37};
+link36[] = {31,38};
+link37[] = {32,39};
+link38[] = {33,56};
+link39[] = {34,33};
+link40[] = {35,34};
+link41[] = {36,18};
+link42[] = {37,36};
+link43[] = {38,37};
+link44[] = {39,38};
+link45[] = {40,41};
+link46[] = {41,5};
+link47[] = {41,42};
+link48[] = {42,44};
+link49[] = {43,7};
+link50[] = {43,40};
+link51[] = {44,3};
+link52[] = {44,45};
+link53[] = {45,46};
+link54[] = {47,49};
+link55[] = {48,50};
+link56[] = {49,52};
+link57[] = {50,52};
+link58[] = {51,23};
+link59[] = {51,24};
+link60[] = {51,25};
+link61[] = {51,26};
+link62[] = {51,27};
+link63[] = {52,51};
+link64[] = {53,39};
+link65[] = {54,55};
+link66[] = {55,56};
+link67[] = {56,18};
+globals[] = {0.000000,0,0,0,0,640,480,2,325,6316128,1,-694.096313,417.547302,129.982788,-1476.371216,573,828,1};
+window[] = {2,-1,-1,-1,-1,933,2128,3618,208,3,591};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -132,7 +139,10 @@ class FSM
                 {
                         name = "Start";
                         itemno = 0;
-                        init = /*%FSM<STATEINIT""">*/"params [""_name"", ""_side"", ""_isActive"", ""_area"", ""_wps"", ""_refUnits"", ""_behavior"", """", ""_zoneBuildings"",""_vehiclePoints""];" \n
+                        init = /*%FSM<STATEINIT""">*/"params [" \n
+                         "   ""_name"", ""_side"", ""_isActive"", ""_area"", ""_wps"", ""_refUnits"", " \n
+                         "   ""_behavior"", """", ""_zoneBuildings"",""_vehiclePoints"", ""_zoneCbaPositions""" \n
+                         "];" \n
                          "" \n
                          "private _zoneRoads = _area call dzn_fnc_getLocationRoads;" \n
                          "private _hasRoads = !(_zoneRoads isEqualTo []);" \n
@@ -324,15 +334,31 @@ class FSM
                          "	_unit setSkill (_groupSkill select 1);" \n
                          "};	" \n
                          "" \n
-                         "if !(typename _gear == ""STRING"" && {_gear == """"} ) then { [_unit, _gear] spawn dzn_fnc_gear_assignKit; };"/*%FSM</STATEINIT""">*/;
+                         "if !(typename _gear == ""STRING"" && {_gear == """"} ) then { [_unit, _gear] spawn dzn_fnc_gear_assignKit; };" \n
+                         ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
+                                /*%FSM<LINK "Entrenched">*/
+                                class Entrenched
+                                {
+                                        itemno = 54;
+                                        priority = 10.000000;
+                                        to="Apply_entrenched";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"!(_assigned isEqualTo []) " \n
+                                         "&& (" \n
+                                         "	(typename (_assigned select 0) == ""STRING"")" \n
+                                         "	&& { toLower(_assigned select 0) == ""entrenched"" }" \n
+                                         ")"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
                                 /*%FSM<LINK "Indoor">*/
                                 class Indoor
                                 {
                                         itemno = 12;
-                                        priority = 3.000000;
+                                        priority = 10.000000;
                                         to="Apply_indoor_beh";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
                                         condition=/*%FSM<CONDITION""">*/"!(_assigned isEqualTo []) " \n
@@ -347,7 +373,7 @@ class FSM
                                 class In_Vehicle
                                 {
                                         itemno = 14;
-                                        priority = 2.000000;
+                                        priority = 9.000000;
                                         to="Assign__in_Vehic";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
                                         condition=/*%FSM<CONDITION""">*/"!(_assigned isEqualTo []) " \n
@@ -376,10 +402,10 @@ class FSM
                         itemno = 13;
                         init = /*%FSM<STATEINIT""">*/"if (isNil {_assigned select 1}) then {										" \n
                          "	// Default houses" \n
-                         "	[_unit, _zoneBuildings] spawn dzn_fnc_assignInBuilding;" \n
+                         "	[_unit, _zoneBuildings] call dzn_fnc_assignInBuilding;" \n
                          "} else {" \n
                          "	// Specified houses" \n
-                         "	[_unit, _zoneBuildings, _assigned select 1] spawn dzn_fnc_assignInBuilding;" \n
+                         "	[_unit, _zoneBuildings, _assigned select 1] call dzn_fnc_assignInBuilding;" \n
                          "};" \n
                          "" \n
                          "_grp setVariable [""dzn_dynai_wpSet"", true];" \n
@@ -979,6 +1005,33 @@ class FSM
                                         to="Apply_Patrol_Beh";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
                                         condition=/*%FSM<CONDITION""">*/"(true)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Apply_entrenched">*/
+                class Apply_entrenched
+                {
+                        name = "Apply_entrenched";
+                        itemno = 55;
+                        init = /*%FSM<STATEINIT""">*/"[_unit, _zoneCbaPositions] call dzn_fnc_assignInBuilding;" \n
+                         "" \n
+                         "_grp setVariable [""dzn_dynai_wpSet"", true];" \n
+                         "" \n
+                         "[_unit, ""entrenched""] call dzn_fnc_dynai_addUnitBehavior;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Unit_Completed">*/
+                                class Unit_Completed
+                                {
+                                        itemno = 18;
+                                        priority = 0.000000;
+                                        to="Go_to_Next_Unit";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"time > _unitTimeout"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
                                 /*%FSM</LINK>*/

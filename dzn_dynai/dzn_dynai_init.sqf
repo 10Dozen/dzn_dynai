@@ -1,5 +1,5 @@
 // **************************
-// 	DZN DYNAI v1.3
+// 	DZN DYNAI v1.3.1.2
 //
 //	Initialized when:
 //	{ !isNil "dzn_dynai_initialized" }
@@ -8,14 +8,16 @@
 //	{ !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } }
 //
 // **************************
-dzn_dynai_version = "v1.3.1";
+dzn_dynai_version = "v1.3.1.2";
 
 // **************************
 //	SETTINGS
 // **************************
 call compile preProcessFileLineNumbers "dzn_dynai\Settings.sqf";
 
-dzn_dynai_complexSkill = [ 
+dzn_dynai_entrenched_settings = [dzn_dynai_entrenched_settings, "PARSE_LINE"] call dzn_fnc_parseSFML;
+
+dzn_dynai_complexSkill = [
 	!dzn_dynai_UseSimpleSkill
 	, if (dzn_dynai_UseSimpleSkill) then { dzn_dynai_overallSkillLevel } else { dzn_dynai_complexSkillLevel }
 ];
@@ -71,7 +73,7 @@ call dzn_fnc_dynai_startZones;
 //	GROUP RESPONSES SYSTEM
 // **************************
 
-if (dzn_dynai_allowGroupResponse) then { 
+if (dzn_dynai_allowGroupResponse) then {
 	call dzn_fnc_dynai_processUnitBehaviours;
 	[] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm";
 };
@@ -89,5 +91,5 @@ call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sq
 // **************************
 //	INITIALIZED
 // **************************
-dzn_dynai_initialized = true; 
+dzn_dynai_initialized = true;
 publicVariable "dzn_dynai_initialized";

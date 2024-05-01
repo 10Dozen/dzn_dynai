@@ -15,7 +15,7 @@ dzn_dynai_makeZoneAlertOnRequest		= true;	// Change behavior of all groups once 
 // Behavior settings
 dzn_dynai_allowVehicleHoldBehavior		= true;
 
-/*	
+/*
 	Skill:
 	if dzn_dynai_UseSimpleSkill == true:  dzn_dynai_overallSkillLevel is used do determine skill.
 	If false -- complex skills are used. More info about complex skills https://community.bistudio.com/wiki/AI_Sub-skills
@@ -35,10 +35,19 @@ dzn_dynai_complexSkillLevel			=	[
     ,["courage", 0.5]
 ];
 
-// Indoors - behavior settings 
-dzn_dynai_indoor_chanceToAdvance = 10;
+
+// Indoors - behavior settings
+dzn_dynai_indoor_chanceToAdvance = 33;
 dzn_dynai_indoor_distanceToAdvance = 25;
 dzn_dynai_indoor_distanceToForceAttack = 75;
+
+// Entrenched - behavior settings
+dzn_dynai_entrenched_settings = "
+general: (distanceToTarget: 75, distanceToAttack: 25),
+turning: (allowed: true, angle: 90, distance: 400),
+stance: (default: AUTO, combat: MIDDLE),
+advance: (allowed: true, distance: 7, chance: 50)";
+
 
 // Indoors - Building list
 dzn_dynai_allowedBuildingClasses    = ["House", "CBA_buildingPos"];
