@@ -50,7 +50,7 @@ advance: (allowed: true, distance: 7, chance: 50)";
 
 
 // Indoors - Building list
-dzn_dynai_allowedBuildingClasses    = ["House", "CBA_buildingPos"];
+dzn_dynai_allowedBuildingClasses    = ["House"]; // ["House", "CBA_buildingPos"];
 dzn_dynai_restrictedBuildingClasses = [
 	/* Altis */
 	"Land_Metal_Shed_F","Land_Slum_House01_F","Land_Slum_House03_F","Land_u_Addon_01_V1_F","Land_Chapel_Small_V1_F","Land_i_Garage_V1_F","Land_LightHouse_F"
