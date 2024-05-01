@@ -43,6 +43,12 @@ var VEHICLE_BEHAVIOUR = [
 	, ["Road Hold (Front)", '"Vehicle Road Frontal Hold"']
 ];
 
+var INFANTRY_BEHAVIOR = [
+	["Indoors", '"indoors"'],
+	["Entrenched", '"entrenched"'],
+	["Patrol", '']
+];
+
 /*
  *	Zone
  *
@@ -273,6 +279,10 @@ var ZoneItem = function () {
 						mode = '["indoors", [' + unit.restrictedHouses + ']]';
 					};
 					break;
+				case "Entrenched": {
+					mode = '["entrenched"]';
+					break;
+				};
 				case "In vehicle":
 					mode = '[' + unit.vehicleId + ',"' + unit.vehicleRole + '"]';
 					break;
@@ -633,6 +643,7 @@ var UnitItem = function (id, classname, kit, mode, restrictedHouses, vehicleId, 
 		+ '<select class="input-select unit-mode">'
 			+ '<option>Patrol</option>'
 			+ '<option>Indoors</option>'
+			+ '<option>Entrenched</option>'
 			+ '<option>In vehicle</option>'
 		+ '</select><div class="btn-short inline remove-unit" title="Remove unit">✖</div>'
 		+ '<div class="btn-short inline copy-unit" title="Copy unit">C</div></div>'
@@ -666,6 +677,8 @@ var UnitItem = function (id, classname, kit, mode, restrictedHouses, vehicleId, 
 				$(this.$form).append(elementHTML);
 				this.additionalFieldsOn = true;
                 break;
+		    case "Entrenched":
+				break;
 			case "In vehicle":
 				var classHTML = "unit-invehicle-fields";
                 var elementHTML = '<div class="unit-additional-fields '
@@ -983,7 +996,7 @@ var Defaults = function () {
 var Export = function () {
 	this.$form = $("<div class='defaults-popup'>"
 		+ '<div class="xpopup-header"><span style="padding: 2px 20px">Dynai Zone Config (SQF)</span></div>'
-		+ '<div class="xpopup-line config-line"></div>'
+		+ '<div class="xpopup-line config-line"><textarea disabled="true" rows=20></textarea></div>'
 		+ '<div class="xpopup-wrapper">'
 		+ '<span  style="float:right"><div class="btn inline defaults-save">✓ OK</div></span>'
 		+ '</div>'
@@ -1007,9 +1020,9 @@ var Export = function () {
 		});
 	};
 	this.showConfig = function () {
-		var config = Zone.getConfig();
+		var config = Zone.getConfig().replaceAll('<br/>', '\n').replaceAll('<br />', '\n');
 
-		$('.xpopup-line').html(config);
+		$('.xpopup-line textarea').html(config);
 	};
 
 

@@ -1,0 +1,435 @@
+/*%FSM<COMPILE "E:\GMZ\STEAM\SteamApps\common\Arma 3 Tools\FSMEditor\scriptedFSM.cfg, dzn_dynai_entrenchedBehavior">*/
+/*%FSM<HEAD>*/
+/*
+item0[] = {"Start",0,250,-50.000000,-1450.000000,50.000000,-1400.000000,0.000000,"Start"};
+item1[] = {"true",4,218,-50.000000,-1225.000000,50.000000,-1175.000000,0.000000,"true"};
+item2[] = {"Stop_and_Wait",2,250,-50.000000,-1150.000000,50.000000,-1100.000000,0.000000,"Stop and Wait"};
+item3[] = {"Wait_for_Enemies",4,218,-50.000000,-1050.000000,50.000000,-1000.000000,5.000000,"Wait for Enemies"};
+item4[] = {"Target_",2,250,-50.000000,-950.000000,50.000000,-900.000000,0.000000,"Target!"};
+item5[] = {"Near_Target",4,218,-50.000000,-875.000000,50.000000,-825.000000,5.000000,"Near Target"};
+item6[] = {"Watch_and_Move",2,250,75.000000,-800.000000,175.000000,-750.000000,0.000000,"Watch and Move"};
+item7[] = {"Timer",4,218,-50.000000,-650.000000,50.000000,-600.000000,0.000000,"Timer"};
+item8[] = {"Wait_for_turn",4,218,75.000000,-1225.000000,175.000000,-1175.000000,0.000000,"Wait for turn"};
+item9[] = {"Turn_around",2,4346,-50.000000,-1300.000000,50.000000,-1250.000000,0.000000,"Turn around"};
+item10[] = {"not_alive",4,218,-200.000000,-1150.000000,-100.000000,-1100.000000,50.000000,"not alive"};
+item11[] = {"End",1,250,-325.000000,-1150.000000,-225.000000,-1100.000000,0.000000,"End"};
+item12[] = {"Watch_and_Fire",2,250,-50.000000,-800.000000,50.000000,-750.000000,0.000000,"Watch and Fire"};
+item13[] = {"Close_Target",4,218,75.000000,-875.000000,175.000000,-825.000000,10.000000,"Close Target"};
+item14[] = {"",7,210,358.500000,-629.000000,366.500000,-621.000000,0.000000,""};
+item15[] = {"",7,210,358.500000,-929.000000,366.500000,-921.000000,0.000000,""};
+item16[] = {"Far_Target",4,218,-175.000000,-875.000000,-75.000000,-825.000000,1.000000,"Far Target"};
+item17[] = {"Watch_and__Targe",2,250,-175.000000,-800.000000,-75.000000,-750.000000,0.000000,"Watch and " \n "Target"};
+item18[] = {"Is_Advancing",4,218,200.000000,-800.000000,300.000000,-750.000000,5.000000,"Is Advancing"};
+item19[] = {"End_1",1,250,200.000000,-725.000000,300.000000,-675.000000,0.000000,"End"};
+item20[] = {"true",4,218,-50.000000,-1375.000000,50.000000,-1325.000000,0.000000,"true"};
+link0[] = {0,20};
+link1[] = {1,2};
+link2[] = {2,3};
+link3[] = {2,8};
+link4[] = {2,10};
+link5[] = {3,4};
+link6[] = {4,5};
+link7[] = {4,10};
+link8[] = {4,13};
+link9[] = {4,16};
+link10[] = {5,12};
+link11[] = {6,7};
+link12[] = {6,18};
+link13[] = {7,14};
+link14[] = {8,9};
+link15[] = {9,1};
+link16[] = {10,11};
+link17[] = {12,7};
+link18[] = {13,6};
+link19[] = {14,15};
+link20[] = {15,4};
+link21[] = {16,17};
+link22[] = {17,7};
+link23[] = {18,19};
+link24[] = {20,9};
+globals[] = {0.000000,0,0,0,0,640,480,1,258,6316128,1,-552.874939,349.602051,-407.139160,-1530.821289,703,884,1};
+window[] = {2,-1,-1,-1,-1,1039,514,1628,278,3,721};
+*//*%FSM</HEAD>*/
+class FSM
+{
+        fsmName = "dzn_dynai_entrenchedBehavior";
+        class States
+        {
+                /*%FSM<STATE "Start">*/
+                class Start
+                {
+                        name = "Start";
+                        itemno = 0;
+                        init = /*%FSM<STATEINIT""">*/"private[" \n
+                         "    ""_unit"",""_settings"",""_target"",""_dist"",""_debug""," \n
+                         "    ""_watchTarget"", ""_unitPos"", ""_isAdvancing""," \n
+                         "    ""_watchHandler""" \n
+                         "];" \n
+                         "" \n
+                         "_unit = _this select 0;" \n
+                         "_settings = +(_this select 1);" \n
+                         "_debug = _this select 2;" \n
+                         "" \n
+                         "_isAdvancing = false;" \n
+                         "" \n
+                         "private _posDirection = random 360;" \n
+                         "private _nearestCbaPoses = nearestObjects [_unit, [""CBA_BuildingPos""], 1];" \n
+                         "if (_nearestCbaPoses isNotEqualTo []) then {" \n
+                         "   private _cbaPos = _nearestCbaPoses # 0;" \n
+                         "" \n
+                         "   _posDirection = getDir _cbaPos;" \n
+                         "   private _customSettingLine = _cbaPos getVariable [""dzn_dynai_entrenched"", """"];" \n
+                         "   if (_customSettingLine != """") then {" \n
+                         "      private _customSettings = [_customSettingLine, ""PARSE_LINE""] call dzn_fnc_parseSFML;" \n
+                         "      {" \n
+                         "          (_settings get _x) merge [(_customSettings get _x), true];" \n
+                         "      } forEach [""general"", ""turning"", ""stance"", ""advance""];" \n
+                         "   };" \n
+                         "};" \n
+                         "" \n
+                         "private _turningAllowed = _settings get ""turning"" get ""allowed"";" \n
+                         "private _advanceAllowed = _settings get ""advance"" get ""allowed"";" \n
+                         "private _watchRight = true;" \n
+                         "" \n
+                         "_unit disableAI ""PATH"";" \n
+                         "_unit setDir _posDirection;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "true">*/
+                                class true
+                                {
+                                        itemno = 20;
+                                        priority = 0.000000;
+                                        to="Turn_around";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"true"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Stop_and_Wait">*/
+                class Stop_and_Wait
+                {
+                        name = "Stop_and_Wait";
+                        itemno = 2;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""[Entrenched] Stop and wait""; };" \n
+                         "" \n
+                         "" \n
+                         "doStop _unit;" \n
+                         "_unit setUnitPos (_settings get ""stance"" get ""default"");" \n
+                         "" \n
+                         "" \n
+                         "_timer = time + 3 + random(2);"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "not_alive">*/
+                                class not_alive
+                                {
+                                        itemno = 10;
+                                        priority = 50.000000;
+                                        to="End";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"!alive _unit " \n
+                                         "||" \n
+                                         "!(_unit getVariable [""dzn_dynai_isIndoor"", false])"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Wait_for_Enemies">*/
+                                class Wait_for_Enemies
+                                {
+                                        itemno = 3;
+                                        priority = 5.000000;
+                                        to="Target_";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(time > _timer) && {_unit call BIS_fnc_enemyDetected}"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Wait_for_turn">*/
+                                class Wait_for_turn
+                                {
+                                        itemno = 8;
+                                        priority = 0.000000;
+                                        to="Turn_around";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(time > _longTimer)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Target_">*/
+                class Target_
+                {
+                        name = "Target_";
+                        itemno = 4;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""[Entrenched] Target!""; };" \n
+                         "" \n
+                         "terminate _watchHandler;" \n
+                         "" \n
+                         "_unitPos = getPosASL _unit;" \n
+                         "_target = _unit findNearestEnemy _unitPos;" \n
+                         "_dist = _unitPos distance (getPosASL _target);" \n
+                         "" \n
+                         "if (stance  _unit == ""PRONE"") then {" \n
+                         "    _unit setUnitPos (_settings get ""stance"" get ""combat"");" \n
+                         "};" \n
+                         "" \n
+                         "_timer = time + 2;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "not_alive">*/
+                                class not_alive
+                                {
+                                        itemno = 10;
+                                        priority = 50.000000;
+                                        to="End";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"!alive _unit " \n
+                                         "||" \n
+                                         "!(_unit getVariable [""dzn_dynai_isIndoor"", false])"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Close_Target">*/
+                                class Close_Target
+                                {
+                                        itemno = 13;
+                                        priority = 10.000000;
+                                        to="Watch_and_Move";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"_dist < (_settings get ""general"" get ""distanceToAttack"")" \n
+                                         ""/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Near_Target">*/
+                                class Near_Target
+                                {
+                                        itemno = 5;
+                                        priority = 5.000000;
+                                        to="Watch_and_Fire";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"_dist < (_settings get ""general"" get ""distanceToTarget"")"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Far_Target">*/
+                                class Far_Target
+                                {
+                                        itemno = 16;
+                                        priority = 1.000000;
+                                        to="Watch_and__Targe";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"_dist >= (_settings get ""general"" get ""distanceToTarget"")"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Watch_and_Move">*/
+                class Watch_and_Move
+                {
+                        name = "Watch_and_Move";
+                        itemno = 6;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""[Entrenched] Watch and move!""; };" \n
+                         "" \n
+                         "(group _unit) setCombatMode ""RED"";" \n
+                         "_unit doFire _target;" \n
+                         "" \n
+                         "" \n
+                         "if (_debug) then { player sideChat format [" \n
+                         "    ""[Entrenched] Watch and move - charge alloewd = %1, in range = %2, chance = %3!""," \n
+                         "		_advanceAllowed," \n
+                         "     (_settings get ""advance"" get ""distance"")," \n
+                         "     (_settings get ""advance"" get ""chance"")" \n
+                         "    ]; " \n
+                         "};" \n
+                         "" \n
+                         "" \n
+                         "if (" \n
+                         "    _advanceAllowed && " \n
+                         "    _dist <= (_settings get ""advance"" get ""distance"") &&" \n
+                         "    {" \n
+                         "       (random 100) < (_settings get ""advance"" get ""chance"")" \n
+                         "    }" \n
+                         ") then {" \n
+                         "     if (_debug) then { player sideChat  ""[Entrenched] Watch and move - charge!""; };" \n
+                         "    _unit enableAI ""PATH"";" \n
+                         "    _unit setUnitPos ""AUTO"";" \n
+                         "    _unit doMove (getPosASL _target);" \n
+                         "    _isAdvancing = true;" \n
+                         "};" \n
+                         "" \n
+                         ""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Is_Advancing">*/
+                                class Is_Advancing
+                                {
+                                        itemno = 18;
+                                        priority = 5.000000;
+                                        to="End_1";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"_isAdvancing"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Timer">*/
+                                class Timer
+                                {
+                                        itemno = 7;
+                                        priority = 0.000000;
+                                        to="Target_";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"time > _timer"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Turn_around">*/
+                class Turn_around
+                {
+                        name = "Turn_around";
+                        itemno = 9;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""[Entrenched] Turn around""; };" \n
+                         "" \n
+                         "" \n
+                         "private _watchDir = _posDirection;" \n
+                         "if (_turningAllowed) then {" \n
+                         "   if (_debug) then { player sideChat  ""[Entrenched] Turn around - look another side""; };" \n
+                         "   _watchRight = !_watchRight;" \n
+                         "   _watchDir = _posDirection + (_settings get ""turning"" get ""angle"") * ([-1, 1] select _watchRight) * selectRandom [0.1, 0.5, 1];" \n
+                         "};" \n
+                         "" \n
+                         "private _watchTime = 10 + random(20);" \n
+                         "" \n
+                         "_watchHandler = [_unit, _watchDir, (_settings get ""turning"" get ""distance""), _watchTime] spawn {" \n
+                         "    params [""_u"", ""_dir"", ""_maxDistance"", ""_watchTime""];" \n
+                         "    " \n
+                         "    for ""_dist"" from 10 to _maxDistance step _maxDistance/10 do {" \n
+                         "        _u doWatch (_u getPos [_dist, _dir]);" \n
+                         "        sleep (_watchTime / 10);" \n
+                         "    };" \n
+                         "};" \n
+                         "" \n
+                         "_longTimer = time + _watchTime + 2;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "true">*/
+                                class true
+                                {
+                                        itemno = 1;
+                                        priority = 0.000000;
+                                        to="Stop_and_Wait";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"true" \n
+                                         ""/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "End">*/
+                class End
+                {
+                        name = "End";
+                        itemno = 11;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""[Entrenched] Dead!""; };" \n
+                         ""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Watch_and_Fire">*/
+                class Watch_and_Fire
+                {
+                        name = "Watch_and_Fire";
+                        itemno = 12;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""[Entrenched] Watch and fire!""; };" \n
+                         "" \n
+                         "_unit doTarget _target;" \n
+                         "_unit doFire _target;" \n
+                         ""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Timer">*/
+                                class Timer
+                                {
+                                        itemno = 7;
+                                        priority = 0.000000;
+                                        to="Target_";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"time > _timer"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Watch_and__Targe">*/
+                class Watch_and__Targe
+                {
+                        name = "Watch_and__Targe";
+                        itemno = 17;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""[Entrenched] Watch and target!""; };" \n
+                         "" \n
+                         "_unit doWatch _target;" \n
+                         "_unit doTarget _target;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Timer">*/
+                                class Timer
+                                {
+                                        itemno = 7;
+                                        priority = 0.000000;
+                                        to="Target_";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"time > _timer"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "End_1">*/
+                class End_1
+                {
+                        name = "End_1";
+                        itemno = 19;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { player sideChat  ""[Entrenched] Advancing!""; };" \n
+                         "" \n
+                         "" \n
+                         "_unit setVariable [""dzn_dynai_isIndoor"", false];"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                        };
+                };
+                /*%FSM</STATE>*/
+        };
+        initState="Start";
+        finalStates[] =
+        {
+                "End",
+                "End_1",
+        };
+};
+/*%FSM</COMPILE>*/

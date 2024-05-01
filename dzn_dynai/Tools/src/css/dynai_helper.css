@@ -212,6 +212,11 @@ body {
 	white-space: pre;
 }
 
+.xpopup-line textarea {
+	height: 95%;
+    width: 100%;
+}
+
 .defaults-popup {
 	position: absolute;		
 	top: 100px;
