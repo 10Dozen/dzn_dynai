@@ -46,7 +46,7 @@ dzn_dynai_entrenched_settings = "
 general: (distanceToTarget: 75, distanceToAttack: 25),
 turning: (allowed: true, angle: 90, distance: 400),
 stance: (default: AUTO, combat: MIDDLE),
-advance: (allowed: true, distance: 7, chance: 50)";
+advance: (allowed: true, distance: 7, chance: 10)";
 
 
 // Indoors - Building list
