@@ -708,9 +708,9 @@ var UnitItem = function (id, classname, kit, mode, restrictedHouses, vehicleId, 
 		this.kit = $('#group-units-' + this.id).find('.unit-kit').val();
 		this.mode = $('#group-units-' + this.id).find('.unit-mode').val();
 
-		this.restrictedHouses = null;
-		this.vehicleId = null;
-		this.vehicleRole = null;
+		this.restrictedHouses = undefined;
+		this.vehicleId = undefined;
+		this.vehicleRole = undefined;
 
 		if (this.additionalFieldsOn) {
 			switch (this.mode) {
