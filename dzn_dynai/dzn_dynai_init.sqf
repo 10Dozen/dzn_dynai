@@ -1,5 +1,5 @@
 // **************************
-// 	DZN DYNAI v1.3.1.2
+// 	DZN DYNAI v1.3.1.3
 //
 //	Initialized when:
 //	{ !isNil "dzn_dynai_initialized" }
@@ -8,8 +8,12 @@
 //	{ !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } }
 //
 // **************************
-dzn_dynai_version = "v1.3.1.2";
+#define LOG_ diag_log text format [
+#define EOL ]
 
+dzn_dynai_version = "v1.3.1.3";
+
+LOG_ "[dzn_dynai] (init) Start initialization. Version: %1.", dzn_dynai_version EOL;
 // **************************
 //	SETTINGS
 // **************************
@@ -28,7 +32,8 @@ dzn_dynai_allowGroupResponse = (["par_dynai_enableGroupResponse", 1] call BIS_fn
 // **************************
 
 // Exit if PLAYER or SERVER when Headless is initialized
-if ( (hasInterface && !isServer) || (!isNil "HC" && isServer) ) exitWith {
+if ( isMultiplayer && { (!isServer && hasInterface) || (isServer && !isNil "HC") } ) exitWith {
+    LOG_ "[dzn_dynai] (init) Running on client machine." EOL;
 	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
 	// If a player and no Zeus needed - exits script
 	if (dzn_dynai_enableZeusCompatibility) then {
@@ -39,11 +44,13 @@ if ( (hasInterface && !isServer) || (!isNil "HC" && isServer) ) exitWith {
 
 dzn_dynai_owner = clientOwner;
 publicVariable "dzn_dynai_owner";
+LOG_ "[dzn_dynai] (init) Running on server/headless machine detected. OwnerID: %1", dzn_dynai_owner EOL;
 
 dzn_dynai_initialized = false;
 waitUntil dzn_dynai_initCondition;
 
 // Initialization of dzn_gear
+LOG_ "[dzn_dynai] (init) Compilation of the zones configs and functions" EOL;
 waitUntil { !isNil "dzn_gear_initDone" && { dzn_gear_initDone } };
 
 // Initialization of dzn_dynai
@@ -64,16 +71,18 @@ if (dzn_dynai_enableZeusCompatibility) then {
 //	DZN DYANI START
 // **************************
 waitUntil { time > dzn_dynai_preInitTimeout };
+LOG_ "[dzn_dynai] (init) Starting zones initialization (found %1 zone(s) in Zones.sqf).", count dzn_dynai_zoneProperties EOL;
 call dzn_fnc_dynai_initZones;
 
 waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout) };
+LOG_ "[dzn_dynai] (init) Starting active zones." EOL;
 call dzn_fnc_dynai_startZones;
 
 // **************************
 //	GROUP RESPONSES SYSTEM
 // **************************
-
 if (dzn_dynai_allowGroupResponse) then {
+    LOG_ "[dzn_dynai] (init) Initialize Reinforcment System" EOL;
 	call dzn_fnc_dynai_processUnitBehaviours;
 	[] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm";
 };
@@ -81,15 +90,22 @@ if (dzn_dynai_allowGroupResponse) then {
 // **************************
 //	CACHING SYSTEM
 // **************************
-if !(dzn_dynai_enableCaching) exitWith {dzn_dynai_initialized = true; publicVariable "dzn_dynai_initialized";};
-
-waitUntil { time > (dzn_dynai_preInitTimeout + dzn_dynai_afterInitTimeout + dzn_dynai_cachingTimeout) };
-call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf";
-[false] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
-
+if (dzn_dynai_enableCaching) then {
+    LOG_ "[dzn_dynai] (init) Caching is enabled. Postponed start in %1 seconds.", dzn_dynai_cachingTimeout EOL;
+    [
+        {
+            LOG_ "[dzn_dynai] (init) Start caching." EOL;
+            call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_cacheFunctions.sqf";
+            [false] execFSM "dzn_dynai\FSMs\dzn_dynai_cache.fsm";
+        },
+        [],
+        dzn_dynai_cachingTimeout
+    ] call CBA_fnc_waitAndExecute;
+};
 
 // **************************
-//	INITIALIZED
+//	INITIALIZED (Core)
 // **************************
+LOG_ "[dzn_dynai] (init) Fully initialized" EOL;
 dzn_dynai_initialized = true;
 publicVariable "dzn_dynai_initialized";

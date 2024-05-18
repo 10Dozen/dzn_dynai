@@ -119,20 +119,18 @@ dzn_fnc_dynai_initZones = {
         };
 
         // -- Collect buildings in zone
-        private _zoneBuildings = [];
-        { _zoneBuildings pushBackUnique _x; } forEach ([
+        private _zoneBuildings = [
             _locations,
             dzn_dynai_allowedBuildingClasses,
             dzn_dynai_restrictedBuildingClasses
-        ] call dzn_fnc_getLocationBuildings);
+        ] call dzn_fnc_getLocationBuildings;
 
 
         // -- Collect CBA Building Positions
-        private _zoneCbaPositions = [];
-        { _zoneCbaPositions pushBackUnique _x; } forEach ([
+        private _zoneCbaPositions = [
             _locations,
             ["CBA_buildingPos"]
-        ] call dzn_fnc_getLocationBuildings);
+        ] call dzn_fnc_getLocationBuildings;
 
         // -- Get Keypoints
         _keypoints = _zone call dzn_fnc_dynai_initZoneKeypoints;

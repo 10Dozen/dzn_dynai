@@ -1,12 +1,12 @@
 # dzn_dynai
-##### Version: 1.3.1
+##### Version: 1.3.1.3
 Dynamic AI with Blackjack and Whores
 
 ### License: APL-SA
 
 #### Dependencies
-- dzn_commonFunctions v1.2 (https://github.com/10Dozen/dzn_commonFunctions)
-- dzn_gear v2.8 (https://github.com/10Dozen/dzn_gear)
+- dzn_commonFunctions (https://github.com/10Dozen/dzn_commonFunctions)
+- dzn_gear (https://github.com/10Dozen/dzn_gear)
 Use https://github.com/10Dozen/tSF_Installer for easy installation
 
 ## How To
