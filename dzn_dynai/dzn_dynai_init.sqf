@@ -1,5 +1,5 @@
 // **************************
-// 	DZN DYNAI v1.3.1.3
+// 	DZN DYNAI v1.3.1.4
 //
 //	Initialized when:
 //	{ !isNil "dzn_dynai_initialized" }
@@ -11,7 +11,7 @@
 #define LOG_ diag_log text format [
 #define EOL ]
 
-dzn_dynai_version = "v1.3.1.3";
+dzn_dynai_version = "v1.3.1.4";
 
 LOG_ "[dzn_dynai] (init) Start initialization. Version: %1.", dzn_dynai_version EOL;
 // **************************
@@ -22,8 +22,8 @@ call compile preProcessFileLineNumbers "dzn_dynai\Settings.sqf";
 dzn_dynai_entrenched_settings = [dzn_dynai_entrenched_settings, "PARSE_LINE"] call dzn_fnc_parseSFML;
 
 dzn_dynai_complexSkill = [
-	!dzn_dynai_UseSimpleSkill
-	, if (dzn_dynai_UseSimpleSkill) then { dzn_dynai_overallSkillLevel } else { dzn_dynai_complexSkillLevel }
+    !dzn_dynai_UseSimpleSkill
+    , if (dzn_dynai_UseSimpleSkill) then { dzn_dynai_overallSkillLevel } else { dzn_dynai_complexSkillLevel }
 ];
 dzn_dynai_allowGroupResponse = (["par_dynai_enableGroupResponse", 1] call BIS_fnc_getParamValue) > 0;
 
@@ -34,12 +34,12 @@ dzn_dynai_allowGroupResponse = (["par_dynai_enableGroupResponse", 1] call BIS_fn
 // Exit if PLAYER or SERVER when Headless is initialized
 if ( isMultiplayer && { (!isServer && hasInterface) || (isServer && !isNil "HC") } ) exitWith {
     LOG_ "[dzn_dynai] (init) Running on client machine." EOL;
-	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
-	// If a player and no Zeus needed - exits script
-	if (dzn_dynai_enableZeusCompatibility) then {
-		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
-		call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_zeusCompatibility.sqf";
-	};
+    call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
+    // If a player and no Zeus needed - exits script
+    if (dzn_dynai_enableZeusCompatibility) then {
+        call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
+        call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_zeusCompatibility.sqf";
+    };
 };
 
 dzn_dynai_owner = clientOwner;
@@ -57,14 +57,14 @@ waitUntil { !isNil "dzn_gear_initDone" && { dzn_gear_initDone } };
 dzn_dynai_activatedZones = [];
 dzn_dynai_activeGroups = [];
 dzn_dynai_zoneProperties = [
-	#include "Zones.sqf"
+    #include "Zones.sqf"
 ];
 
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_dynaiFunctions.sqf";
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_controlFunctions.sqf";
 call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_behaviourFunctions.sqf";
 if (dzn_dynai_enableZeusCompatibility) then {
-	call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_zeusCompatibility.sqf";
+    call compile preProcessFileLineNumbers "dzn_dynai\fn\dzn_dynai_zeusCompatibility.sqf";
 };
 
 // **************************
@@ -83,8 +83,8 @@ call dzn_fnc_dynai_startZones;
 // **************************
 if (dzn_dynai_allowGroupResponse) then {
     LOG_ "[dzn_dynai] (init) Initialize Reinforcment System" EOL;
-	call dzn_fnc_dynai_processUnitBehaviours;
-	[] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm";
+    call dzn_fnc_dynai_processUnitBehaviours;
+    [] execFSM "dzn_dynai\FSMs\dzn_dynai_reinforcement_behavior.fsm";
 };
 
 // **************************

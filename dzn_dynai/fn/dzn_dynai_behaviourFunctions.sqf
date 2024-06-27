@@ -26,8 +26,7 @@ dzn_fnc_dynai_updateActiveGroups = {
 
 	{
 		_activeGroups = [];
-
-		_grps = [_x, "groups"] call dzn_fnc_dynai_getZoneVar;
+		private _grps = [_x, "groups"] call dzn_fnc_dynai_getZoneVar;
 		{
 			if ( !(isNull _x) && { !((units _x) isEqualTo []) } ) then {
 				_activeGroups pushBack _x;
@@ -50,10 +49,13 @@ dzn_fnc_dynai_callReinfocements = {
 	// @Zone spawn dzn_fnc_dynai_getSquadsForRequestsReinforcement
 	{
 		if (
-			(_x call dzn_fnc_dynai_checkSquadCriticalLosses
-			|| _x call dzn_fnc_dynai_checkSquadKnownEnemiesCritical)
+			_x getVariable ["dzn_dynai_canRequestReinforcement", true]
 			&& !(_x call dzn_fnc_dynai_isRequestingReinforcement)
 			&& !(_x call dzn_fnc_dynai_isProvidingReinforcement)
+			&& {
+				_x call dzn_fnc_dynai_checkSquadCriticalLosses
+				|| _x call dzn_fnc_dynai_checkSquadKnownEnemiesCritical
+			}
 		) then {
 			_x call dzn_fnc_dynai_requestReinforcement;
 		};
@@ -84,6 +86,11 @@ dzn_fnc_dynai_assignReinforcementGroups = {
 		_isProvider = _x call dzn_fnc_dynai_isProvidingReinforcement;
 		if (_isRequester) then {
 			_requesters pushBack _x;
+		};
+
+		// Skip if cannot provide reinforcements by zone settings
+		if !(_x getVariable ["dzn_dynai_canProvideReinforcement", true]) then {
+			continue;
 		};
 
 		if !(_isProvider || _isRequester) then {
@@ -241,14 +248,9 @@ dzn_fnc_dynai_isRequestingReinforcement = {
 	// If Requesting and No provider assigned - true, else - false
 	// _this getVariable ["dzn_dynai_isRequestingReinfocement", false]
 
-	if (
-		_this getVariable ["dzn_dynai_isRequestingReinfocement", false]
-		&& (count (_this getVariable ["dzn_dynai_reinforcementProviders", []]) < dzn_dynai_responseGroupsPerRequest)
-	) then {
-		true
-	} else {
-		false
-	}
+	_this getVariable ["", true]
+	&& _this getVariable ["dzn_dynai_isRequestingReinfocement", false]
+	&& (count (_this getVariable ["dzn_dynai_reinforcementProviders", []]) < dzn_dynai_responseGroupsPerRequest)
 };
 
 dzn_fnc_dynai_isProvidingReinforcement = {
@@ -408,18 +410,18 @@ dzn_fnc_dynai_addGroupAsSupporter = {
 
 
 dzn_fnc_dynai_setSpotSkillRemote = {
-    /*  Add 20% boost to spot and aiming for units in static positions
-    */
-    {
-        _this setSkill [
-            _x,
-            (1.2 * (_this skill _x)) max 1
-        ];
-    } forEach [
-        "spotTime", "spotDistance",
-        "aimingAccuracy", "aimingSpeed", "aimingShake",
-        "reloadSpeed"
-    ];
+	/*  Add 20% boost to spot and aiming for units in static positions
+	*/
+	{
+		_this setSkill [
+			_x,
+			(1.2 * (_this skill _x)) max 1
+		];
+	} forEach [
+		"spotTime", "spotDistance",
+		"aimingAccuracy", "aimingSpeed", "aimingShake",
+		"reloadSpeed"
+	];
 };
 
 dzn_fnc_dynai_addUnitBehavior = {
@@ -427,7 +429,7 @@ dzn_fnc_dynai_addUnitBehavior = {
 	 * [@Unit, @Behavior] call dzn_fnc_dynai_addUnitBehavior
 	 * Adds behavior script to unit.
 	 *      "Indoor" -- behavior for units inside the buildings/sentries;
-     *      "Entrenched" -- bahaviour for units in static positions (trenches, foxholes).
+	 *      "Entrenched" -- bahaviour for units in static positions (trenches, foxholes).
 	 *      "Vehicle Hold" 	-- vehicle/turret behaviour (rotation);
 	 *
 	 * INPUT:
@@ -451,10 +453,10 @@ dzn_fnc_dynai_addUnitBehavior = {
 			[_unit, false] execFSM "dzn_dynai\FSMs\dzn_dynai_indoors_behavior.fsm";
 			_unit setVariable ["dzn_dynai_isIndoor", true, true];
 		};
-        case "entrenched": {
-            [_unit, dzn_dynai_entrenched_settings, false] execFSM "dzn_dynai\FSMs\dzn_dynai_entrenched_behavior.fsm";
-            _unit setVariable ["dzn_dynai_isIndoor", true, true];
-        };
+		case "entrenched": {
+			[_unit, dzn_dynai_entrenched_settings, false] execFSM "dzn_dynai\FSMs\dzn_dynai_entrenched_behavior.fsm";
+			_unit setVariable ["dzn_dynai_isIndoor", true, true];
+		};
 		case "vehicle hold": {
 			[_unit, "All Aspect", false] execFSM "dzn_dynai\FSMs\dzn_dynai_vehicleHold_behavior.fsm";
 			_unit setVariable ["dzn_dynai_isVehicleHold", true, true];
