@@ -1,5 +1,5 @@
 # dzn_dynai
-##### Version: 1.3.1.3
+##### Version: 1.3.1.4
 Dynamic AI with Blackjack and Whores
 
 ### License: APL-SA
@@ -41,6 +41,14 @@ Use different second value in vehicle array ( ["B_G_Offroad_01_armed_F","Vehicle
 If <tt>dzn_dynai_allowGroupResponse</tt> variable is <tt>true</tt> - group reactions will be used. That means, that group which met many hostiles or suffer great loses will call for help. Then nearby allied group will move to caller position to provide support.
 You can add Editor-placed units/groups to Group Reaction system (check [wiki for details](https://github.com/10Dozen/dzn_dynai/wiki/Groups-Reaction)).
 
+To enable/disable Group Reaction per zone, one may add extras section to zone's config:
+```sqf
+,[
+    ["providesSupport", false], /* when True makes groups to provide support to other groups */
+    ["requestsSupport", true]   /* when True makes groups call for support */ 
+]
+```
+
 ### Caching
 If <tt>dzn_dynai_enableCaching</tt> variable is <tt>true</tt> - units, which are placed far from the players become 'cached' and will not affect on performance. Cached unit will be hidden, excluded from simulation (no physics, no AI, no graphics). Anyway group leaders will not be cached, so AI groups will patrol areas (using single unit per group) and when players come closer - rest of the squad will be uncached at the current position of group leader.
 <br /><tt>dzn_dynai_cacheDistance</tt> variable allow you to set minimum distance between unit and nearest player when unit become cached.
@@ -50,24 +58,29 @@ If <tt>dzn_dynai_enableCaching</tt> variable is <tt>true</tt> - units, which are
 It is available to set individual skill level for every group. To do it - add skill array as 3rd argument of group array:
 
 <h4>Simple skill</h4>
-<tt>[
+```sqf
+[
   28,
   [
 	  ["B_G_Offroad_01_armed_F","Vehicle Patrol",""],
 	  ["B_Soldier_F",[0,"driver"],""],
 	  ["B_Soldier_F",[0,"gunner"],""]
-  ],</tt>
+  ],
   
-  <tt>[false, 0.5] /* Simple skill: isComplex(BOOLEAN), skill level(NUMBER)  */</tt>
-<tt>]</tt>
+  [false, 0.5] /* Simple skill: isComplex(BOOLEAN), skill level(NUMBER)  */
+]
+```
+
 <h4>Complex skill</h4>
-<tt>[
+
+```sqf
+[
   28,
   [
 	  ["B_G_Offroad_01_armed_F","Vehicle Patrol",""],
 	  ["B_Soldier_F",[0,"driver"],""],
 	  ["B_Soldier_F",[0,"gunner"],""]
-  ],</tt>
+  ],
   
-  <tt>[true, [["accuracy, 0.5], ["spotTime", 0.9]]] /* Complex Skill: isComplex(BOOLEAN), Skill array (NUMBER) */</tt>
-<tt>]</tt>
+  [true, [["accuracy, 0.5], ["spotTime", 0.9]]] /* Complex Skill: isComplex(BOOLEAN), Skill array (NUMBER) */]<
+```

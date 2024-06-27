@@ -107,6 +107,13 @@ dzn_fnc_dynai_initZones = {
         };
 
         private _config = dzn_dynai_zoneProperties # _configId;
+        private _extras = nil;
+        if (count _config > 7) then {
+        	_extras = createHashMapFromArray (_config # 8);
+        	_config deleteAt 8;
+        } else {
+        	_extras = createHashMap;
+        };
 
         // Init zone
         _zone setVariable ["dzn_dynai_initialized", false];
@@ -151,6 +158,7 @@ dzn_fnc_dynai_initZones = {
         _config pushBack _zoneBuildings;
         _config pushBack _vehiclePoints;
         _config pushBack _zoneCbaPositions;
+        _config pushBack _extras;
 
         /*
         *  Zone Config (Properties):
@@ -165,6 +173,7 @@ dzn_fnc_dynai_initZones = {
         *  8@  Buildings       (list of building objects)
         *  9@  Vehicle points  (list of pos3ds of vehicle points)
         *  10@ CBA Positions   (list of CBA_buildingPos objects found in zone)
+        *  11@ Extra           (hashMap of the extra options)
         */
 
         // Set variables to a zone
@@ -177,6 +186,7 @@ dzn_fnc_dynai_initZones = {
             , ["dzn_dynai_initialized", true]
             , ["dzn_dynai_condition", _config select 7]
             , ["dzn_dyani_cbaPositions", _zoneCbaPositions]
+            , ["dzn_dynai_extras", _extras]
         ], true] call dzn_fnc_setVars;
 
     } forEach _zoneModules;
