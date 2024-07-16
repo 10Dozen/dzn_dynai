@@ -158,7 +158,7 @@ private _zoneTemplates = [];
 
                     // Select from autocrewDetailed section or use defaults
                     private ["_customCrewClass", "_customCrewSeats", "_customCrewKit"];
-                    if (!isNil "_detailed") then {
+                    if (!isNil "_detailedCfg") then {
                         _customCrewClass = _detailedCfg get CFG_AUTOCREW__CLASS;
                         _customCrewSeats = _detailedCfg get CFG_AUTOCREW__SEATS;
                         _customCrewKit = _detailedCfg getOrDefault [CFG_AUTOCREW__KITS, ""];
