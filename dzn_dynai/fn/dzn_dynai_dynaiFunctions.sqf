@@ -107,12 +107,10 @@ dzn_fnc_dynai_initZones = {
         };
 
         private _config = dzn_dynai_zoneProperties # _configId;
-        private _extras = nil;
+        private _extras = createHashMap;
         if (count _config > 7) then {
         	_extras = createHashMapFromArray (_config # 8);
         	_config deleteAt 8;
-        } else {
-        	_extras = createHashMap;
         };
 
         // Init zone
