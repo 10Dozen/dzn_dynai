@@ -1,5 +1,5 @@
 // **************************
-// 	DZN DYNAI v1.3.1.4
+// 	DZN DYNAI v1.3.1.5
 //
 //	Initialized when:
 //	{ !isNil "dzn_dynai_initialized" }
@@ -11,7 +11,7 @@
 #define LOG_ diag_log text format [
 #define EOL ]
 
-dzn_dynai_version = "v1.3.1.4";
+dzn_dynai_version = "v1.3.1.5";
 
 LOG_ "[dzn_dynai] (init) Start initialization. Version: %1.", dzn_dynai_version EOL;
 // **************************
