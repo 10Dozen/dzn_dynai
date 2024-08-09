@@ -108,7 +108,7 @@ dzn_fnc_dynai_initZones = {
 
         private _config = dzn_dynai_zoneProperties # _configId;
         private _extras = createHashMap;
-        if (count _config > 7) then {
+        if (count _config > 8) then {
         	_extras = createHashMapFromArray (_config # 8);
         	_config deleteAt 8;
         };
