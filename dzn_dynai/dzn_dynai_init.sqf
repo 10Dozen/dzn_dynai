@@ -1,5 +1,5 @@
 // **************************
-// 	DZN DYNAI v1.3.1.5
+// 	DZN DYNAI v1.3.1.6
 //
 //	Initialized when:
 //	{ !isNil "dzn_dynai_initialized" }
@@ -11,7 +11,7 @@
 #define LOG_ diag_log text format [
 #define EOL ]
 
-dzn_dynai_version = "v1.3.1.5";
+dzn_dynai_version = "v1.3.1.6";
 
 LOG_ "[dzn_dynai] (init) Start initialization. Version: %1.", dzn_dynai_version EOL;
 // **************************
@@ -21,10 +21,17 @@ call compile preProcessFileLineNumbers "dzn_dynai\Settings.sqf";
 
 dzn_dynai_entrenched_settings = [dzn_dynai_entrenched_settings, "PARSE_LINE"] call dzn_fnc_parseSFML;
 
-dzn_dynai_complexSkill = [
-    !dzn_dynai_UseSimpleSkill
-    , if (dzn_dynai_UseSimpleSkill) then { dzn_dynai_overallSkillLevel } else { dzn_dynai_complexSkillLevel }
+dzn_dynai_complexSkill = createHashMapFromArray [
+    ["isComplex", !dzn_dynai_UseSimpleSkill],
+    ["skills", dzn_dynai_overallSkillLevel]
 ];
+if (!dzn_dynai_UseSimpleSkill) then {
+    dzn_dynai_complexSkill set [
+        "skills",
+        createHashMapFromArray dzn_dynai_complexSkillLevel
+    ];
+};
+
 dzn_dynai_allowGroupResponse = (["par_dynai_enableGroupResponse", 1] call BIS_fnc_getParamValue) > 0;
 
 // **************************

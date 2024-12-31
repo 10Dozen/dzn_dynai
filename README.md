@@ -1,5 +1,5 @@
 # dzn_dynai
-##### Version: 1.3.1.5
+##### Version: 1.3.1.6
 Dynamic AI with Blackjack and Hookers
 
 ### License: APL-SA
@@ -45,7 +45,7 @@ To enable/disable Group Reaction per zone, one may add extras section to zone's 
 ```sqf
 ,[
     ["providesSupport", false], /* when True makes groups to provide support to other groups */
-    ["requestsSupport", true]   /* when True makes groups call for support */ 
+    ["requestsSupport", true]   /* when True makes groups call for support */
 ]
 ```
 
@@ -55,7 +55,7 @@ If <tt>dzn_dynai_enableCaching</tt> variable is <tt>true</tt> - units, which are
 <br /><tt>dzn_dynai_cachingTimeout</tt> and <tt>dzn_dynai_cacheCheckTimer</tt> allow you to customize time between cache/uncache checks (e.g. make periods longer/shorter)
 
 ### Group Custom Skill Level
-It is available to set individual skill level for every group. To do it - add skill array as 3rd argument of group array:
+It is available to set individual skill level multiplier for every group. Multiplier will adjust group's skill relative to overall DynAI skill level. To do it - add skill array as 3rd argument of group array:
 
 <h4>Simple skill</h4>
 ```sqf
@@ -66,8 +66,8 @@ It is available to set individual skill level for every group. To do it - add sk
 	  ["B_Soldier_F",[0,"driver"],""],
 	  ["B_Soldier_F",[0,"gunner"],""]
   ],
-  
-  [false, 0.5] /* Simple skill: isComplex(BOOLEAN), skill level(NUMBER)  */
+
+  0.5 /* Simple skill multiplier: skill level(NUMBER)  */
 ]
 ```
 
@@ -81,6 +81,6 @@ It is available to set individual skill level for every group. To do it - add sk
 	  ["B_Soldier_F",[0,"driver"],""],
 	  ["B_Soldier_F",[0,"gunner"],""]
   ],
-  
-  [true, [["accuracy, 0.5], ["spotTime", 0.9]]] /* Complex Skill: isComplex(BOOLEAN), Skill array (NUMBER) */]<
+
+  [["accuracy, 0.5], ["spotTime", 0.9]] /* Complex Skill: Skill array (STRING (skill), NUMBER (multiplier)) */]<
 ```

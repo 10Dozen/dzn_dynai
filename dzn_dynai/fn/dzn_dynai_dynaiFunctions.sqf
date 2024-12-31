@@ -19,19 +19,116 @@ dzn_fnc_dynai_getSkillFromParameters = {
 	#define GET_SKILL(X)    ((X call BIS_fnc_getParamValue) / 100)
 	switch ("par_dynai_overrideSkill" call BIS_fnc_getParamValue) do {
 		case 1: {
-			dzn_dynai_complexSkill = [false, GET_SKILL("par_dynai_skillGeneral")];
+			dzn_dynai_complexSkill set ["isComplex", false];
+            dzn_dynai_complexSkill set ["skills", GET_SKILL("par_dynai_skillGeneral")];
 		};
 		case 2: {
-			dzn_dynai_complexSkill = [
-				true
-				, dzn_dynai_complexSkillLevel + [
-					["general", GET_SKILL("par_dynai_skillGeneral")]
-					, ["aimingAccuracy", GET_SKILL("par_dynai_skillAccuracy")]
-					, ["aimingSpeed", GET_SKILL("par_dynai_skillAimSpeed")]
-				]
-			];
+            private _skills = createHashMapFromArray dzn_dynai_complexSkillLevel;
+            _skills set ["general", GET_SKILL("par_dynai_skillGeneral")];
+            _skills set ["aimingAccuracy", GET_SKILL("par_dynai_skillAccuracy")];
+            _skills set ["aimingSpeed", GET_SKILL("par_dynai_skillAimSpeed")];
+
+            dzn_dynai_complexSkill set ["isComplex", true];
+        	dzn_dynai_complexSkill set ["skills", _skills];
 		};
 	};
+};
+
+dzn_fnc_dynai_getAdjustedSkillLevel = {
+    /*
+        Adjust dzn_dynai_complexSkill setting according to given _skillMultipliers.
+
+        Params:
+        0: _skillMultipliers (NUMBER or ARRAY) - number (for simple skill adjustment) or
+        array of [skill(string), level(number)] (for complex skill adjustment)
+
+        Returns:
+        hashMap with keys:
+        - "isComplex" (BOOL) - flag that complex skill is used
+        - "skills" (HASHMAP) - [skill, level] map of skill values
+    */
+    params ["_skillMultipliers"];
+
+    private _adjustedSkills = +dzn_dynai_complexSkill;
+    private _dynaiSkillIsComplex = _adjustedSkills get "isComplex";
+    private _isComplex = !(_skillMultipliers isEqualType 0);
+    if (_isComplex) then {
+        _skillMultipliers = createHashMapFromArray _skillMultipliers;
+    };
+
+    // -- Both complex - adjust each skill indiviually
+    if (_dynaiSkillIsComplex && _isComplex) exitWith {
+        private _skills = _adjustedSkills get "skills";
+        private _defaultLevel = _skills getOrDefault ["general", 1];
+        private ["_skill"];
+        {
+            _skill = _skills getOrDefault [_x, _defaultLevel];
+            _skills set [_x, ((_skill * _y) min 1) max 0];
+        } forEach _skillMultipliers;
+
+        _adjustedSkills
+    };
+
+    // -- Adjust complex skill with simple multiplier
+    if (_dynaiSkillIsComplex && !_isComplex) exitWith {
+        private _skills = _adjustedSkills get "skills";
+        {
+            _skills set [_x, ((_y * _skillMultipliers) min 1) max 0];
+        } forEach _skills;
+
+        _adjustedSkills
+    };
+
+    // -- Attempt to update simple skill with custom - use only "general"
+    if (!_dynaiSkillIsComplex && _isComplex) exitWith {
+        private _updatedSkill = (_adjustedSkills get "skills") * (_skillMultipliers getOrDefault ["general", 1]);
+        _adjustedSkills set ["skills", (_updatedSkill min 1) max 0];
+
+        _adjustedSkills
+    };
+
+    // -- Adjust simple skill with simple multiplier
+    private _updatedSkill = (_adjustedSkills get "skills") * _skillMultipliers;
+    _adjustedSkills set ["skills", (_updatedSkill min 1) max 0];
+
+    _adjustedSkills
+};
+
+dzn_fnc_dynai_applySkillLevels = {
+    /*
+        Applies DynAI skill level to given unit.
+        If unit has "dzn_dynai_skill" variable - adjust skill level accordingly
+        (may be plain number as multiplier, or array of [skillname, level] to
+        adjust per skill)
+
+        Params:
+        0: _unit (OBJECT) - unit or vehicle to apply skill. For vehicles crew will be adjusted.
+        1: _modifier (NUMBER or ARRAY) - skill level modifier (plain number or array
+        of [skillname, level])
+
+        Retuens:
+        nothing
+    */
+    params [
+        ["_unit", nil, [objNull]],
+        ["_modifier", 1, [1]]
+    ];
+
+    private _perUnitModifier = _unit getVariable ["dzn_dynai_skill", _modifier];
+
+    // -- If executed on vehicle - apply to crew
+    if !(_unit isKindOf "CAManBase") exitWith {
+        {
+            [_x, _perUnitModifier] call dzn_fnc_dynai_applySkillLevels;
+        } forEach (crew _unit);
+    };
+
+    private _skill = [_perUnitModifier] call dzn_fnc_dynai_getAdjustedSkillLevel;
+    if (_skill get "isComplex") exitWith {
+        { _unit setSkill [_x, _y] } forEach (_skill get "skills");
+    };
+
+    _unit setSkill (_skill get "skills");
 };
 
 
@@ -94,6 +191,7 @@ dzn_fnc_dynai_initZones = {
     private ["_modules", "_properties","_syncObj", "_locations","_synced", "_wps", "_keypoints","_locationBuildings","_locBuildings","_locPos"];
 
     [] call dzn_fnc_dynai_getSkillFromParameters;
+    [] call dzn_fnc_dynai_getMultiplier;
     private _zoneModules = synchronizedObjects dzn_dynai_core;
 
     {
