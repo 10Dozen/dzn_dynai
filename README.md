@@ -57,10 +57,10 @@ If <tt>dzn_dynai_enableCaching</tt> variable is <tt>true</tt> - units, which are
 ### Group Custom Skill Level
 It is available to set individual skill level multiplier for every group. Multiplier will adjust group's skill relative to overall DynAI skill level. To do it - add skill array as 3rd argument of group array:
 
-<h4>Simple skill</h4>
+#### Simple skill<
 ```sqf
 [
-  28,
+  2,
   [
 	  ["B_G_Offroad_01_armed_F","Vehicle Patrol",""],
 	  ["B_Soldier_F",[0,"driver"],""],
@@ -71,11 +71,11 @@ It is available to set individual skill level multiplier for every group. Multip
 ]
 ```
 
-<h4>Complex skill</h4>
+#### Complex skill
 
 ```sqf
 [
-  28,
+  2,
   [
 	  ["B_G_Offroad_01_armed_F","Vehicle Patrol",""],
 	  ["B_Soldier_F",[0,"driver"],""],
