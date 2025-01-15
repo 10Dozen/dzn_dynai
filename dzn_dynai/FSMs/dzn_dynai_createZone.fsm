@@ -1,4 +1,4 @@
-/*%FSM<COMPILE "scriptedFSM.cfg, dzn_dynai_createZone">*/
+/*%FSM<COMPILE "E:\GMZ\STEAM\SteamApps\common\Arma 3 Tools\FSMEditor\scriptedFSM.cfg, dzn_dynai_createZone">*/
 /*%FSM<HEAD>*/
 /*
 item0[] = {"Start",0,250,-25.000000,-1500.000000,75.000000,-1450.000000,0.000000,"Start"};
@@ -42,7 +42,7 @@ item37[] = {"",7,210,241.000000,-179.000000,259.000000,-171.000000,0.000000,""};
 item38[] = {"",7,210,366.000000,-179.000000,384.000000,-171.000000,0.000000,""};
 item39[] = {"",7,210,491.000000,-179.000000,509.000000,-171.000000,0.000000,""};
 item40[] = {"All_Units_Proces",4,218,-225.000000,-900.000000,-125.000000,-850.000000,0.000000,"All Units" \n "Processed"};
-item41[] = {"Set_Group__Behavior",2,4346,-225.000000,-1000.000000,-125.000000,-950.000000,0.000000,"Set Group " \n "Behavior" \n "Properties"};
+item41[] = {"Set_Group__Behavior",2,250,-225.000000,-1000.000000,-125.000000,-950.000000,0.000000,"Set Group " \n "Behavior" \n "Properties"};
 item42[] = {"All_groups_proce",4,218,-225.000000,-1100.000000,-125.000000,-1050.000000,0.000000,"All groups" \n "processed"};
 item43[] = {"",7,210,-179.000000,-804.000000,-171.000000,-796.000000,0.000000,""};
 item44[] = {"Switch_to_next_R",2,250,-225.000000,-1200.000000,-125.000000,-1150.000000,0.000000,"Switch to" \n "next Reference"};
@@ -52,7 +52,7 @@ item47[] = {"Random_Position",4,218,200.000000,-650.000000,300.000000,-600.00000
 item48[] = {"Road__Position",4,218,450.000000,-650.000000,550.000000,-600.000000,1.000000,"Road " \n "Position"};
 item49[] = {"Get_Random_Posit",2,250,200.000000,-575.000000,300.000000,-525.000000,0.000000,"Get Random" \n "Position"};
 item50[] = {"Get_Road_Positio",2,250,450.000000,-575.000000,550.000000,-525.000000,0.000000,"Get Road" \n "Position"};
-item51[] = {"Create_Vehicle",2,250,325.000000,-500.000000,425.000000,-450.000000,0.000000,"Create Vehicle"};
+item51[] = {"Create_Vehicle",2,4346,325.000000,-500.000000,425.000000,-450.000000,0.000000,"Create Vehicle"};
 item52[] = {"_",4,218,325.000000,-575.000000,425.000000,-525.000000,0.000000,""};
 item53[] = {"",7,210,616.000000,-179.000000,633.999939,-171.000000,0.000000,""};
 item54[] = {"Entrenched",4,218,-125.000000,-400.000000,-25.000000,-350.000000,10.000000,"Entrenched"};
@@ -126,8 +126,8 @@ link64[] = {53,39};
 link65[] = {54,55};
 link66[] = {55,56};
 link67[] = {56,18};
-globals[] = {0.000000,0,0,0,0,640,480,2,325,6316128,1,-535.691040,435.072937,-665.768982,-1353.542725,1897,1344,1};
-window[] = {2,-1,-1,-32000,-32000,1208,3351,4841,483,3,1924};
+globals[] = {0.000000,0,0,0,0,640,480,2,325,6316128,1,-1036.350098,864.602295,168.320190,-1477.470947,1043,903,1};
+window[] = {2,-1,-1,-32000,-32000,880,138,1628,155,3,1061};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -211,11 +211,18 @@ class FSM
                         init = /*%FSM<STATEINIT""">*/"private _currentRef = _refUnits select _currentReferenceNumber;" \n
                          "// _currentRef is [3,[[""O_Soldier_F"", [], """"] ,[""O_Soldier_F"", [], """"]]]" \n
                          "" \n
-                         "private _totalGrpCount = round( (_currentRef select 0) * (call dzn_fnc_dynai_getMultiplier) );" \n
-                         "private _groupUnits = _currentRef select 1; // [[""O_Soldier_F"", [], """"] ,[""O_Soldier_F"", [], """"]]" \n
-                         "private _groupSkill = if (!isNil {_currentRef select 2}) then { _currentRef select 2 } else { dzn_dynai_complexSkill };" \n
+                         "(_refUnits select _currentReferenceNumber) params [" \n
+                         "	[""_groupCount"", 0,                      [0]    ], // integer" \n
+                         "   [""_groupUnits"", [],                     [[]]   ], // [[""O_Soldier_F"", [], """"] ,[""O_Soldier_F"", [], """"]]" \n
+                         "   [""_groupSkill"", dzn_dynai_complexSkill, [0, []]]  // [true, [ [""accuracy"", 1] ]] or [false, 1]" \n
+                         "];" \n
                          "" \n
-                         "private _currentGrpCount = 0;"/*%FSM</STATEINIT""">*/;
+                         "private _totalGrpCount = round(_groupCount * dzn_dynai_amountMultiplier);" \n
+                         "private _currentGrpCount = 0;" \n
+                         "" \n
+                         "if (_groupSkill isNotEqualTo dzn_dynai_complexSkill) then {" \n
+                         "    _groupSkill = [_groupSkill] call dzn_fnc_dynai_getAdjustedSkillLevel;" \n
+                         "};"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
@@ -283,13 +290,14 @@ class FSM
                         init = /*%FSM<STATEINIT""">*/"// _groupUnits is [[""O_Soldier_F"", [], """"] ,[""O_Soldier_F"", [], """"]]" \n
                          "// (_groupUnits select _currentUnitsCount) is [""O_Soldier_F"", [], """"]" \n
                          "" \n
-                         "private _classname = (_groupUnits select _currentUnitsCount) select 0;" \n
-                         "private _assigned = (_groupUnits select _currentUnitsCount) select 1;" \n
-                         "private _gear = (_groupUnits select _currentUnitsCount) select 2;" \n
+                         "(_groupUnits select _currentUnitsCount) params [" \n
+                         "	[""_classname"", """", [""""]], " \n
+                         "   [""_assigned"",  [], [[]]], " \n
+                         "   [""_gear"",      """", [""""]]" \n
+                         "];" \n
                          "				" \n
                          "private _unit = objNull;" \n
-                         "" \n
-                         "private _unitTimeout = time + 0.25;"/*%FSM</STATEINIT""">*/;
+                         "private _unitTimeout = time + 0.25; "/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
@@ -300,7 +308,7 @@ class FSM
                                         priority = 1.000000;
                                         to="Create_Infantry";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
-                                        condition=/*%FSM<CONDITION""">*/"(typename _assigned == ""ARRAY"")"/*%FSM</CONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_assigned isEqualType [])"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
                                 /*%FSM</LINK>*/
@@ -329,10 +337,11 @@ class FSM
                          "_grp setVariable [""dzn_dynai_units"", (_grp getVariable ""dzn_dynai_units"") + [_unit]];" \n
                          "_grp setVariable [""dzn_dynai_vehicles"", (_grp getVariable ""dzn_dynai_vehicles"") + [""""]];" \n
                          "" \n
-                         "if (_groupSkill select 0) then {" \n
-                         "	{ _unit setSkill _x; } forEach (_groupSkill select 1);" \n
+                         "" \n
+                         "if (_groupSkill get ""isComplex"") then {" \n
+                         "	{ _unit setSkill [_x, _y]; } forEach (_groupSkill get ""skills"");" \n
                          "} else {" \n
-                         "	_unit setSkill (_groupSkill select 1);" \n
+                         "	_unit setSkill (_groupSkill get ""skills"");" \n
                          "};	" \n
                          "" \n
                          "if !(typename _gear == ""STRING"" && {_gear == """"} ) then { [_unit, _gear] spawn dzn_fnc_gear_assignKit; };" \n
@@ -846,12 +855,14 @@ class FSM
                 {
                         name = "Complete_zone";
                         itemno = 46;
-                        init = /*%FSM<STATEINIT""">*/"if (dzn_dynai_allowGroupResponse && dzn_dynai_makeZoneAlertOnRequest) then {" \n
-                         "	(call compile _name) setVariable [""dzn_dynai_isZoneAlerted"", false];" \n
+                        init = /*%FSM<STATEINIT""">*/"private _zoneObject = missionNamespace getVariable _name;" \n
+                         "if (dzn_dynai_allowGroupResponse && dzn_dynai_makeZoneAlertOnRequest) then {" \n
+                         "	_zoneObject setVariable [""dzn_dynai_isZoneAlerted"", false];" \n
                          "};" \n
                          "	" \n
-                         "(call compile _name) setVariable [""dzn_dynai_groups"", _groups];	" \n
-                         "dzn_dynai_activatedZones pushBack (call compile _name);" \n
+                         "_zoneObject setVariable [""dzn_dynai_groups"", _groups];" \n
+                         "" \n
+                         "dzn_dynai_activatedZones pushBack _zoneObject;" \n
                          ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
@@ -953,7 +964,7 @@ class FSM
                          "			" \n
                          "_unit spawn { sleep 5; _this allowDamage true; };" \n
                          "					" \n
-                         "if !(typename _gear == ""STRING"" && {_gear == """"} ) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };" \n
+                         "if !(_gear isEqualType """" && {_gear == """"}) then { [_unit, _gear, true] spawn dzn_fnc_gear_assignKit; };" \n
                          "" \n
                          "_grp setVariable [""dzn_dynai_vehicles"", (_grp getVariable ""dzn_dynai_vehicles"") + [_unit]];" \n
                          ""/*%FSM</STATEINIT""">*/;
