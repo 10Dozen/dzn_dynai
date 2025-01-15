@@ -83,7 +83,7 @@ var ZoneItem = function () {
 
     this.generateSides = function () {
         return ([
-            ["WEST", "west"], 
+            ["WEST", "west"],
             ["EAST", "east"],
             ["INDEP", "resistance"],
             ["CIV", "civilian"]
@@ -228,7 +228,7 @@ var ZoneItem = function () {
         this.groupMode[typeItem] = mode;
     };
     this.addGroup = function () {
-        var group = new Group(this.groupCounter);
+        const group = new Group(this.groupCounter);
         console.log("Group Added");
         this.groups.push(group);
         this.groupCounter = this.groupCounter + 1;
@@ -342,10 +342,10 @@ var ZoneItem = function () {
         document.getElementById( this.id ).scrollIntoView();
     };
 
-    
+
     this.getUnitMode = function (unit, modeName) {
         var mode = '[]';
-        
+
         if (unit.type == "Infantry") {
             switch (modeName) {
                 case "Indoors":
@@ -364,17 +364,17 @@ var ZoneItem = function () {
                     break;
             };
         } else {
-            for (var i = 0; i < VEHICLE_BEHAVIOUR.length; i++) {				
-                if (modeName == VEHICLE_BEHAVIOUR[i][0]) {				
+            for (var i = 0; i < VEHICLE_BEHAVIOUR.length; i++) {
+                if (modeName == VEHICLE_BEHAVIOUR[i][0]) {
                     mode = VEHICLE_BEHAVIOUR[i][1];
                     break;
                 };
             };
         }
-        
+
         return mode;
     };
-    
+
     this.getConfig = function () {
         var spc = "	";
         const sep = "<br />" + spc;
@@ -387,13 +387,13 @@ var ZoneItem = function () {
 
         var groups = "";
         for (var i = 0; i < this.groups.length; i++ ) {
-            var separatorPerGroup = (i > 0) ? "," : "";
-            var grp = this.groups[i];
+            const separatorPerGroup = (i > 0) ? "," : "";
+            const grp = this.groups[i];
 
-            var units = '';
-            for (var j = 0; j < grp.units.length; j++) {
-                var separatorPerUnit = (j > 0) ? "," : "";
-                var unit = grp.units[j];
+            let units = '';
+            for (let j = 0; j < grp.units.length; j++) {
+                const separatorPerUnit = (j > 0) ? "," : "";
+                let unit = grp.units[j];
 
                 unitOptions = this.getUnitMode(unit, unit.mode);
 
@@ -404,6 +404,15 @@ var ZoneItem = function () {
                     + '"' + unit.kit + '"]';
             };
 
+            let customSkillLine = "";
+            if (grp.customSkill.trim() != "") {
+                let customSkill = grp.customSkill.trim()
+                if (customSkill.includes(",")) {
+                    customSkill = `[${customSkill}]`
+                }
+                customSkillLine = '<br />' + spc + spc + spc + ", " + customSkill + " /* Skill multiplier */"
+            }
+
             groups = groups
                 + '<br />' + spc + spc + separatorPerGroup + '['
                 + '<br />' + spc + spc + spc + grp.number + ', /* Groups quantity */'
@@ -411,6 +420,7 @@ var ZoneItem = function () {
                 + '<br />' + spc + spc + spc + '['
                 + units
                 + '<br />' + spc + spc + spc + ']'
+                + customSkillLine
                 + '<br />' + spc + spc + ']';
         };
 
@@ -455,15 +465,33 @@ var Group = function (id) {
     this.desc = "Empty group";
     this.id = id;
     this.number = 1;
+    this.customSkill = "";
     this.units = [];
     this.$form = $(
-        '<div class="group-item" style="border: 1px solid black;">'
-        + '<div class="group-left">' + (id+1) + '</div>'
-        + '<div class="group-right"><div class="col-2 col-inline-block">Number of groups</div>'
-        + '<div class="col-6 col-inline-block"><input class="input-short"></input></div>'
-        + '<div class="btn group-edit-btn">✎</div><div class="btn group-remove-btn">✖</div></div>'
-        + '<div class="group-right-desc"><b>' + this.desc + '</b><br /></div></div>'
-    );
+        `<div id=${this.id} class="group-item">
+            <div class="group-left">${id+1}</div>
+            <div class="group-right">
+                <div class="col-2 col-inline-block">
+                    <div>Number of groups</div>
+                    <input type="number" class="input-short input-group-count" value=${this.number}></input>
+                </div>
+                <div class="btn group-edit-btn"><span class="icon-center">✎</span></div>
+                <div class="btn group-remove-btn"><span class="icon-center">✖</span></div>
+                <div class="col-2 col-inline-block">
+                    <div title="Optional, adjusts level for group. See BIKI: Arma 3 AI Skills">
+                        Skill multiplier
+                        <a target="_blank" href="https://community.bistudio.com/wiki/Arma_3:_AI_Skill#Sub-Skills">
+                            <span class="optional">?</span>
+                        </a>
+                    </div>
+                    <input class="input-group-custom-skill"></input>
+                </div>
+            </div>
+            <div class="group-right-desc">
+                <b>${this.desc}</b>
+                <br/>
+            </div>
+        </div>`);
 
     this.remove = function () {
         $(this.$form).find('.group-remove-btn').off();
@@ -474,16 +502,18 @@ var Group = function (id) {
     };
 
     this.edit = function () {
-
         GroupEditWindow.open(this);
     };
 
-    this.setCount = function () {
-        var num = $(this.$form).find('input').val();
-        if (+num < 1) {
-            $(this.$form).find('input').val( this.number );
+    this.setCount = function (field) {
+        console.log(field)
+        const num = parseInt(field.value);
+        if (isNaN(num) || num < 1) {
+            // Reset number if field, if negative was entered
+            field.value = this.number;
         } else {
-            this.number = +($(this.$form).find('input').val());
+            // Update internal value otherwise
+            this.number = num;
         }
     };
     this.setDesc = function () {
@@ -515,9 +545,13 @@ var Group = function (id) {
         this.desc = description;
         $(this.$form).find('.group-right-desc').find('b').html(this.desc);
     };
+    this.setCustomSkill = function(value) {
+        this.customSkill = value
+    };
 
     this.initEvents = function () {
         $(this.$form).find('.group-remove-btn').on('click', function () {
+            console.log("onClick[REMOVE]: Invoked!")
             var self = Zone.getGroupById( $($(this).parents()[1]).attr("id") );
             self.remove();
         });
@@ -525,23 +559,26 @@ var Group = function (id) {
             var self = Zone.getGroupById( $($(this).parents()[1]).attr("id") );
             self.edit();
         });
-        $(this.$form).find('input').on('blur', function () {
-            var self = Zone.getGroupById( $($(this).parents()[2]).attr("id") );
-            self.setCount();
+        $(this.$form).find('.input-group-count').on('blur', this, function (event) {
+            const self = event.data;
+            self.setCount(event.target);
+        });
+        $(this.$form).find('.input-group-custom-skill').on('blur', this, function (event) {
+            const self = event.data;
+            self.setCustomSkill(event.target.value);
         });
     };
     this.draw = function () {
-        var self = Zone;
-
-        $(self.$form).find( '.group-wrapper' ).append( this.$form );
-        $(this.$form).attr("id", this.id);
+        $(Zone.$form).find( '.group-wrapper' ).append( this.$form );
     };
 
     this.init = function () {
         this.draw();
         this.initEvents();
-        this.setCount();
         this.setDesc();
+        $(this.$form).find(".input-group-custom-skill").attr(
+            "title", `Format:\n(basic): 0.5\n(specific): ["accuracy, 0.5], ["spotTime", 0.9]`
+        )
     };
 
     this.init();
@@ -718,7 +755,7 @@ var UnitItem = function (id, classname, kit, mode, restrictedHouses, vehicleId, 
         mode: "Patrol",
         restrictedHouses: "",
         vehicleId: "",
-        vehicleRole: "Driver" 
+        vehicleRole: "Driver"
     };
 
     this.id = id;
@@ -904,7 +941,7 @@ var VehicleItem = function (id, classname, kit, mode) {
         };
         return result
     };
-    
+
     this.$form = $('<div class="xpopup-wrapper group-unit" id="group-units-' + this.id
         + '" unitId="' + this.id
         + '"><div class="col-4">Vehicle #' + this.id + '</div>'
@@ -1131,7 +1168,7 @@ var ExportPopup = new Export();
 
 $(document).ready(function () {
     Zone = new ZoneItem();
-    
+
     $('.btn-show-defaults').on('click', function () {
         DefaultsSettings.display();
     });
@@ -1143,7 +1180,7 @@ $(document).ready(function () {
     $('.btn-clear-form').on('click', function () {
         Zone.reset();
     });
-    
+
     $( '.splash' ).css('display', 'none');
 
     DefaultsSettings.display();

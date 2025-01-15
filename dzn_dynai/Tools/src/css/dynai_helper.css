@@ -1,4 +1,4 @@
-body {	
+body {
 	margin: 0px;
 	padding: 0px;
 	font-family: helvetica,arial,sans-serif;
@@ -6,7 +6,7 @@ body {
 }
 
 /* ****************
- *	 
+ *
  *
  * Header page
  *
@@ -21,7 +21,7 @@ body {
 }
 
 .header-title {
-	font-size: 24px;	
+	font-size: 24px;
 	padding: 2px 0px 0px 40px;
 }
 
@@ -60,13 +60,13 @@ body {
 
 
 /* ****************
- *	
+ *
  *
  * Zone Wrapper
  *
  *
 ****************** */
-#zones-wrapper {	
+#zones-wrapper {
 	position: absolute;
     top: 80px;
 	left: 20px;
@@ -94,14 +94,14 @@ body {
 
 .zone-form {
 	width: 100%;
-	
+
 }
 
 .zone-form ul {
-	list-style-type: none;	
+	list-style-type: none;
 }
 
-.side-switch-off {	
+.side-switch-off {
 	display: inline-block;
 	width: 50px;
 	text-align: center;
@@ -124,11 +124,11 @@ body {
 
 .toggle-switch {
 	display: inline-block;
-	cursor: pointer;	
+	cursor: pointer;
 	width: 50px;
 	min-height: 16px;
 	background-color: rgb(177, 230, 89);
-	
+
 	text-align: center;
 	font-size: 12px;
 }
@@ -136,7 +136,7 @@ body {
 .toggle-switch label {
 	padding: 0px 5px;
 	cursor: pointer;
-		
+
 }
 
 .toggle-switch-on {
@@ -157,8 +157,10 @@ body {
 	margin-bottom: 5px;
 	min-height: 32px;
 	background-color:#a6a6a6;
-	
+	border: 1px solid black;
+	border-right:0px;
 }
+
 .group-left {
 	margin:0px;
 	float:left;
@@ -166,14 +168,14 @@ body {
 	display: inline-block;
 	background-color: #5a5a5a;
 	color: #fff;
-	
+
 	width: 32px;
 	min-height: 32px;
 }
 
 .group-right {
 	display: flex;
-	margin:0px;		
+	margin:0px;
 	width: 528px;
 	padding: 3px;
 }
@@ -198,7 +200,7 @@ body {
 .xpopup-header {
 	background-color: #252525;
 	line-height: 30px;
-	font-weight: 400;	
+	font-weight: 400;
 	color: white;
 	width: 100%;
 }
@@ -218,9 +220,9 @@ body {
 }
 
 .defaults-popup {
-	position: absolute;		
+	position: absolute;
 	top: 100px;
-	left: 40px;	
+	left: 40px;
 	padding-bottom: 15px;
 	min-width: 800px;
 	border: 1px solid black;
@@ -232,9 +234,9 @@ body {
 
 
 .group-popup {
-	position: absolute;		
+	position: absolute;
 	top: 100px;
-	left: 40px;	
+	left: 40px;
 	min-width: 880px;
 	border: 1px solid black;
 	background-color: #ececec;
@@ -317,7 +319,7 @@ select {
 }
 
 .btn {
-	font-size:14px;	
+	font-size:14px;
 	text-align: center;
 	background-color: #ececec;
 	border: 1px solid #5A5A5A;
@@ -337,7 +339,7 @@ select {
 }
 
 .btn-short {
-	font-size:14px;	
+	font-size:14px;
 	text-align: center;
 	background-color: #ececec;
 	border: 1px solid #5A5A5A;
@@ -358,5 +360,30 @@ select {
 
 .input-short {
 	max-width: 40px;
+}
 
+.icon-center {
+	position: relative;
+	top: 25%;
+}
+
+.optional {
+	font-size: xx-small;
+	position: absolute;
+	border-radius: 100%;
+	color: black;
+	background-color: #5F5FFF;
+	width: 10px;
+    height: 10px;
+    padding: 2px;
+    text-align: center;
+    cursor: pointer;
+
+}
+
+.optional:hover {
+	color: white;
+	background-color: #a1bcf7;
+    text-align: center;
+    cursor: pointer;
 }
