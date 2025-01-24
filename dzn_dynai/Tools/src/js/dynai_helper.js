@@ -194,9 +194,9 @@ var ZoneItem = function () {
         $(this.$form).find('.side-toggle').find('.side-switch-on').removeClass('side-switch-on').addClass('side-switch-off');
         $(this.$form).find('.side-toggle').find('div[value="' + side + '"]').removeClass( "side-switch-off" ).addClass( "side-switch-on" );
     };
-    this.toggleActive = function (target) {
-        const id = target.id
-        const isActive = $(target).find('label').html() == "YES";
+    this.toggleActive = function (target, desriedState) {
+        const id = target.id;
+        const isActive = desriedState == null ? $(target).find('label').html() == "YES" : !desriedState;
 
         $(target).find('span').css("float", isActive ? "right" : "left" );
         $(target).find('label').html(isActive ? 'NO' : 'YES');
@@ -257,7 +257,7 @@ var ZoneItem = function () {
 
         Object.keys(this.toggles).forEach((el) => {
             this.toggles[el] = true
-            this.toggleActive( $(`id=${el}`) );
+            this.toggleActive( $(`#${el}`)[0], true );
         })
 
         this.setSide("west");
@@ -506,7 +506,6 @@ var Group = function (id) {
     };
 
     this.setCount = function (field) {
-        console.log(field)
         const num = parseInt(field.value);
         if (isNaN(num) || num < 1) {
             // Reset number if field, if negative was entered
@@ -551,7 +550,6 @@ var Group = function (id) {
 
     this.initEvents = function () {
         $(this.$form).find('.group-remove-btn').on('click', function () {
-            console.log("onClick[REMOVE]: Invoked!")
             var self = Zone.getGroupById( $($(this).parents()[1]).attr("id") );
             self.remove();
         });
