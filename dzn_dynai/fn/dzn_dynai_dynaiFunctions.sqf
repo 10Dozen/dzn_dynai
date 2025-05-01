@@ -301,25 +301,29 @@ dzn_fnc_dynai_startZones = {
 	if !(call dzn_fnc_dynai_initValidate) exitWith {};
 
 	private _modules = synchronizedObjects dzn_dynai_core;
-
 	{
-		_x spawn {
-			waitUntil { !isNil {GET_PROP(_this, "init")} && {GET_PROP(_this, "init")} };
-			waitUntil { !isNil {GET_PROP(_this,"isActive")} && !isNil {GET_PROP(_this, "condition")} };
-
-			// Wait for zone activation (_this getVariable "isActive")
-			waitUntil {
-				GET_PROP(_this,"isActive")
-				||
-				call (GET_PROP(_this, "condition"))
-			};
-
-			if (DEBUG) then { player sideChat format ["dzn_dynai :: Creating zone '%1'", str(_this)]; };
-
-			_this setVariable ["dzn_dynai_isActive", true, true];
-			(GET_PROP(_this,"properties")) call dzn_fnc_dynai_createZone;
-		};
-		sleep 0.5;
+        [
+            {
+                params ["_module", "_timeOffset"];
+                [
+                    GET_PROP(_module, "init"),
+                    GET_PROP(_module, "isActive"),
+                    GET_PROP(_module, "condition")
+                ] params [
+                    ["_init", false],
+                    ["_isActive", false],
+                    ["_condition", {true}]
+                ];
+                (CBA_missionTime > _timeOffset) && _init && (_isActive || _condition)
+            },
+            {
+                params ["_module", "_timeOffset"];
+                if (DEBUG) then { player sideChat format ["dzn_dynai :: Creating zone '%1'", str(_module)]; };
+                _module setVariable ["dzn_dynai_isActive", true, true];
+    			(GET_PROP(_module, "properties")) call dzn_fnc_dynai_createZone;
+            },
+            [_x, CBA_missionTime + (0.1 + random 1) * _forEachIndex]
+        ] call CBA_fnc_waitUntilAndExecute;
 	} forEach _modules;
 };
 

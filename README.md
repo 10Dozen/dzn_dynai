@@ -1,5 +1,5 @@
 # dzn_dynai
-##### Version: 1.3.1.6
+##### Version: 1.3.3
 Dynamic AI with Blackjack and Hookers
 
 ### License: APL-SA

@@ -3,6 +3,9 @@ dzn_dynai_preInitTimeout   = 3;
 dzn_dynai_afterInitTimeout = 3;
 dzn_dynai_initCondition    = { true };
 
+// Zones 
+dzn_dynai_zonesFiles = ["Config\Dynai\Zones.sqf"];
+
 // Group Responses
 dzn_dynai_allowGroupResponse       = true;
 dzn_dynai_responseGroupsPerRequest = 2;     // Number of groups that can reinforce each request
